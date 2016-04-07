@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>iOSCharts</id>
+    <version>2.2.3.0</version>
+    <title>iOSCharts</title>
+    <authors>Flash3001</authors>
+    <owners>Flash3001, </owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A Xamarin port by Lucas Teixeira for Charts (ios-charts) by Daniel Cohen Gindi, inspired by Philipp Jahoda</description>
+    <releaseNotes>First release</releaseNotes>
+    <copyright>Copyright 2016</copyright>
+    <tags>Xamarin iOS Charts iOSCharts MPAndroidCharts-inspired LineChart Combined-Chart BarChart Horizontal-BarChartPieChart ScatterChart CandleStickChart BubbleChart RadarChart</tags>
+  </metadata>
+</package>
