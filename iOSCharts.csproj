@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -14,7 +14,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>lib</OutputPath>
+    <OutputPath>lib\xamarinios10\</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -46,5 +46,14 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.ObjCBinding.CSharp.targets" />
   <ItemGroup>
     <ObjcBindingNativeFramework Include="Charts.framework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="SwiftFrameworksDevice\*" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="SwiftFrameworksSimulator\*" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="build\SwiftFrameworks.targets" />
   </ItemGroup>
 </Project>
