@@ -1,0 +1,32 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Platform)' == 'iPhoneSimulator'">
+    <CreateAppBundleDependsOn>
+			$(CreateAppBundleDependsOn);
+      _CopySwiftLibsSimulator;
+		</CreateAppBundleDependsOn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)' == 'iPhone'">
+    <CreateAppBundleDependsOn>
+			$(CreateAppBundleDependsOn);
+      _CopySwiftLibsDevice;
+		</CreateAppBundleDependsOn>
+  </PropertyGroup>
+  
+  <Target Name="_CopySwiftLibsSimulator">
+    <ItemGroup>
+        <_SwiftLibsSimulator Include="$(_AppBundlePath)\SwiftFrameworksSimulator\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_SwiftLibsSimulator)" DestinationFolder="$(_AppBundlePath)\Frameworks" />
+    <RemoveDir Directories="$(_AppBundlePath)\SwiftFrameworksSimulator" />
+    <RemoveDir Directories="$(_AppBundlePath)\SwiftFrameworksDevice" />
+  </Target>
+  
+  <Target Name="_CopySwiftLibsDevice">
+    <ItemGroup>
+        <_SwiftLibsDevice Include="$(_AppBundlePath)\SwiftFrameworksDevice\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_SwiftLibsDevice)" DestinationFolder="$(_AppBundlePath)\Frameworks" />
+    <RemoveDir Directories="$(_AppBundlePath)\SwiftFrameworksSimulator" />
+    <RemoveDir Directories="$(_AppBundlePath)\SwiftFrameworksDevice" />
+  </Target>
+</Project>
