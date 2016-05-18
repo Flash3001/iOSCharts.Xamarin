@@ -48,12 +48,28 @@
     <ObjcBindingNativeFramework Include="Charts.framework" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SwiftFrameworksDevice\*" />
+    <Content Include="Frameworks\libswiftContacts.dylib" />
+    <Content Include="Frameworks\libswiftCore.dylib" />
+    <Content Include="Frameworks\libswiftCoreGraphics.dylib" />
+    <Content Include="Frameworks\libswiftCoreImage.dylib" />
+    <Content Include="Frameworks\libswiftDarwin.dylib" />
+    <Content Include="Frameworks\libswiftDispatch.dylib" />
+    <Content Include="Frameworks\libswiftFoundation.dylib" />
+    <Content Include="Frameworks\libswiftObjectiveC.dylib" />
+    <Content Include="Frameworks\libswiftUIKit.dylib" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SwiftFrameworksSimulator\*" />
+    <Content Include="SwiftFrameworksSimulator\libswiftContacts.dylib" />
+    <Content Include="SwiftFrameworksSimulator\libswiftCore.dylib" />
+    <Content Include="SwiftFrameworksSimulator\libswiftCoreGraphics.dylib" />
+    <Content Include="SwiftFrameworksSimulator\libswiftCoreImage.dylib" />
+    <Content Include="SwiftFrameworksSimulator\libswiftDarwin.dylib" />
+    <Content Include="SwiftFrameworksSimulator\libswiftDispatch.dylib" />
+    <Content Include="SwiftFrameworksSimulator\libswiftFoundation.dylib" />
+    <Content Include="SwiftFrameworksSimulator\libswiftObjectiveC.dylib" />
+    <Content Include="SwiftFrameworksSimulator\libswiftUIKit.dylib" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="build\SwiftFrameworks.targets" />
+    <None Include="build\iOSCharts.targets" />
   </ItemGroup>
 </Project>
