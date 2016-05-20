@@ -1,0 +1,26 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Platform)' == 'iPhoneSimulator'">
+    <CreateAppBundleDependsOn>
+		$(CreateAppBundleDependsOn);
+      	_CopySwiftLibsSimulator;
+	</CreateAppBundleDependsOn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)' == 'iPhone'">
+	<CodesignDependsOn>
+		$(CodesignDependsOn);
+		_RemoveExtraLibs;
+	</CodesignDependsOn>
+  </PropertyGroup>
+  
+  <Target Name="_CopySwiftLibsSimulator">
+    <ItemGroup>
+        <_SwiftLibsSimulator Include="$(_AppBundlePath)\SwiftFrameworksSimulator\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_SwiftLibsSimulator)" DestinationFolder="$(_AppBundlePath)\Frameworks" />
+	<RemoveDir Directories="$(_AppBundlePath)\SwiftFrameworksSimulator" />
+  </Target>
+  
+  <Target Name="_RemoveExtraLibs">
+    <RemoveDir Directories="$(_AppBundlePath)\SwiftFrameworksSimulator" />
+  </Target>
+</Project>
