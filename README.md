@@ -6,6 +6,6 @@ https://github.com/danielgindi/Charts
 
 When creating the IPA for publish you might get the following error:
 
-"Invalid Swift Support - The file libswiftContacts.dylib doesn’t have the correct code signature. Make sure you’re using the correct signature, rebuild your app using the current public (GM) version of Xcode, and resubmit it. Don’t just modify the code signature of libswiftContacts.dylib."
+"Invalid Swift Support - The SwiftSupport folder is missing. Rebuild your app using the current public (GM) version of Xcode and resubmit it."
 
 The following script will help: https://github.com/bq/ipa-packager
