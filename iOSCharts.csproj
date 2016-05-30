@@ -48,6 +48,8 @@
     <ObjcBindingNativeFramework Include="Charts.framework" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="build\Xamarin.iOS.Tasks.Core.dll" />
+    <Content Include="build\Xamarin.iOS.Tasks.dll" />
     <Content Include="Frameworks\libswiftContacts.dylib" />
     <Content Include="Frameworks\libswiftCore.dylib" />
     <Content Include="Frameworks\libswiftCoreGraphics.dylib" />
