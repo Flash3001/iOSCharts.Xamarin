@@ -23,7 +23,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
-    <OutputPath>lib</OutputPath>
+    <OutputPath>lib\xamarinios10</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -32,6 +32,9 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Xamarin.iOS" />
+    <Reference Include="Xamarin.Swift22.Support">
+      <HintPath>packages\Xamarin.SwiftSupport.2.2.0.0\lib\xamarinios10\Xamarin.Swift22.Support.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -44,34 +47,11 @@
     <ObjcBindingCoreSource Include="Structs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.ObjCBinding.CSharp.targets" />
+  <Import Project="packages\Xamarin.SwiftSupport.2.2.0.0\build\Xamarin.SwiftSupport.targets" Condition="Exists('packages\Xamarin.SwiftSupport.2.2.0.0\build\Xamarin.SwiftSupport.targets')" />
   <ItemGroup>
     <ObjcBindingNativeFramework Include="Charts.framework" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="build\Xamarin.iOS.Tasks.Core.dll" />
-    <Content Include="build\Xamarin.iOS.Tasks.dll" />
-    <Content Include="Frameworks\libswiftContacts.dylib" />
-    <Content Include="Frameworks\libswiftCore.dylib" />
-    <Content Include="Frameworks\libswiftCoreGraphics.dylib" />
-    <Content Include="Frameworks\libswiftCoreImage.dylib" />
-    <Content Include="Frameworks\libswiftDarwin.dylib" />
-    <Content Include="Frameworks\libswiftDispatch.dylib" />
-    <Content Include="Frameworks\libswiftFoundation.dylib" />
-    <Content Include="Frameworks\libswiftObjectiveC.dylib" />
-    <Content Include="Frameworks\libswiftUIKit.dylib" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="SwiftFrameworksSimulator\libswiftContacts.dylib" />
-    <Content Include="SwiftFrameworksSimulator\libswiftCore.dylib" />
-    <Content Include="SwiftFrameworksSimulator\libswiftCoreGraphics.dylib" />
-    <Content Include="SwiftFrameworksSimulator\libswiftCoreImage.dylib" />
-    <Content Include="SwiftFrameworksSimulator\libswiftDarwin.dylib" />
-    <Content Include="SwiftFrameworksSimulator\libswiftDispatch.dylib" />
-    <Content Include="SwiftFrameworksSimulator\libswiftFoundation.dylib" />
-    <Content Include="SwiftFrameworksSimulator\libswiftObjectiveC.dylib" />
-    <Content Include="SwiftFrameworksSimulator\libswiftUIKit.dylib" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="build\iOSCharts.targets" />
+    <BundleResource Include="packages.config" />
   </ItemGroup>
 </Project>
