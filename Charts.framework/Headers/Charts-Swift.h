@@ -279,7 +279,7 @@ SWIFT_CLASS("_TtC6Charts9ChartData")
 /// MARK: - ObjC compatibility
 ///
 /// \returns  the average length (in characters) across all values in the x-vals array
-@property (nonatomic, readonly, copy) NSArray<NSObject *> * _Nonnull xValsObjc;
+@property (nonatomic, copy) NSArray<NSObject *> * _Nonnull xValsObjc;
 @end
 
 
@@ -422,6 +422,9 @@ SWIFT_PROTOCOL("_TtP6Charts13IChartDataSet_")
 /// \returns  the value of the Entry object at the given xIndex. Returns NaN if no value is at the given x-index.
 - (double)yValForXIndex:(NSInteger)x;
 
+/// \returns  all of the y values of the Entry objects at the given xIndex. Returns NaN if no value is at the given x-index.
+- (NSArray<NSNumber *> * _Nonnull)yValsForXIndex:(NSInteger)x;
+
 /// \param error out of bounds
 /// if <code>i
 /// </code> is out of bounds, it may throw an out-of-bounds exception
@@ -438,6 +441,10 @@ SWIFT_PROTOCOL("_TtP6Charts13IChartDataSet_")
 /// If the no Entry at the specifed x-index is found, this method returns the Entry at the closest x-index.
 /// nil if no Entry object at that index.
 - (ChartDataEntry * _Nullable)entryForXIndex:(NSInteger)x;
+
+/// \returns  all Entry objects found at the given xIndex with binary search.
+/// An empty array if no Entry object at that index.
+- (NSArray<ChartDataEntry *> * _Nonnull)entriesForXIndex:(NSInteger)x;
 
 /// \param x x-index of the entry to search for
 ///
@@ -590,6 +597,12 @@ SWIFT_PROTOCOL("_TtP6Charts16IBarChartDataSet_")
 /// the color used for drawing the bar-shadows. The bar shadows is a surface behind the bar that indicates the maximum value
 @property (nonatomic, strong) UIColor * _Nonnull barShadowColor;
 
+/// the width used for drawing borders around the bars. If borderWidth == 0, no border will be drawn.
+@property (nonatomic) CGFloat barBorderWidth;
+
+/// the color drawing borders around the bars.
+@property (nonatomic, strong) UIColor * _Nonnull barBorderColor;
+
 /// the alpha value (transparency) that is used for drawing the highlight indicator bar. min = 0.0 (fully transparent), max = 1.0 (fully opaque)
 @property (nonatomic) CGFloat highlightAlpha;
 
@@ -610,9 +623,11 @@ SWIFT_CLASS("_TtC6Charts16ChartBaseDataSet")
 @property (nonatomic, readonly) double yMax;
 @property (nonatomic, readonly) NSInteger entryCount;
 - (double)yValForXIndex:(NSInteger)x;
+- (NSArray<NSNumber *> * _Nonnull)yValsForXIndex:(NSInteger)x;
 - (ChartDataEntry * _Nullable)entryForIndex:(NSInteger)i;
 - (ChartDataEntry * _Nullable)entryForXIndex:(NSInteger)x rounding:(enum ChartDataSetRounding)rounding;
 - (ChartDataEntry * _Nullable)entryForXIndex:(NSInteger)x;
+- (NSArray<ChartDataEntry *> * _Nonnull)entriesForXIndex:(NSInteger)x;
 - (NSInteger)entryIndexWithXIndex:(NSInteger)x rounding:(enum ChartDataSetRounding)rounding;
 - (NSInteger)entryIndexWithEntry:(ChartDataEntry * _Nonnull)e;
 - (BOOL)addEntry:(ChartDataEntry * _Nonnull)e;
@@ -722,7 +737,9 @@ SWIFT_CLASS("_TtC6Charts12ChartDataSet")
 
 /// the last end value used for calcMinMax
 @property (nonatomic) NSInteger _lastEnd;
-@property (nonatomic, readonly, copy) NSArray<ChartDataEntry *> * _Nonnull yVals;
+
+/// the array of y-values that this DataSet represents.
+@property (nonatomic, copy) NSArray<ChartDataEntry *> * _Nonnull yVals;
 
 /// Use this method to tell the data set that the underlying data has changed
 - (void)notifyDataSetChanged;
@@ -740,6 +757,9 @@ SWIFT_CLASS("_TtC6Charts12ChartDataSet")
 /// \returns  the value of the Entry object at the given xIndex. Returns NaN if no value is at the given x-index.
 - (double)yValForXIndex:(NSInteger)x;
 
+/// \returns  all of the y values of the Entry objects at the given xIndex. Returns NaN if no value is at the given x-index.
+- (NSArray<NSNumber *> * _Nonnull)yValsForXIndex:(NSInteger)x;
+
 /// \param error out of bounds
 /// if <code>i
 /// </code> is out of bounds, it may throw an out-of-bounds exception
@@ -756,6 +776,9 @@ SWIFT_CLASS("_TtC6Charts12ChartDataSet")
 /// If the no Entry at the specifed x-index is found, this method returns the Entry at the closest x-index.
 /// nil if no Entry object at that index.
 - (ChartDataEntry * _Nullable)entryForXIndex:(NSInteger)x;
+
+/// \returns  all Entry objects found at the given xIndex with binary search.
+/// An empty array if no Entry object at that index.
 - (NSArray<ChartDataEntry *> * _Nonnull)entriesForXIndex:(NSInteger)x;
 
 /// \param x x-index of the entry to search for
@@ -852,13 +875,18 @@ SWIFT_CLASS("_TtC6Charts15BarChartDataSet")
 /// the color used for drawing the bar-shadows. The bar shadows is a surface behind the bar that indicates the maximum value
 @property (nonatomic, strong) UIColor * _Nonnull barShadowColor;
 
+/// the width used for drawing borders around the bars. If borderWidth == 0, no border will be drawn.
+@property (nonatomic) CGFloat barBorderWidth;
+
+/// the color drawing borders around the bars.
+@property (nonatomic, strong) UIColor * _Nonnull barBorderColor;
+
 /// the alpha value (transparency) that is used for drawing the highlight indicator bar. min = 0.0 (fully transparent), max = 1.0 (fully opaque)
 @property (nonatomic) CGFloat highlightAlpha;
 - (id _Nonnull)copyWithZone:(struct _NSZone * _Null_unspecified)zone;
 @end
 
 @class BarLineChartViewBase;
-@class ChartSelectionDetail;
 
 SWIFT_CLASS("_TtC6Charts16ChartHighlighter")
 @interface ChartHighlighter : NSObject
@@ -874,56 +902,36 @@ SWIFT_CLASS("_TtC6Charts16ChartHighlighter")
 /// \param y 
 ///
 /// \returns  
-- (ChartHighlight * _Nullable)getHighlightWithX:(double)x y:(double)y;
+- (ChartHighlight * _Nullable)getHighlightWithX:(CGFloat)x y:(CGFloat)y;
 
 /// Returns the corresponding x-index for a given touch-position in pixels.
 ///
 /// \param x 
 ///
 /// \returns  
-- (NSInteger)getXIndex:(double)x;
-
-/// Returns the corresponding dataset-index for a given xIndex and xy-touch position in pixels.
-///
-/// \param xIndex 
-///
-/// \param x 
-///
-/// \param y 
-///
-/// \returns  
-- (NSInteger)getDataSetIndexWithXIndex:(NSInteger)xIndex x:(double)x y:(double)y;
-
-/// Returns a list of SelectionDetail object corresponding to the given xIndex.
-///
-/// \param xIndex 
-///
-/// \returns  
-- (NSArray<ChartSelectionDetail *> * _Nonnull)getSelectionDetailsAtIndex:(NSInteger)xIndex;
+- (NSInteger)getXIndex:(CGFloat)x;
 @end
 
+@class ChartSelectionDetail;
 @class ChartRange;
 
 SWIFT_CLASS("_TtC6Charts19BarChartHighlighter")
 @interface BarChartHighlighter : ChartHighlighter
-- (ChartHighlight * _Nullable)getHighlightWithX:(double)x y:(double)y;
-- (NSInteger)getXIndex:(double)x;
-- (NSInteger)getDataSetIndexWithXIndex:(NSInteger)xIndex x:(double)x y:(double)y;
+- (ChartHighlight * _Nullable)getHighlightWithX:(CGFloat)x y:(CGFloat)y;
+- (NSInteger)getXIndex:(CGFloat)x;
 
 /// This method creates the Highlight object that also indicates which value of a stacked BarEntry has been selected.
 ///
-/// \param old the old highlight object before looking for stacked values
+/// \param selectionDetail the selection detail to work with
 ///
 /// \param set 
 ///
 /// \param xIndex 
 ///
-/// \param dataSetIndex 
-///
 /// \param yValue 
 ///
 /// \returns  
-- (ChartHighlight * _Nullable)getStackedHighlightWithOld:(ChartHighlight * _Nullable)old set:(BarChartDataSet * _Nonnull)set xIndex:(NSInteger)xIndex dataSetIndex:(NSInteger)dataSetIndex yValue:(double)yValue;
+- (ChartHighlight * _Nullable)getStackedHighlightWithSelectionDetail:(ChartSelectionDetail * _Nonnull)selectionDetail set:(id <IBarChartDataSet> _Nonnull)set xIndex:(NSInteger)xIndex yValue:(double)yValue;
 
 /// Returns the index of the closest value inside the values array / ranges (stacked barchart) to the value given as a parameter.
 ///
@@ -939,7 +947,7 @@ SWIFT_CLASS("_TtC6Charts19BarChartHighlighter")
 /// \param x 
 ///
 /// \returns  
-- (double)getBase:(double)x;
+- (double)getBase:(CGFloat)x;
 
 /// Splits up the stack-values of the given bar-entry into Range objects.
 ///
@@ -967,7 +975,7 @@ SWIFT_CLASS("_TtC6Charts17ChartRendererBase")
 - (nonnull instancetype)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler OBJC_DESIGNATED_INITIALIZER;
 
 /// Calculates the minimum and maximum x-value the chart can currently display (with the given zoom level).
-- (void)calcXBoundsWithChart:(BarLineChartViewBase * _Nonnull)chart xAxisModulus:(NSInteger)xAxisModulus;
+- (void)calcXBoundsWithChart:(id <BarLineScatterCandleBubbleChartDataProvider> _Nonnull)chart xAxisModulus:(NSInteger)xAxisModulus;
 @end
 
 @class ChartAnimator;
@@ -1177,6 +1185,9 @@ SWIFT_CLASS("_TtC6Charts13ChartViewBase")
 ///
 /// \param highlight contains information about which entry should be highlighted
 - (void)highlightValue:(ChartHighlight * _Nullable)highlight;
+
+/// Highlights the value at the given x-index in the given DataSet. Provide -1 as the x-index to undo all highlighting.
+- (void)highlightValueWithXIndex:(NSInteger)xIndex dataSetIndex:(NSInteger)dataSetIndex;
 
 /// Highlights the value at the given x-index in the given DataSet. Provide -1 as the x-index to undo all highlighting.
 - (void)highlightValueWithXIndex:(NSInteger)xIndex dataSetIndex:(NSInteger)dataSetIndex callDelegate:(BOOL)callDelegate;
@@ -1664,6 +1675,12 @@ SWIFT_CLASS("_TtC6Charts20BarLineChartViewBase")
 /// <em>default</em>: true
 @property (nonatomic, readonly) BOOL isHighlightPerDragEnabled;
 
+/// Set this to true to make the highlight full-bar oriented, false to make it highlight single values
+@property (nonatomic) BOOL highlightFullBarEnabled;
+
+/// \returns  true the highlight is be full-bar oriented, false if single-value
+@property (nonatomic, readonly) BOOL isHighlightFullBarEnabled;
+
 /// default: true
 ///
 /// \returns  true if drawing the grid background is enabled, false if not.
@@ -1891,6 +1908,7 @@ SWIFT_PROTOCOL("_TtP6Charts19IBubbleChartDataSet_")
 @property (nonatomic, readonly) double xMin;
 @property (nonatomic, readonly) double xMax;
 @property (nonatomic, readonly) CGFloat maxSize;
+@property (nonatomic, readonly) BOOL isNormalizeSizeEnabled;
 
 /// Sets/gets the width of the circle that surrounds the bubble when highlighted
 @property (nonatomic) CGFloat highlightCircleWidth;
@@ -1905,6 +1923,8 @@ SWIFT_CLASS("_TtC6Charts18BubbleChartDataSet")
 @property (nonatomic, readonly) double xMin;
 @property (nonatomic, readonly) double xMax;
 @property (nonatomic, readonly) CGFloat maxSize;
+@property (nonatomic) BOOL normalizeSizeEnabled;
+@property (nonatomic, readonly) BOOL isNormalizeSizeEnabled;
 - (void)calcMinMaxWithStart:(NSInteger)start end:(NSInteger)end;
 
 /// Sets/gets the width of the circle that surrounds the bubble when highlighted
@@ -2388,6 +2408,7 @@ SWIFT_CLASS("_TtC6Charts19ChartColorTemplates")
 + (NSArray<UIColor *> * _Nonnull)pastel;
 + (NSArray<UIColor *> * _Nonnull)colorful;
 + (NSArray<UIColor *> * _Nonnull)vordiplom;
++ (NSArray<UIColor *> * _Nonnull)material;
 + (UIColor * _Nonnull)colorFromString:(NSString * _Nonnull)colorString;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
@@ -2575,7 +2596,7 @@ SWIFT_CLASS("_TtC6Charts9ChartFill")
 - (void)fillPathWithContext:(CGContextRef _Nonnull)context rect:(CGRect)rect;
 @end
 
-typedef SWIFT_ENUM(NSInteger, ChartFillType) {
+typedef SWIFT_ENUM_NAMED(NSInteger, ChartFillType, "Type") {
   ChartFillTypeEmpty = 0,
   ChartFillTypeColor = 1,
   ChartFillTypeLinearGradient = 2,
@@ -2590,21 +2611,68 @@ typedef SWIFT_ENUM(NSInteger, ChartFillType) {
 SWIFT_CLASS("_TtC6Charts14ChartHighlight")
 @interface ChartHighlight : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
-- (nonnull instancetype)initWithXIndex:(NSInteger)x dataSetIndex:(NSInteger)dataSetIndex OBJC_DESIGNATED_INITIALIZER;
-- (nonnull instancetype)initWithXIndex:(NSInteger)x dataSetIndex:(NSInteger)dataSetIndex stackIndex:(NSInteger)stackIndex OBJC_DESIGNATED_INITIALIZER;
 
-/// Constructor, only used for stacked-barchart.
+/// \param xIndex the index of the highlighted value on the x-axis
 ///
-/// \param x the index of the highlighted value on the x-axis
+/// \param value the y-value of the highlighted value
 ///
-/// \param dataSet the index of the DataSet the highlighted value belongs to
+/// \param dataIndex the index of the Data the highlighted value belongs to
+///
+/// \param dataSetIndex the index of the DataSet the highlighted value belongs to
 ///
 /// \param stackIndex references which value of a stacked-bar entry has been selected
 ///
 /// \param range the range the selected stack-value is in
-- (nonnull instancetype)initWithXIndex:(NSInteger)x dataSetIndex:(NSInteger)dataSetIndex stackIndex:(NSInteger)stackIndex range:(ChartRange * _Nonnull)range;
-@property (nonatomic, readonly) NSInteger dataSetIndex;
+- (nonnull instancetype)initWithXIndex:(NSInteger)x value:(double)value dataIndex:(NSInteger)dataIndex dataSetIndex:(NSInteger)dataSetIndex stackIndex:(NSInteger)stackIndex range:(ChartRange * _Nullable)range OBJC_DESIGNATED_INITIALIZER;
+
+/// \param xIndex the index of the highlighted value on the x-axis
+///
+/// \param value the y-value of the highlighted value
+///
+/// \param dataIndex the index of the Data the highlighted value belongs to
+///
+/// \param dataSetIndex the index of the DataSet the highlighted value belongs to
+///
+/// \param stackIndex references which value of a stacked-bar entry has been selected
+- (nonnull instancetype)initWithXIndex:(NSInteger)x value:(double)value dataIndex:(NSInteger)dataIndex dataSetIndex:(NSInteger)dataSetIndex stackIndex:(NSInteger)stackIndex;
+
+/// \param xIndex the index of the highlighted value on the x-axis
+///
+/// \param value the y-value of the highlighted value
+///
+/// \param dataSetIndex the index of the DataSet the highlighted value belongs to
+///
+/// \param stackIndex references which value of a stacked-bar entry has been selected
+///
+/// \param range the range the selected stack-value is in
+- (nonnull instancetype)initWithXIndex:(NSInteger)x value:(double)value dataSetIndex:(NSInteger)dataSetIndex stackIndex:(NSInteger)stackIndex range:(ChartRange * _Nullable)range;
+
+/// \param xIndex the index of the highlighted value on the x-axis
+///
+/// \param value the y-value of the highlighted value
+///
+/// \param dataSetIndex the index of the DataSet the highlighted value belongs to
+///
+/// \param stackIndex references which value of a stacked-bar entry has been selected
+///
+/// \param range the range the selected stack-value is in
+- (nonnull instancetype)initWithXIndex:(NSInteger)x value:(double)value dataSetIndex:(NSInteger)dataSetIndex stackIndex:(NSInteger)stackIndex;
+
+/// \param xIndex the index of the highlighted value on the x-axis
+///
+/// \param dataSetIndex the index of the DataSet the highlighted value belongs to
+///
+/// \param stackIndex references which value of a stacked-bar entry has been selected
+- (nonnull instancetype)initWithXIndex:(NSInteger)x dataSetIndex:(NSInteger)dataSetIndex stackIndex:(NSInteger)stackIndex;
+
+/// \param xIndex the index of the highlighted value on the x-axis
+///
+/// \param dataSetIndex the index of the DataSet the highlighted value belongs to
+- (nonnull instancetype)initWithXIndex:(NSInteger)x dataSetIndex:(NSInteger)dataSetIndex;
 @property (nonatomic, readonly) NSInteger xIndex;
+@property (nonatomic, readonly) double value;
+@property (nonatomic, readonly) NSInteger dataIndex;
+@property (nonatomic, readonly) NSInteger dataSetIndex;
 @property (nonatomic, readonly) NSInteger stackIndex;
 
 /// \returns  the range of values the selected value of a stacked bar is in. (this is only relevant for stacked-barchart)
@@ -2615,12 +2683,34 @@ SWIFT_CLASS("_TtC6Charts14ChartHighlight")
 
 
 enum ChartLegendPosition : NSInteger;
+enum ChartLegendHorizontalAlignment : NSInteger;
+enum ChartLegendVerticalAlignment : NSInteger;
+enum ChartLegendOrientation : NSInteger;
 enum ChartLegendDirection : NSInteger;
 enum ChartLegendForm : NSInteger;
 
 SWIFT_CLASS("_TtC6Charts11ChartLegend")
 @interface ChartLegend : ChartComponentBase
+
+/// This property is deprecated - Use position, horizontalAlignment, verticalAlignment, orientation, drawInside, direction.
 @property (nonatomic) enum ChartLegendPosition position;
+
+/// The horizontal alignment of the legend
+@property (nonatomic) enum ChartLegendHorizontalAlignment horizontalAlignment;
+
+/// The vertical alignment of the legend
+@property (nonatomic) enum ChartLegendVerticalAlignment verticalAlignment;
+
+/// The orientation of the legend
+@property (nonatomic) enum ChartLegendOrientation orientation;
+
+/// Flag indicating whether the legend will draw inside the chart or outside
+@property (nonatomic) BOOL drawInside;
+
+/// Flag indicating whether the legend will draw inside the chart or outside
+@property (nonatomic, readonly) BOOL isDrawInsideEnabled;
+
+/// The text direction of the legend
 @property (nonatomic) enum ChartLegendDirection direction;
 @property (nonatomic, strong) UIFont * _Nonnull font;
 @property (nonatomic, strong) UIColor * _Nonnull textColor;
@@ -2636,13 +2726,15 @@ SWIFT_CLASS("_TtC6Charts11ChartLegend")
 - (nonnull instancetype)initWithColors:(NSArray<NSObject *> * _Nonnull)colors labels:(NSArray<NSObject *> * _Nonnull)labels OBJC_DESIGNATED_INITIALIZER;
 - (CGSize)getMaximumEntrySize:(UIFont * _Nonnull)font;
 - (NSString * _Nullable)getLabel:(NSInteger)index;
+
+/// This function is deprecated - Please read neededWidth/neededHeight after calculateDimensions was called.
 - (CGSize)getFullSize:(UIFont * _Nonnull)labelFont;
 @property (nonatomic) CGFloat neededWidth;
 @property (nonatomic) CGFloat neededHeight;
 @property (nonatomic) CGFloat textWidthMax;
 @property (nonatomic) CGFloat textHeightMax;
 
-/// flag that indicates if word wrapping is enabled this is currently supported only for: BelowChartLeft, BelowChartRight, BelowChartCenter. note that word wrapping a legend takes a toll on performance. you may want to set maxSizePercent when word wrapping, to set the point where the text wraps.
+/// flag that indicates if word wrapping is enabled this is currently supported only for orientation == Horizontal. you may want to set maxSizePercent when word wrapping, to set the point where the text wraps.
 ///
 /// <em>default</em>: false
 @property (nonatomic) BOOL wordWrapEnabled;
@@ -2650,7 +2742,7 @@ SWIFT_CLASS("_TtC6Charts11ChartLegend")
 /// if this is set, then word wrapping the legend is enabled.
 @property (nonatomic, readonly) BOOL isWordWrapEnabled;
 
-/// The maximum relative size out of the whole chart view in percent. If the legend is to the right/left of the chart, then this affects the width of the legend. If the legend is to the top/bottom of the chart, then this affects the height of the legend. If the legend is the center of the piechart, then this defines the size of the rectangular bounds out of the size of the "hole".
+/// The maximum relative size out of the whole chart view in percent. If the legend is to the right/left of the chart, then this affects the width of the legend. If the legend is to the top/bottom of the chart, then this affects the height of the legend.
 ///
 /// <em>default</em>: 0.95 (95%)
 @property (nonatomic) CGFloat maxSizePercent;
@@ -2689,7 +2781,9 @@ SWIFT_CLASS("_TtC6Charts11ChartLegend")
 - (void)setCustomWithColors:(NSArray<NSObject *> * _Nonnull)colors labels:(NSArray<NSObject *> * _Nonnull)labels;
 @end
 
-typedef SWIFT_ENUM(NSInteger, ChartLegendPosition) {
+
+/// This property is deprecated - Use position, horizontalAlignment, verticalAlignment, orientation, drawInside, direction.
+typedef SWIFT_ENUM_NAMED(NSInteger, ChartLegendPosition, "Position") {
   ChartLegendPositionRightOfChart = 0,
   ChartLegendPositionRightOfChartCenter = 1,
   ChartLegendPositionRightOfChartInside = 2,
@@ -2705,13 +2799,30 @@ typedef SWIFT_ENUM(NSInteger, ChartLegendPosition) {
   ChartLegendPositionPiechartCenter = 12,
 };
 
-typedef SWIFT_ENUM(NSInteger, ChartLegendForm) {
+typedef SWIFT_ENUM_NAMED(NSInteger, ChartLegendForm, "Form") {
   ChartLegendFormSquare = 0,
   ChartLegendFormCircle = 1,
   ChartLegendFormLine = 2,
 };
 
-typedef SWIFT_ENUM(NSInteger, ChartLegendDirection) {
+typedef SWIFT_ENUM_NAMED(NSInteger, ChartLegendHorizontalAlignment, "HorizontalAlignment") {
+  ChartLegendHorizontalAlignmentLeft = 0,
+  ChartLegendHorizontalAlignmentCenter = 1,
+  ChartLegendHorizontalAlignmentRight = 2,
+};
+
+typedef SWIFT_ENUM_NAMED(NSInteger, ChartLegendVerticalAlignment, "VerticalAlignment") {
+  ChartLegendVerticalAlignmentTop = 0,
+  ChartLegendVerticalAlignmentCenter = 1,
+  ChartLegendVerticalAlignmentBottom = 2,
+};
+
+typedef SWIFT_ENUM_NAMED(NSInteger, ChartLegendOrientation, "Orientation") {
+  ChartLegendOrientationHorizontal = 0,
+  ChartLegendOrientationVertical = 1,
+};
+
+typedef SWIFT_ENUM_NAMED(NSInteger, ChartLegendDirection, "Direction") {
   ChartLegendDirectionLeftToRight = 0,
   ChartLegendDirectionRightToLeft = 1,
 };
@@ -2750,6 +2861,7 @@ SWIFT_CLASS("_TtC6Charts14ChartLimitLine")
 @property (nonatomic, strong) UIColor * _Nonnull valueTextColor;
 @property (nonatomic, strong) UIFont * _Nonnull valueFont;
 @property (nonatomic, copy) NSString * _Nonnull label;
+@property (nonatomic) BOOL drawLabelEnabled;
 @property (nonatomic) enum ChartLimitLabelPosition labelPosition;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 - (nonnull instancetype)initWithLimit:(double)limit OBJC_DESIGNATED_INITIALIZER;
@@ -2759,7 +2871,7 @@ SWIFT_CLASS("_TtC6Charts14ChartLimitLine")
 @property (nonatomic) CGFloat lineWidth;
 @end
 
-typedef SWIFT_ENUM(NSInteger, ChartLimitLabelPosition) {
+typedef SWIFT_ENUM_NAMED(NSInteger, ChartLimitLabelPosition, "LabelPosition") {
   ChartLimitLabelPositionLeftTop = 0,
   ChartLimitLabelPositionLeftBottom = 1,
   ChartLimitLabelPositionRightTop = 2,
@@ -2768,7 +2880,7 @@ typedef SWIFT_ENUM(NSInteger, ChartLimitLabelPosition) {
 
 
 SWIFT_CLASS("_TtC6Charts11ChartMarker")
-@interface ChartMarker : ChartComponentBase
+@interface ChartMarker : NSObject
 
 /// The marker image to render
 @property (nonatomic, strong) UIImage * _Nullable image;
@@ -2815,8 +2927,12 @@ SWIFT_CLASS("_TtC6Charts10ChartRange")
 SWIFT_CLASS("_TtC6Charts20ChartSelectionDetail")
 @interface ChartSelectionDetail : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
-- (nonnull instancetype)initWithValue:(double)value dataSetIndex:(NSInteger)dataSetIndex dataSet:(id <IChartDataSet> _Nonnull)dataSet OBJC_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)initWithY:(CGFloat)y value:(double)value dataIndex:(NSInteger)dataIndex dataSetIndex:(NSInteger)dataSetIndex dataSet:(id <IChartDataSet> _Nonnull)dataSet OBJC_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)initWithY:(CGFloat)y value:(double)value dataSetIndex:(NSInteger)dataSetIndex dataSet:(id <IChartDataSet> _Nonnull)dataSet;
+- (nonnull instancetype)initWithValue:(double)value dataSetIndex:(NSInteger)dataSetIndex dataSet:(id <IChartDataSet> _Nonnull)dataSet;
+@property (nonatomic, readonly) CGFloat y;
 @property (nonatomic, readonly) double value;
+@property (nonatomic, readonly) NSInteger dataIndex;
 @property (nonatomic, readonly) NSInteger dataSetIndex;
 @property (nonatomic, readonly, strong) id <IChartDataSet> _Nullable dataSet;
 - (BOOL)isEqual:(id _Nullable)object;
@@ -3084,7 +3200,7 @@ SWIFT_CLASS("_TtC6Charts10ChartXAxis")
 @property (nonatomic, copy) NSArray<NSObject *> * _Nonnull valuesObjc;
 @end
 
-typedef SWIFT_ENUM(NSInteger, XAxisLabelPosition) {
+typedef SWIFT_ENUM_NAMED(NSInteger, XAxisLabelPosition, "LabelPosition") {
   XAxisLabelPositionTop = 0,
   XAxisLabelPositionBottom = 1,
   XAxisLabelPositionBothSided = 2,
@@ -3164,7 +3280,7 @@ SWIFT_CLASS("_TtC6Charts10ChartYAxis")
 /// flag that indicates if the axis is inverted or not
 @property (nonatomic) BOOL inverted;
 
-/// This property is deprecated - Use customAxisMin instead.
+/// This property is deprecated - Use axisMinValue instead.
 @property (nonatomic) BOOL startAtZeroEnabled;
 
 /// if true, the set number of y-labels will be forced
@@ -3235,7 +3351,7 @@ SWIFT_CLASS("_TtC6Charts10ChartYAxis")
 @property (nonatomic, readonly) BOOL needsOffset;
 @property (nonatomic, readonly) BOOL isInverted;
 
-/// This is deprecated now, use customAxisMin
+/// This is deprecated now, use axisMinValue
 @property (nonatomic, readonly) BOOL isStartAtZeroEnabled;
 
 /// \returns  true if focing the y-label count is enabled. Default: false
@@ -3248,10 +3364,10 @@ SWIFT_CLASS("_TtC6Charts10ChartYAxis")
 /// \param dataMin the y-min value according to chart data
 ///
 /// \param dataMax the y-max value according to chart
-- (void)calcMinMaxWithMin:(double)dataMin max:(double)dataMax;
+- (void)calculateWithMin:(double)dataMin max:(double)dataMax;
 @end
 
-typedef SWIFT_ENUM(NSInteger, YAxisLabelPosition) {
+typedef SWIFT_ENUM_NAMED(NSInteger, YAxisLabelPosition, "LabelPosition") {
   YAxisLabelPositionOutsideChart = 0,
   YAxisLabelPositionInsideChart = 1,
 };
@@ -3329,6 +3445,13 @@ SWIFT_CLASS("_TtC6Charts17CombinedChartData")
 /// \returns  all data objects in row: line-bar-scatter-candle-bubble if not null.
 @property (nonatomic, readonly, copy) NSArray<ChartData *> * _Nonnull allData;
 - (void)notifyDataChanged;
+
+/// Get the Entry for a corresponding highlight object
+///
+/// \param highlight 
+///
+/// \returns  the entry that is highlighted
+- (ChartDataEntry * _Nullable)getEntryForHighlight:(ChartHighlight * _Nonnull)highlight;
 @end
 
 @class CombinedChartView;
@@ -3354,7 +3477,7 @@ SWIFT_CLASS("_TtC6Charts21CombinedChartRenderer")
 - (void)drawValuesWithContext:(CGContextRef _Nonnull)context;
 - (void)drawExtrasWithContext:(CGContextRef _Nonnull)context;
 - (void)drawHighlightedWithContext:(CGContextRef _Nonnull)context indices:(NSArray<ChartHighlight *> * _Nonnull)indices;
-- (void)calcXBoundsWithChart:(BarLineChartViewBase * _Nonnull)chart xAxisModulus:(NSInteger)xAxisModulus;
+- (void)calcXBoundsWithChart:(id <BarLineScatterCandleBubbleChartDataProvider> _Nonnull)chart xAxisModulus:(NSInteger)xAxisModulus;
 
 /// \returns  the sub-renderer object at the specified index.
 - (ChartDataRendererBase * _Nullable)getSubRendererWithIndex:(NSInteger)index;
@@ -3429,7 +3552,7 @@ SWIFT_CLASS("_TtC6Charts17CombinedChartView")
 
 
 /// enum that allows to specify the order in which the different data objects for the combined-chart are drawn
-typedef SWIFT_ENUM(NSInteger, CombinedChartDrawOrder) {
+typedef SWIFT_ENUM_NAMED(NSInteger, CombinedChartDrawOrder, "DrawOrder") {
   CombinedChartDrawOrderBar = 0,
   CombinedChartDrawOrderBubble = 1,
   CombinedChartDrawOrderLine = 2,
@@ -3440,28 +3563,21 @@ typedef SWIFT_ENUM(NSInteger, CombinedChartDrawOrder) {
 
 SWIFT_CLASS("_TtC6Charts19CombinedHighlighter")
 @interface CombinedHighlighter : ChartHighlighter
-
-/// Returns a list of SelectionDetail object corresponding to the given xIndex.
-///
-/// \param xIndex 
-///
-/// \returns  
-- (NSArray<ChartSelectionDetail *> * _Nonnull)getSelectionDetailsAtIndex:(NSInteger)xIndex;
 - (nonnull instancetype)initWithChart:(BarLineChartViewBase * _Nonnull)chart OBJC_DESIGNATED_INITIALIZER;
 @end
 
 
 SWIFT_CLASS("_TtC6Charts29HorizontalBarChartHighlighter")
 @interface HorizontalBarChartHighlighter : BarChartHighlighter
-- (ChartHighlight * _Nullable)getHighlightWithX:(double)x y:(double)y;
-- (NSInteger)getXIndex:(double)x;
+- (ChartHighlight * _Nullable)getHighlightWithX:(CGFloat)x y:(CGFloat)y;
+- (NSInteger)getXIndex:(CGFloat)x;
 
 /// Returns the base y-value to the corresponding x-touch value in pixels.
 ///
 /// \param y 
 ///
 /// \returns  
-- (double)getBase:(double)y;
+- (double)getBase:(CGFloat)y;
 - (nonnull instancetype)initWithChart:(BarLineChartViewBase * _Nonnull)chart OBJC_DESIGNATED_INITIALIZER;
 @end
 
@@ -3522,29 +3638,30 @@ SWIFT_PROTOCOL("_TtP6Charts22ILineRadarChartDataSet_")
 @property (nonatomic, readonly) BOOL isDrawFilledEnabled;
 @end
 
+enum LineChartMode : NSInteger;
 
 SWIFT_PROTOCOL("_TtP6Charts17ILineChartDataSet_")
 @protocol ILineChartDataSet <ILineRadarChartDataSet>
+
+/// The drawing mode for this line dataset
+///
+/// <em>default</em>: Linear
+@property (nonatomic) enum LineChartMode mode;
 
 /// Intensity for cubic lines (min = 0.05, max = 1)
 ///
 /// <em>default</em>: 0.2
 @property (nonatomic) CGFloat cubicIntensity;
-
-/// If true, cubic lines are drawn instead of linear
 @property (nonatomic) BOOL drawCubicEnabled;
-
-/// \returns  true if drawing cubic lines is enabled, false if not.
 @property (nonatomic, readonly) BOOL isDrawCubicEnabled;
-
-/// If true, stepped lines are drawn instead of linear
 @property (nonatomic) BOOL drawSteppedEnabled;
-
-/// \returns  true if drawing stepped lines is enabled, false if not.
 @property (nonatomic, readonly) BOOL isDrawSteppedEnabled;
 
 /// The radius of the drawn circles.
 @property (nonatomic) CGFloat circleRadius;
+
+/// The hole radius of the drawn circles.
+@property (nonatomic) CGFloat circleHoleRadius;
 @property (nonatomic, copy) NSArray<UIColor *> * _Nonnull circleColors;
 
 /// \returns  the color at the given index of the DataSet's circle-color array.
@@ -3564,7 +3681,7 @@ SWIFT_PROTOCOL("_TtP6Charts17ILineChartDataSet_")
 @property (nonatomic, readonly) BOOL isDrawCirclesEnabled;
 
 /// The color of the inner circle (the circle-hole).
-@property (nonatomic, strong) UIColor * _Nonnull circleHoleColor;
+@property (nonatomic, strong) UIColor * _Nullable circleHoleColor;
 
 /// True if drawing circles for this DataSet is enabled, false if not
 @property (nonatomic) BOOL drawCircleHoleEnabled;
@@ -3587,6 +3704,7 @@ SWIFT_PROTOCOL("_TtP6Charts17ILineChartDataSet_")
 
 
 
+enum PieChartValuePosition : NSInteger;
 
 SWIFT_PROTOCOL("_TtP6Charts16IPieChartDataSet_")
 @protocol IPieChartDataSet <IChartDataSet>
@@ -3596,6 +3714,26 @@ SWIFT_PROTOCOL("_TtP6Charts16IPieChartDataSet_")
 
 /// indicates the selection distance of a pie slice
 @property (nonatomic) CGFloat selectionShift;
+@property (nonatomic) enum PieChartValuePosition xValuePosition;
+@property (nonatomic) enum PieChartValuePosition yValuePosition;
+
+/// When valuePosition is OutsideSlice, indicates line color
+@property (nonatomic, strong) UIColor * _Nullable valueLineColor;
+
+/// When valuePosition is OutsideSlice, indicates line width
+@property (nonatomic) CGFloat valueLineWidth;
+
+/// When valuePosition is OutsideSlice, indicates offset as percentage out of the slice size
+@property (nonatomic) CGFloat valueLinePart1OffsetPercentage;
+
+/// When valuePosition is OutsideSlice, indicates length of first half of the line
+@property (nonatomic) CGFloat valueLinePart1Length;
+
+/// When valuePosition is OutsideSlice, indicates length of second half of the line
+@property (nonatomic) CGFloat valueLinePart2Length;
+
+/// When valuePosition is OutsideSlice, this allows variable line length
+@property (nonatomic) BOOL valueLineVariableLength;
 @end
 
 
@@ -3671,25 +3809,25 @@ SWIFT_CLASS("_TtC6Charts16LineChartDataSet")
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 - (nonnull instancetype)initWithYVals:(NSArray<ChartDataEntry *> * _Nullable)yVals label:(NSString * _Nullable)label OBJC_DESIGNATED_INITIALIZER;
 
+/// The drawing mode for this line dataset
+///
+/// <em>default</em>: Linear
+@property (nonatomic) enum LineChartMode mode;
+
 /// Intensity for cubic lines (min = 0.05, max = 1)
 ///
 /// <em>default</em>: 0.2
 @property (nonatomic) CGFloat cubicIntensity;
-
-/// If true, cubic lines are drawn instead of linear
 @property (nonatomic) BOOL drawCubicEnabled;
-
-/// \returns  true if drawing cubic lines is enabled, false if not.
 @property (nonatomic, readonly) BOOL isDrawCubicEnabled;
-
-/// If true, stepped lines are drawn instead of linear
 @property (nonatomic) BOOL drawSteppedEnabled;
-
-/// \returns  true if drawing stepped lines is enabled, false if not.
 @property (nonatomic, readonly) BOOL isDrawSteppedEnabled;
 
 /// The radius of the drawn circles.
 @property (nonatomic) CGFloat circleRadius;
+
+/// The hole radius of the drawn circles
+@property (nonatomic) CGFloat circleHoleRadius;
 @property (nonatomic, copy) NSArray<UIColor *> * _Nonnull circleColors;
 
 /// \returns  the color at the given index of the DataSet's circle-color array.
@@ -3709,7 +3847,7 @@ SWIFT_CLASS("_TtC6Charts16LineChartDataSet")
 @property (nonatomic, readonly) BOOL isDrawCirclesEnabled;
 
 /// The color of the inner circle (the circle-hole).
-@property (nonatomic, strong) UIColor * _Nonnull circleHoleColor;
+@property (nonatomic, strong) UIColor * _Nullable circleHoleColor;
 
 /// True if drawing circles for this DataSet is enabled, false if not
 @property (nonatomic) BOOL drawCircleHoleEnabled;
@@ -3731,6 +3869,13 @@ SWIFT_CLASS("_TtC6Charts16LineChartDataSet")
 - (id _Nonnull)copyWithZone:(struct _NSZone * _Null_unspecified)zone;
 @end
 
+typedef SWIFT_ENUM_NAMED(NSInteger, LineChartMode, "Mode") {
+  LineChartModeLinear = 0,
+  LineChartModeStepped = 1,
+  LineChartModeCubicBezier = 2,
+  LineChartModeHorizontalBezier = 3,
+};
+
 
 SWIFT_CLASS("_TtC6Charts22LineRadarChartRenderer")
 @interface LineRadarChartRenderer : LineScatterCandleRadarChartRenderer
@@ -3750,7 +3895,8 @@ SWIFT_CLASS("_TtC6Charts17LineChartRenderer")
 - (nonnull instancetype)initWithDataProvider:(id <LineChartDataProvider> _Nullable)dataProvider animator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler OBJC_DESIGNATED_INITIALIZER;
 - (void)drawDataWithContext:(CGContextRef _Nonnull)context;
 - (void)drawDataSetWithContext:(CGContextRef _Nonnull)context dataSet:(id <ILineChartDataSet> _Nonnull)dataSet;
-- (void)drawCubicWithContext:(CGContextRef _Nonnull)context dataSet:(id <ILineChartDataSet> _Nonnull)dataSet;
+- (void)drawCubicBezierWithContext:(CGContextRef _Nonnull)context dataSet:(id <ILineChartDataSet> _Nonnull)dataSet;
+- (void)drawHorizontalBezierWithContext:(CGContextRef _Nonnull)context dataSet:(id <ILineChartDataSet> _Nonnull)dataSet;
 - (void)drawCubicFillWithContext:(CGContextRef _Nonnull)context dataSet:(id <ILineChartDataSet> _Nonnull)dataSet spline:(CGMutablePathRef _Nonnull)spline matrix:(CGAffineTransform)matrix from:(NSInteger)from to:(NSInteger)to;
 - (void)drawLinearWithContext:(CGContextRef _Nonnull)context dataSet:(id <ILineChartDataSet> _Nonnull)dataSet;
 - (void)drawLinearFillWithContext:(CGContextRef _Nonnull)context dataSet:(id <ILineChartDataSet> _Nonnull)dataSet minx:(NSInteger)minx maxx:(NSInteger)maxx trans:(ChartTransformer * _Nonnull)trans;
@@ -3806,8 +3952,33 @@ SWIFT_CLASS("_TtC6Charts15PieChartDataSet")
 
 /// indicates the selection distance of a pie slice
 @property (nonatomic) CGFloat selectionShift;
+@property (nonatomic) enum PieChartValuePosition xValuePosition;
+@property (nonatomic) enum PieChartValuePosition yValuePosition;
+
+/// When valuePosition is OutsideSlice, indicates line color
+@property (nonatomic, strong) UIColor * _Nullable valueLineColor;
+
+/// When valuePosition is OutsideSlice, indicates line width
+@property (nonatomic) CGFloat valueLineWidth;
+
+/// When valuePosition is OutsideSlice, indicates offset as percentage out of the slice size
+@property (nonatomic) CGFloat valueLinePart1OffsetPercentage;
+
+/// When valuePosition is OutsideSlice, indicates length of first half of the line
+@property (nonatomic) CGFloat valueLinePart1Length;
+
+/// When valuePosition is OutsideSlice, indicates length of second half of the line
+@property (nonatomic) CGFloat valueLinePart2Length;
+
+/// When valuePosition is OutsideSlice, this allows variable line length
+@property (nonatomic) BOOL valueLineVariableLength;
 - (id _Nonnull)copyWithZone:(struct _NSZone * _Null_unspecified)zone;
 @end
+
+typedef SWIFT_ENUM_NAMED(NSInteger, PieChartValuePosition, "ValuePosition") {
+  PieChartValuePositionInsideSlice = 0,
+  PieChartValuePositionOutsideSlice = 1,
+};
 
 @class PieChartView;
 
@@ -4168,7 +4339,7 @@ SWIFT_CLASS("_TtC6Charts19ScatterChartDataSet")
 - (nonnull instancetype)initWithYVals:(NSArray<ChartDataEntry *> * _Nullable)yVals label:(NSString * _Nullable)label OBJC_DESIGNATED_INITIALIZER;
 @end
 
-typedef SWIFT_ENUM(NSInteger, ScatterShape) {
+typedef SWIFT_ENUM_NAMED(NSInteger, ScatterShape, "Shape") {
   ScatterShapeSquare = 0,
   ScatterShapeCircle = 1,
   ScatterShapeTriangle = 2,
