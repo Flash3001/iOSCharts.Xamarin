@@ -3257,9 +3257,9 @@ namespace iOSCharts
 	[BaseType(typeof(NSObject), Name = "_TtC6Charts25ChartDefaultFillFormatter")]
 	interface ChartDefaultFillFormatter : ChartFillFormatter
 	{
-		// -(CGFloat)getFillLinePositionWithDataSet:(id<IInterfaceLineChartDataSet> _Nonnull)dataSet dataProvider:(id<LineChartDataProvider> _Nonnull)dataProvider;
-		[Export("getFillLinePositionWithDataSet:dataProvider:")]
-		nfloat GetFillLinePositionWithDataSet(IInterfaceLineChartDataSet dataSet, ILineChartDataProvider dataProvider);
+		//// -(CGFloat)getFillLinePositionWithDataSet:(id<IInterfaceLineChartDataSet> _Nonnull)dataSet dataProvider:(id<LineChartDataProvider> _Nonnull)dataProvider;
+		//[Export("getFillLinePositionWithDataSet:dataProvider:")]
+		//nfloat GetFillLinePositionWithDataSet(IInterfaceLineChartDataSet dataSet, ILineChartDataProvider dataProvider);
 	}
 
 	interface IChartXAxisValueFormatter { }

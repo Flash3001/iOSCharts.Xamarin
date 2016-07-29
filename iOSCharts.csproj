@@ -47,7 +47,6 @@
     <ObjcBindingCoreSource Include="Structs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.ObjCBinding.CSharp.targets" />
-  <Import Project="packages\Xamarin.SwiftSupport.2.2.0.0\build\Xamarin.SwiftSupport.targets" Condition="Exists('packages\Xamarin.SwiftSupport.2.2.0.0\build\Xamarin.SwiftSupport.targets')" />
   <ItemGroup>
     <ObjcBindingNativeFramework Include="Charts.framework" />
   </ItemGroup>
