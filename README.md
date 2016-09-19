@@ -7,7 +7,10 @@ https://github.com/danielgindi/Charts
 If you updated to Xcode 8 there's a version of this library uploaded in NuGet pre-release channel.
 https://www.nuget.org/packages/iOSCharts/2.2.5.2-xcode8
 
-Its SwiftSupport dependence has changed to https://github.com/Flash3001/Xamarin.Swift23.Support
+It is important as Xcode 8 dropped support for Swift 2.2 and now only works with 2.3 and 3.0.
+This version was updated to work on 2.3.
+
+Its SwiftSupport dependence has changed to https://github.com/Flash3001/Xamarin.Swift23.Support NuGet: https://www.nuget.org/packages/Xamarin.Swift23.Support/
 
 <h2>Troubleshooting</h2>
 When creating the IPA for publish you might get the following error:
