@@ -32,9 +32,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Xamarin.iOS" />
-    <Reference Include="Xamarin.Swift22.Support">
-      <HintPath>packages\Xamarin.SwiftSupport.2.2.0.0\lib\xamarinios10\Xamarin.Swift22.Support.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -49,8 +46,5 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.ObjCBinding.CSharp.targets" />
   <ItemGroup>
     <ObjcBindingNativeFramework Include="Charts.framework" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="packages.config" />
   </ItemGroup>
 </Project>

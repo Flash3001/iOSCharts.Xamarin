@@ -3,87 +3,476 @@ using CoreAnimation;
 using CoreGraphics;
 using Foundation;
 using ObjCRuntime;
-//using ObjectiveC;
 using UIKit;
 
 namespace iOSCharts
 {
+	// @interface ChartViewPortJob : NSObject
+	[BaseType(typeof(NSObject), Name = "ViewPortJob")]
+	[DisableDefaultCtor]
+	interface ChartViewPortJob
+	{
+		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler xValue:(double)xValue yValue:(double)yValue transformer:(ChartTransformer * _Nonnull)transformer view:(ChartViewBase * _Nonnull)view __attribute__((objc_designated_initializer));
+		[Export("initWithViewPortHandler:xValue:yValue:transformer:view:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(ChartViewPortHandler viewPortHandler, double xValue, double yValue, ChartTransformer transformer, ChartViewBase view);
+
+		// -(void)doJob;
+		[Export("doJob")]
+		void DoJob();
+	}
+
+	// @interface AnimatedViewPortJob : ChartViewPortJob
+	[BaseType(typeof(ChartViewPortJob), Name = "_TtC6Charts19AnimatedViewPortJob")]
+	interface AnimatedViewPortJob
+	{
+		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler xValue:(double)xValue yValue:(double)yValue transformer:(ChartTransformer * _Nonnull)transformer view:(ChartViewBase * _Nonnull)view xOrigin:(CGFloat)xOrigin yOrigin:(CGFloat)yOrigin duration:(NSTimeInterval)duration easing:(double (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing __attribute__((objc_designated_initializer));
+		[Export("initWithViewPortHandler:xValue:yValue:transformer:view:xOrigin:yOrigin:duration:easing:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(ChartViewPortHandler viewPortHandler, double xValue, double yValue, ChartTransformer transformer, ChartViewBase view, nfloat xOrigin, nfloat yOrigin, double duration, [NullAllowed] Func<double, double, double> easing);
+
+		// -(void)doJob;
+		[Export("doJob")]
+		void DoJob();
+
+		// -(void)start;
+		[Export("start")]
+		void Start();
+
+		// -(void)stopWithFinish:(BOOL)finish;
+		[Export("stopWithFinish:")]
+		void StopWithFinish(bool finish);
+	}
+
+	// @interface AnimatedMoveViewJob : AnimatedViewPortJob
+	[BaseType(typeof(AnimatedViewPortJob), Name = "_TtC6Charts19AnimatedMoveViewJob")]
+	interface AnimatedMoveViewJob
+	{
+		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler xValue:(double)xValue yValue:(double)yValue transformer:(ChartTransformer * _Nonnull)transformer view:(ChartViewBase * _Nonnull)view xOrigin:(CGFloat)xOrigin yOrigin:(CGFloat)yOrigin duration:(NSTimeInterval)duration easing:(double (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing __attribute__((objc_designated_initializer));
+		[Export("initWithViewPortHandler:xValue:yValue:transformer:view:xOrigin:yOrigin:duration:easing:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(ChartViewPortHandler viewPortHandler, double xValue, double yValue, ChartTransformer transformer, ChartViewBase view, nfloat xOrigin, nfloat yOrigin, double duration, [NullAllowed] Func<double, double, double> easing);
+	}
+
+	// @interface AnimatedZoomViewJob : AnimatedViewPortJob
+	[BaseType(typeof(AnimatedViewPortJob), Name = "_TtC6Charts19AnimatedZoomViewJob")]
+	interface AnimatedZoomViewJob
+	{
+		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler transformer:(ChartTransformer * _Nonnull)transformer view:(ChartViewBase * _Nonnull)view yAxis:(ChartYAxis * _Nonnull)yAxis xAxisRange:(double)xAxisRange scaleX:(CGFloat)scaleX scaleY:(CGFloat)scaleY xOrigin:(CGFloat)xOrigin yOrigin:(CGFloat)yOrigin zoomCenterX:(CGFloat)zoomCenterX zoomCenterY:(CGFloat)zoomCenterY zoomOriginX:(CGFloat)zoomOriginX zoomOriginY:(CGFloat)zoomOriginY duration:(NSTimeInterval)duration easing:(double (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing __attribute__((objc_designated_initializer));
+		[Export("initWithViewPortHandler:transformer:view:yAxis:xAxisRange:scaleX:scaleY:xOrigin:yOrigin:zoomCenterX:zoomCenterY:zoomOriginX:zoomOriginY:duration:easing:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(ChartViewPortHandler viewPortHandler, ChartTransformer transformer, ChartViewBase view, ChartYAxis yAxis, double xAxisRange, nfloat scaleX, nfloat scaleY, nfloat xOrigin, nfloat yOrigin, nfloat zoomCenterX, nfloat zoomCenterY, nfloat zoomOriginX, nfloat zoomOriginY, double duration, [NullAllowed] Func<double, double, double> easing);
+	}
+
+	// @interface ChartAnimator : NSObject
+	[BaseType(typeof(NSObject), Name = "Animator")]
+	interface ChartAnimator
+	{
+		[Wrap("WeakDelegate")]
+		[NullAllowed]
+		ChartAnimatorDelegate Delegate { get; set; }
+
+		// @property (nonatomic, weak) id<ChartAnimatorDelegate> _Nullable delegate;
+		[NullAllowed, Export("delegate", ArgumentSemantic.Weak)]
+		NSObject WeakDelegate { get; set; }
+
+		// @property (copy, nonatomic) void (^ _Nullable)(void) updateBlock;
+		[NullAllowed, Export("updateBlock", ArgumentSemantic.Copy)]
+		Action UpdateBlock { get; set; }
+
+		// @property (copy, nonatomic) void (^ _Nullable)(void) stopBlock;
+		[NullAllowed, Export("stopBlock", ArgumentSemantic.Copy)]
+		Action StopBlock { get; set; }
+
+		// @property (nonatomic) double phaseX;
+		[Export("phaseX")]
+		double PhaseX { get; set; }
+
+		// @property (nonatomic) double phaseY;
+		[Export("phaseY")]
+		double PhaseY { get; set; }
+
+		// -(void)stop;
+		[Export("stop")]
+		void Stop();
+
+		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration yAxisDuration:(NSTimeInterval)yAxisDuration easingX:(double (^ _Nullable)(NSTimeInterval, NSTimeInterval))easingX easingY:(double (^ _Nullable)(NSTimeInterval, NSTimeInterval))easingY;
+		[Export("animateWithXAxisDuration:yAxisDuration:easingX:easingY:")]
+		void AnimateWithXAxisDuration(double xAxisDuration, double yAxisDuration, [NullAllowed] Func<double, double, double> easingX, [NullAllowed] Func<double, double, double> easingY);
+
+		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration yAxisDuration:(NSTimeInterval)yAxisDuration easingOptionX:(enum ChartEasingOption)easingOptionX easingOptionY:(enum ChartEasingOption)easingOptionY;
+		[Export("animateWithXAxisDuration:yAxisDuration:easingOptionX:easingOptionY:")]
+		void AnimateWithXAxisDuration(double xAxisDuration, double yAxisDuration, ChartEasingOption easingOptionX, ChartEasingOption easingOptionY);
+
+		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration yAxisDuration:(NSTimeInterval)yAxisDuration easing:(double (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing;
+		[Export("animateWithXAxisDuration:yAxisDuration:easing:")]
+		void AnimateWithXAxisDuration(double xAxisDuration, double yAxisDuration, [NullAllowed] Func<double, double, double> easing);
+
+		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration yAxisDuration:(NSTimeInterval)yAxisDuration easingOption:(enum ChartEasingOption)easingOption;
+		[Export("animateWithXAxisDuration:yAxisDuration:easingOption:")]
+		void AnimateWithXAxisDuration(double xAxisDuration, double yAxisDuration, ChartEasingOption easingOption);
+
+		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration yAxisDuration:(NSTimeInterval)yAxisDuration;
+		[Export("animateWithXAxisDuration:yAxisDuration:")]
+		void AnimateWithXAxisDuration(double xAxisDuration, double yAxisDuration);
+
+		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration easing:(double (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing;
+		[Export("animateWithXAxisDuration:easing:")]
+		void AnimateWithXAxisDuration(double xAxisDuration, [NullAllowed] Func<double, double, double> easing);
+
+		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration easingOption:(enum ChartEasingOption)easingOption;
+		[Export("animateWithXAxisDuration:easingOption:")]
+		void AnimateWithXAxisDuration(double xAxisDuration, ChartEasingOption easingOption);
+
+		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration;
+		[Export("animateWithXAxisDuration:")]
+		void AnimateWithXAxisDuration(double xAxisDuration);
+
+		// -(void)animateWithYAxisDuration:(NSTimeInterval)yAxisDuration easing:(double (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing;
+		[Export("animateWithYAxisDuration:easing:")]
+		void AnimateWithYAxisDuration(double yAxisDuration, [NullAllowed] Func<double, double, double> easing);
+
+		// -(void)animateWithYAxisDuration:(NSTimeInterval)yAxisDuration easingOption:(enum ChartEasingOption)easingOption;
+		[Export("animateWithYAxisDuration:easingOption:")]
+		void AnimateWithYAxisDuration(double yAxisDuration, ChartEasingOption easingOption);
+
+		// -(void)animateWithYAxisDuration:(NSTimeInterval)yAxisDuration;
+		[Export("animateWithYAxisDuration:")]
+		void AnimateWithYAxisDuration(double yAxisDuration);
+	}
+
+	interface IChartAnimatorDelegate { }
+
+	// @protocol ChartAnimatorDelegate
+	[BaseType(typeof(NSObject), Name = "AnimatorDelegate")]
+	[Protocol(Name = "AnimatorDelegate"), Model]
+	interface ChartAnimatorDelegate
+	{
+		// @required -(void)animatorUpdated:(ChartAnimator * _Nonnull)animator;
+		[Abstract]
+		[Export("animatorUpdated:")]
+		void AnimatorUpdated(ChartAnimator animator);
+
+		// @required -(void)animatorStopped:(ChartAnimator * _Nonnull)animator;
+		[Abstract]
+		[Export("animatorStopped:")]
+		void AnimatorStopped(ChartAnimator animator);
+	}
+
+	// @interface ChartComponentBase : NSObject
+	[BaseType(typeof(NSObject), Name = "ComponentBase")]
+	interface ChartComponentBase
+	{
+		// @property (nonatomic) BOOL enabled;
+		[Export("enabled")]
+		bool Enabled { get; set; }
+
+		// @property (nonatomic) CGFloat xOffset;
+		[Export("xOffset")]
+		nfloat XOffset { get; set; }
+
+		// @property (nonatomic) CGFloat yOffset;
+		[Export("yOffset")]
+		nfloat YOffset { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isEnabled;
+		[Export("isEnabled")]
+		bool IsEnabled { get; }
+	}
+
+	// @interface ChartAxisBase : ChartComponentBase
+	[BaseType(typeof(ChartComponentBase), Name = "AxisBase")]
+	interface ChartAxisBase
+	{
+		// @property (nonatomic, strong) UIFont * _Nonnull labelFont;
+		[Export("labelFont", ArgumentSemantic.Strong)]
+		UIFont LabelFont { get; set; }
+
+		// @property (nonatomic, strong) UIColor * _Nonnull labelTextColor;
+		[Export("labelTextColor", ArgumentSemantic.Strong)]
+		UIColor LabelTextColor { get; set; }
+
+		// @property (nonatomic, strong) UIColor * _Nonnull axisLineColor;
+		[Export("axisLineColor", ArgumentSemantic.Strong)]
+		UIColor AxisLineColor { get; set; }
+
+		// @property (nonatomic) CGFloat axisLineWidth;
+		[Export("axisLineWidth")]
+		nfloat AxisLineWidth { get; set; }
+
+		// @property (nonatomic) CGFloat axisLineDashPhase;
+		[Export("axisLineDashPhase")]
+		nfloat AxisLineDashPhase { get; set; }
+
+		// @property (copy, nonatomic) NSArray<NSNumber *> * _Null_unspecified axisLineDashLengths;
+		[Export("axisLineDashLengths", ArgumentSemantic.Copy)]
+		NSNumber[] AxisLineDashLengths { get; set; }
+
+		// @property (nonatomic, strong) UIColor * _Nonnull gridColor;
+		[Export("gridColor", ArgumentSemantic.Strong)]
+		UIColor GridColor { get; set; }
+
+		// @property (nonatomic) CGFloat gridLineWidth;
+		[Export("gridLineWidth")]
+		nfloat GridLineWidth { get; set; }
+
+		// @property (nonatomic) CGFloat gridLineDashPhase;
+		[Export("gridLineDashPhase")]
+		nfloat GridLineDashPhase { get; set; }
+
+		// @property (copy, nonatomic) NSArray<NSNumber *> * _Null_unspecified gridLineDashLengths;
+		[Export("gridLineDashLengths", ArgumentSemantic.Copy)]
+		NSNumber[] GridLineDashLengths { get; set; }
+
+		// @property (nonatomic) CGLineCap gridLineCap;
+		[Export("gridLineCap", ArgumentSemantic.Assign)]
+		CGLineCap GridLineCap { get; set; }
+
+		// @property (nonatomic) BOOL drawGridLinesEnabled;
+		[Export("drawGridLinesEnabled")]
+		bool DrawGridLinesEnabled { get; set; }
+
+		// @property (nonatomic) BOOL drawAxisLineEnabled;
+		[Export("drawAxisLineEnabled")]
+		bool DrawAxisLineEnabled { get; set; }
+
+		// @property (nonatomic) BOOL drawLabelsEnabled;
+		[Export("drawLabelsEnabled")]
+		bool DrawLabelsEnabled { get; set; }
+
+		// @property (nonatomic) BOOL centerAxisLabelsEnabled;
+		[Export("centerAxisLabelsEnabled")]
+		bool CenterAxisLabelsEnabled { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isCenterAxisLabelsEnabled;
+		[Export("isCenterAxisLabelsEnabled")]
+		bool IsCenterAxisLabelsEnabled { get; }
+
+		// @property (nonatomic) BOOL drawLimitLinesBehindDataEnabled;
+		[Export("drawLimitLinesBehindDataEnabled")]
+		bool DrawLimitLinesBehindDataEnabled { get; set; }
+
+		// @property (nonatomic) BOOL gridAntialiasEnabled;
+		[Export("gridAntialiasEnabled")]
+		bool GridAntialiasEnabled { get; set; }
+
+		// @property (copy, nonatomic) NSArray<NSNumber *> * _Nonnull entries;
+		[Export("entries", ArgumentSemantic.Copy)]
+		NSNumber[] Entries { get; set; }
+
+		// @property (copy, nonatomic) NSArray<NSNumber *> * _Nonnull centeredEntries;
+		[Export("centeredEntries", ArgumentSemantic.Copy)]
+		NSNumber[] CenteredEntries { get; set; }
+
+		// @property (readonly, nonatomic) NSInteger entryCount;
+		[Export("entryCount")]
+		nint EntryCount { get; }
+
+		// @property (nonatomic) NSInteger decimals;
+		[Export("decimals")]
+		nint Decimals { get; set; }
+
+		// @property (nonatomic) BOOL granularityEnabled;
+		[Export("granularityEnabled")]
+		bool GranularityEnabled { get; set; }
+
+		// @property (nonatomic) double granularity;
+		[Export("granularity")]
+		double Granularity { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isGranularityEnabled;
+		[Export("isGranularityEnabled")]
+		bool IsGranularityEnabled { get; }
+
+		// @property (nonatomic) BOOL forceLabelsEnabled;
+		[Export("forceLabelsEnabled")]
+		bool ForceLabelsEnabled { get; set; }
+
+		// -(NSString * _Nonnull)getLongestLabel;
+		[Export("getLongestLabel")]
+		string LongestLabel { get; }
+
+		// -(NSString * _Nonnull)getFormattedLabel:(NSInteger)index;
+		[Export("getFormattedLabel:")]
+		string GetFormattedLabel(nint index);
+
+		// @property (nonatomic, strong) id<InterfaceChartAxisValueFormatter> _Nullable valueFormatter;
+		[NullAllowed, Export("valueFormatter", ArgumentSemantic.Strong)]
+		InterfaceChartAxisValueFormatter ValueFormatter { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isDrawGridLinesEnabled;
+		[Export("isDrawGridLinesEnabled")]
+		bool IsDrawGridLinesEnabled { get; }
+
+		// @property (readonly, nonatomic) BOOL isDrawAxisLineEnabled;
+		[Export("isDrawAxisLineEnabled")]
+		bool IsDrawAxisLineEnabled { get; }
+
+		// @property (readonly, nonatomic) BOOL isDrawLabelsEnabled;
+		[Export("isDrawLabelsEnabled")]
+		bool IsDrawLabelsEnabled { get; }
+
+		// @property (readonly, nonatomic) BOOL isDrawLimitLinesBehindDataEnabled;
+		[Export("isDrawLimitLinesBehindDataEnabled")]
+		bool IsDrawLimitLinesBehindDataEnabled { get; }
+
+		// @property (nonatomic) double spaceMin;
+		[Export("spaceMin")]
+		double SpaceMin { get; set; }
+
+		// @property (nonatomic) double spaceMax;
+		[Export("spaceMax")]
+		double SpaceMax { get; set; }
+
+		// @property (nonatomic) double axisRange;
+		[Export("axisRange")]
+		double AxisRange { get; set; }
+
+		// @property (nonatomic) NSInteger labelCount;
+		[Export("labelCount")]
+		nint LabelCount { get; set; }
+
+		// -(void)setLabelCount:(NSInteger)count force:(BOOL)force;
+		[Export("setLabelCount:force:")]
+		void SetLabelCount(nint count, bool force);
+
+		// @property (readonly, nonatomic) BOOL isForceLabelsEnabled;
+		[Export("isForceLabelsEnabled")]
+		bool IsForceLabelsEnabled { get; }
+
+		// -(void)addLimitLine:(ChartLimitLine * _Nonnull)line;
+		[Export("addLimitLine:")]
+		void AddLimitLine(ChartLimitLine line);
+
+		// -(void)removeLimitLine:(ChartLimitLine * _Nonnull)line;
+		[Export("removeLimitLine:")]
+		void RemoveLimitLine(ChartLimitLine line);
+
+		// -(void)removeAllLimitLines;
+		[Export("removeAllLimitLines")]
+		void RemoveAllLimitLines();
+
+		// @property (readonly, copy, nonatomic) NSArray<ChartLimitLine *> * _Nonnull limitLines;
+		[Export("limitLines", ArgumentSemantic.Copy)]
+		ChartLimitLine[] LimitLines { get; }
+
+		// -(void)resetCustomAxisMin;
+		[Export("resetCustomAxisMin")]
+		void ResetCustomAxisMin();
+
+		// @property (readonly, nonatomic) BOOL isAxisMinCustom;
+		[Export("isAxisMinCustom")]
+		bool IsAxisMinCustom { get; }
+
+		// -(void)resetCustomAxisMax;
+		[Export("resetCustomAxisMax")]
+		void ResetCustomAxisMax();
+
+		// @property (readonly, nonatomic) BOOL isAxisMaxCustom;
+		[Export("isAxisMaxCustom")]
+		bool IsAxisMaxCustom { get; }
+
+		// @property (nonatomic) double axisMinValue;
+		[Export("axisMinValue")]
+		double AxisMinValue { get; set; }
+
+		// @property (nonatomic) double axisMaxValue;
+		[Export("axisMaxValue")]
+		double AxisMaxValue { get; set; }
+
+		// @property (nonatomic) double axisMinimum;
+		[Export("axisMinimum")]
+		double AxisMinimum { get; set; }
+
+		// @property (nonatomic) double axisMaximum;
+		[Export("axisMaximum")]
+		double AxisMaximum { get; set; }
+
+		// -(void)calculateWithMin:(double)dataMin max:(double)dataMax;
+		[Export("calculateWithMin:max:")]
+		void CalculateWithMin(double dataMin, double dataMax);
+	}
+
+	// @interface ChartRenderer : NSObject
+	[BaseType(typeof(NSObject), Name = "Renderer")]
+	interface ChartRenderer
+	{
+		// @property (nonatomic, strong) ChartViewPortHandler * _Nullable viewPortHandler;
+		[NullAllowed, Export("viewPortHandler", ArgumentSemantic.Strong)]
+		ChartViewPortHandler ViewPortHandler { get; set; }
+
+		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler __attribute__((objc_designated_initializer));
+		[Export("initWithViewPortHandler:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] ChartViewPortHandler viewPortHandler);
+	}
+
+	// @interface ChartAxisRendererBase : ChartRenderer
+	[BaseType(typeof(ChartRenderer), Name = "AxisRendererBase")]
+	interface ChartAxisRendererBase
+	{
+		// @property (nonatomic, strong) ChartAxisBase * _Nullable axis;
+		[NullAllowed, Export("axis", ArgumentSemantic.Strong)]
+		ChartAxisBase Axis { get; set; }
+
+		// @property (nonatomic, strong) ChartTransformer * _Nullable transformer;
+		[NullAllowed, Export("transformer", ArgumentSemantic.Strong)]
+		ChartTransformer Transformer { get; set; }
+
+		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler transformer:(ChartTransformer * _Nullable)transformer axis:(ChartAxisBase * _Nullable)axis __attribute__((objc_designated_initializer));
+		[Export("initWithViewPortHandler:transformer:axis:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] ChartViewPortHandler viewPortHandler, [NullAllowed] ChartTransformer transformer, [NullAllowed] ChartAxisBase axis);
+
+		//u-n-safe void RenderAxisLabelsWithContext(CGContextRef* context);
+
+		//u-n-safe void RenderGridLinesWithContext(CGContextRef* context);
+
+		//u-n-safe void RenderAxisLineWithContext(CGContextRef* context);
+
+		//u-n-safe void RenderLimitLinesWithContext(CGContextRef* context);
+
+		// -(void)computeAxisWithMin:(double)min max:(double)max inverted:(BOOL)inverted;
+		[Export("computeAxisWithMin:max:inverted:")]
+		void ComputeAxisWithMin(double min, double max, bool inverted);
+
+		// -(void)computeAxisValuesWithMin:(double)min max:(double)max;
+		[Export("computeAxisValuesWithMin:max:")]
+		void ComputeAxisValuesWithMin(double min, double max);
+	}
+
 	// @interface ChartData : NSObject
 	[BaseType(typeof(NSObject), Name = "_TtC6Charts9ChartData")]
 	interface ChartData
 	{
-		// @property (nonatomic) double _yMax;
-		[Export("_yMax")]
-		double _yMax { get; set; }
-
-		// @property (nonatomic) double _yMin;
-		[Export("_yMin")]
-		double _yMin { get; set; }
-
-		// @property (nonatomic) double _leftAxisMax;
-		[Export("_leftAxisMax")]
-		double _leftAxisMax { get; set; }
-
-		// @property (nonatomic) double _leftAxisMin;
-		[Export("_leftAxisMin")]
-		double _leftAxisMin { get; set; }
-
-		// @property (nonatomic) double _rightAxisMax;
-		[Export("_rightAxisMax")]
-		double _rightAxisMax { get; set; }
-
-		// @property (nonatomic) double _rightAxisMin;
-		[Export("_rightAxisMin")]
-		double _rightAxisMin { get; set; }
-
-		// @property (nonatomic) NSInteger _lastStart;
-		[Export("_lastStart")]
-		nint _lastStart { get; set; }
-
-		// @property (nonatomic) NSInteger _lastEnd;
-		[Export("_lastEnd")]
-		nint _lastEnd { get; set; }
-
-		// @property (copy, nonatomic) NSArray<id<IInterfaceChartDataSet>> * _Null_unspecified _dataSets;
-		[Export("_dataSets", ArgumentSemantic.Copy)]
-		IInterfaceChartDataSet[] _dataSets { get; set; }
-
-		// -(instancetype _Nonnull)initWithXVals:(NSArray<NSObject *> * _Nullable)xVals dataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nullable)dataSets __attribute__((objc_designated_initializer));
-		[Export("initWithXVals:dataSets:")]
+		// -(instancetype _Nonnull)initWithDataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nullable)dataSets __attribute__((objc_designated_initializer));
+		[Export("initWithDataSets:")]
 		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] NSObject[] xVals, [NullAllowed] IInterfaceChartDataSet[] dataSets);
+		IntPtr Constructor([NullAllowed] IInterfaceChartDataSet[] dataSets);
 
-		// -(instancetype _Nonnull)initWithXVals:(NSArray<NSObject *> * _Nullable)xVals;
-		[Export("initWithXVals:")]
-		IntPtr Constructor([NullAllowed] NSObject[] xVals);
-
-		// -(instancetype _Nonnull)initWithXVals:(NSArray<NSObject *> * _Nullable)xVals dataSet:(id<IInterfaceChartDataSet> _Nullable)dataSet;
-		[Export("initWithXVals:dataSet:")]
-		IntPtr Constructor([NullAllowed] NSObject[] xVals, [NullAllowed] IInterfaceChartDataSet dataSet);
-
-		// -(void)initialize:(NSArray<id<IInterfaceChartDataSet>> * _Nonnull)dataSets;
-		[Export("initialize:")]
-		void Initialize(IInterfaceChartDataSet[] dataSets);
-
-		// -(void)calcXValAverageLength;
-		[Export("calcXValAverageLength")]
-		void CalcXValAverageLength();
-
-		// -(void)checkIsLegal:(NSArray<id<IInterfaceChartDataSet>> * _Null_unspecified)dataSets;
-		[Export("checkIsLegal:")]
-		void CheckIsLegal(IInterfaceChartDataSet[] dataSets);
+		// -(instancetype _Nonnull)initWithDataSet:(id<IInterfaceChartDataSet> _Nullable)dataSet;
+		[Export("initWithDataSet:")]
+		IntPtr Constructor([NullAllowed] IInterfaceChartDataSet dataSet);
 
 		// -(void)notifyDataChanged;
 		[Export("notifyDataChanged")]
 		void NotifyDataChanged();
 
-		// -(void)calcMinMaxWithStart:(NSInteger)start end:(NSInteger)end;
-		[Export("calcMinMaxWithStart:end:")]
-		void CalcMinMaxWithStart(nint start, nint end);
+		// -(void)calcMinMaxYFromX:(double)fromX toX:(double)toX;
+		[Export("calcMinMaxYFromX:toX:")]
+		void CalcMinMaxYFromX(double fromX, double toX);
 
-		// -(void)calcYValueCount;
-		[Export("calcYValueCount")]
-		void CalcYValueCount();
+		// -(void)calcMinMax;
+		[Export("calcMinMax")]
+		void CalcMinMax();
+
+		// -(void)calcMinMaxWithEntry:(ChartDataEntry * _Nonnull)e axis:(enum AxisDependency)axis;
+		[Export("calcMinMaxWithEntry:axis:")]
+		void CalcMinMaxWithEntry(ChartDataEntry e, AxisDependency axis);
+
+		// -(void)calcMinMaxWithDataSet:(id<IInterfaceChartDataSet> _Nonnull)d;
+		[Export("calcMinMaxWithDataSet:")]
+		void CalcMinMaxWithDataSet(IInterfaceChartDataSet d);
 
 		// @property (readonly, nonatomic) NSInteger dataSetCount;
 		[Export("dataSetCount")]
@@ -93,65 +482,34 @@ namespace iOSCharts
 		[Export("yMin")]
 		double YMin { get; }
 
-		//// -(double)getYMin;
-		//[Export("getYMin")]
-		////[Verify(MethodToProperty)]
-		//double YMin { get; }
-
-		// -(double)getYMin:(enum AxisDependency)axis;
-		[Export("getYMin:")]
-		double GetYMin(AxisDependency axis);
+		// -(double)getYMinWithAxis:(enum AxisDependency)axis;
+		[Export("getYMinWithAxis:")]
+		double GetYMinWithAxis(AxisDependency axis);
 
 		// @property (readonly, nonatomic) double yMax;
 		[Export("yMax")]
 		double YMax { get; }
 
-		//// -(double)getYMax;
-		//[Export("getYMax")]
-		////[Verify(MethodToProperty)]
-		//double YMax { get; }
+		// -(double)getYMaxWithAxis:(enum AxisDependency)axis;
+		[Export("getYMaxWithAxis:")]
+		double GetYMaxWithAxis(AxisDependency axis);
 
-		// -(double)getYMax:(enum AxisDependency)axis;
-		[Export("getYMax:")]
-		double GetYMax(AxisDependency axis);
+		// @property (readonly, nonatomic) double xMin;
+		[Export("xMin")]
+		double XMin { get; }
 
-		// @property (readonly, nonatomic) double xValAverageLength;
-		[Export("xValAverageLength")]
-		double XValAverageLength { get; }
-
-		// @property (readonly, nonatomic) NSInteger yValCount;
-		[Export("yValCount")]
-		nint YValCount { get; }
-
-		// -(void)addXValue:(NSString * _Nullable)xVal;
-		[Export("addXValue:")]
-		void AddXValue([NullAllowed] string xVal);
-
-		// -(void)removeXValue:(NSInteger)index;
-		[Export("removeXValue:")]
-		void RemoveXValue(nint index);
+		// @property (readonly, nonatomic) double xMax;
+		[Export("xMax")]
+		double XMax { get; }
 
 		// @property (copy, nonatomic) NSArray<id<IInterfaceChartDataSet>> * _Nonnull dataSets;
 		[Export("dataSets", ArgumentSemantic.Copy)]
 		IInterfaceChartDataSet[] DataSets { get; set; }
 
-		// -(NSInteger)getDataSetIndexByLabel:(NSString * _Nonnull)label ignorecase:(BOOL)ignorecase;
-		[Export("getDataSetIndexByLabel:ignorecase:")]
-		nint GetDataSetIndexByLabel(string label, bool ignorecase);
-
-		// @property (readonly, nonatomic) NSInteger xValCount;
-		[Export("xValCount")]
-		nint XValCount { get; }
-
-		// -(NSArray<NSString *> * _Nonnull)dataSetLabels;
-		[Export("dataSetLabels")]
-		//[Verify(MethodToProperty)]
-		string[] DataSetLabels { get; }
-
-		// -(ChartDataEntry * _Nullable)getEntryForHighlight:(ChartHighlight * _Nonnull)highlight;
-		[Export("getEntryForHighlight:")]
+		// -(ChartDataEntry * _Nullable)entryForHighlight:(ChartHighlight * _Nonnull)highlight;
+		[Export("entryForHighlight:")]
 		[return: NullAllowed]
-		ChartDataEntry GetEntryForHighlight(ChartHighlight highlight);
+		ChartDataEntry EntryForHighlight(ChartHighlight highlight);
 
 		// -(id<IInterfaceChartDataSet> _Nullable)getDataSetByLabel:(NSString * _Nonnull)label ignorecase:(BOOL)ignorecase;
 		[Export("getDataSetByLabel:ignorecase:")]
@@ -162,13 +520,9 @@ namespace iOSCharts
 		[Export("getDataSetByIndex:")]
 		IInterfaceChartDataSet GetDataSetByIndex(nint index);
 
-		// -(void)addDataSet:(id<IInterfaceChartDataSet> _Null_unspecified)d;
+		// -(void)addDataSet:(id<IInterfaceChartDataSet> _Null_unspecified)dataSet;
 		[Export("addDataSet:")]
-		void AddDataSet(IInterfaceChartDataSet d);
-
-		// -(void)handleEmptyAxis:(id<IInterfaceChartDataSet> _Nullable)firstLeft firstRight:(id<IInterfaceChartDataSet> _Nullable)firstRight;
-		[Export("handleEmptyAxis:firstRight:")]
-		void HandleEmptyAxis([NullAllowed] IInterfaceChartDataSet firstLeft, [NullAllowed] IInterfaceChartDataSet firstRight);
+		void AddDataSet(IInterfaceChartDataSet dataSet);
 
 		// -(BOOL)removeDataSet:(id<IInterfaceChartDataSet> _Null_unspecified)dataSet;
 		[Export("removeDataSet:")]
@@ -182,13 +536,13 @@ namespace iOSCharts
 		[Export("addEntry:dataSetIndex:")]
 		void AddEntry(ChartDataEntry e, nint dataSetIndex);
 
-		// -(BOOL)removeEntry:(ChartDataEntry * _Null_unspecified)entry dataSetIndex:(NSInteger)dataSetIndex;
+		// -(BOOL)removeEntry:(ChartDataEntry * _Nonnull)entry dataSetIndex:(NSInteger)dataSetIndex;
 		[Export("removeEntry:dataSetIndex:")]
 		bool RemoveEntry(ChartDataEntry entry, nint dataSetIndex);
 
-		// -(BOOL)removeEntryByXIndex:(NSInteger)xIndex dataSetIndex:(NSInteger)dataSetIndex;
-		[Export("removeEntryByXIndex:dataSetIndex:")]
-		bool RemoveEntryByXIndex(nint xIndex, nint dataSetIndex);
+		// -(BOOL)removeEntryWithXValue:(double)xValue dataSetIndex:(NSInteger)dataSetIndex;
+		[Export("removeEntryWithXValue:dataSetIndex:")]
+		bool RemoveEntryWithXValue(double xValue, nint dataSetIndex);
 
 		// -(id<IInterfaceChartDataSet> _Nullable)getDataSetForEntry:(ChartDataEntry * _Null_unspecified)e;
 		[Export("getDataSetForEntry:")]
@@ -199,28 +553,23 @@ namespace iOSCharts
 		[Export("indexOfDataSet:")]
 		nint IndexOfDataSet(IInterfaceChartDataSet dataSet);
 
-		// -(id<IInterfaceChartDataSet> _Nullable)getFirstLeft;
-		[NullAllowed, Export("getFirstLeft")]
-		//[Verify(MethodToProperty)]
-		IInterfaceChartDataSet FirstLeft { get; }
+		// -(id<IInterfaceChartDataSet> _Nullable)getFirstLeftWithDataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nonnull)dataSets;
+		[Export("getFirstLeftWithDataSets:")]
+		[return: NullAllowed]
+		IInterfaceChartDataSet GetFirstLeftWithDataSets(IInterfaceChartDataSet[] dataSets);
 
-		// -(id<IInterfaceChartDataSet> _Nullable)getFirstRight;
-		[NullAllowed, Export("getFirstRight")]
-		//[Verify(MethodToProperty)]
-		IInterfaceChartDataSet FirstRight { get; }
+		// -(id<IInterfaceChartDataSet> _Nullable)getFirstRightWithDataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nonnull)dataSets;
+		[Export("getFirstRightWithDataSets:")]
+		[return: NullAllowed]
+		IInterfaceChartDataSet GetFirstRightWithDataSets(IInterfaceChartDataSet[] dataSets);
 
 		// -(NSArray<UIColor *> * _Nullable)getColors;
 		[NullAllowed, Export("getColors")]
-		//[Verify(MethodToProperty)]
 		UIColor[] Colors { get; }
 
-		// -(NSArray<NSString *> * _Nonnull)generateXVals:(NSInteger)from to:(NSInteger)to;
-		[Export("generateXVals:to:")]
-		string[] GenerateXVals(nint from, nint to);
-
-		// -(void)setValueFormatter:(NSNumberFormatter * _Null_unspecified)formatter;
+		// -(void)setValueFormatter:(id<InterfaceChartValueFormatter> _Nullable)formatter;
 		[Export("setValueFormatter:")]
-		void SetValueFormatter(NSNumberFormatter formatter);
+		void SetValueFormatter([NullAllowed] InterfaceChartValueFormatter formatter);
 
 		// -(void)setValueTextColor:(UIColor * _Null_unspecified)color;
 		[Export("setValueTextColor:")]
@@ -246,72 +595,99 @@ namespace iOSCharts
 		[Export("clearValues")]
 		void ClearValues();
 
-		// -(BOOL)containsWithEntry:(ChartDataEntry * _Nonnull)entry;
-		[Export("containsWithEntry:")]
-		bool ContainsWithEntry(ChartDataEntry entry);
-
 		// -(BOOL)containsWithDataSet:(id<IInterfaceChartDataSet> _Nonnull)dataSet;
 		[Export("containsWithDataSet:")]
 		bool ContainsWithDataSet(IInterfaceChartDataSet dataSet);
 
-		// @property (copy, nonatomic) NSArray<NSObject *> * _Nonnull xValsObjc;
-		[Export("xValsObjc", ArgumentSemantic.Copy)]
-		NSObject[] XValsObjc { get; set; }
+		// @property (readonly, nonatomic) NSInteger entryCount;
+		[Export("entryCount")]
+		nint EntryCount { get; }
+
+		// @property (readonly, nonatomic, strong) id<IInterfaceChartDataSet> _Nullable maxEntryCountSet;
+		[NullAllowed, Export("maxEntryCountSet", ArgumentSemantic.Strong)]
+		IInterfaceChartDataSet MaxEntryCountSet { get; }
 	}
 
 	// @interface BarLineScatterCandleBubbleChartData : ChartData
 	[BaseType(typeof(ChartData), Name = "_TtC6Charts35BarLineScatterCandleBubbleChartData")]
 	interface BarLineScatterCandleBubbleChartData
 	{
-		// -(instancetype _Nonnull)initWithXVals:(NSArray<NSObject *> * _Nullable)xVals dataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nullable)dataSets __attribute__((objc_designated_initializer));
-		[Export("initWithXVals:dataSets:")]
+		// -(instancetype _Nonnull)initWithDataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nullable)dataSets __attribute__((objc_designated_initializer));
+		[Export("initWithDataSets:")]
 		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] NSObject[] xVals, [NullAllowed] IInterfaceChartDataSet[] dataSets);
+		IntPtr Constructor([NullAllowed] IInterfaceChartDataSet[] dataSets);
 	}
 
 	// @interface BarChartData : BarLineScatterCandleBubbleChartData
 	[BaseType(typeof(BarLineScatterCandleBubbleChartData), Name = "_TtC6Charts12BarChartData")]
 	interface BarChartData
 	{
-		// -(instancetype _Nonnull)initWithXVals:(NSArray<NSObject *> * _Nullable)xVals dataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nullable)dataSets __attribute__((objc_designated_initializer));
-		[Export("initWithXVals:dataSets:")]
+		// -(instancetype _Nonnull)initWithDataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nullable)dataSets __attribute__((objc_designated_initializer));
+		[Export("initWithDataSets:")]
 		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] NSObject[] xVals, [NullAllowed] IInterfaceChartDataSet[] dataSets);
+		IntPtr Constructor([NullAllowed] IInterfaceChartDataSet[] dataSets);
 
-		// @property (nonatomic) CGFloat groupSpace;
-		[Export("groupSpace")]
-		nfloat GroupSpace { get; set; }
+		// @property (nonatomic) double barWidth;
+		[Export("barWidth")]
+		double BarWidth { get; set; }
 
-		// @property (readonly, nonatomic) BOOL isGrouped;
-		[Export("isGrouped")]
-		bool IsGrouped { get; }
+		// -(void)groupBarsFromX:(double)fromX groupSpace:(double)groupSpace barSpace:(double)barSpace;
+		[Export("groupBarsFromX:groupSpace:barSpace:")]
+		void GroupBarsFromX(double fromX, double groupSpace, double barSpace);
+
+		// -(double)groupWidthWithGroupSpace:(double)groupSpace barSpace:(double)barSpace;
+		[Export("groupWidthWithGroupSpace:barSpace:")]
+		double GroupWidthWithGroupSpace(double groupSpace, double barSpace);
 	}
 
-	// @interface ChartDataEntry : NSObject
-	[BaseType(typeof(NSObject), Name = "_TtC6Charts14ChartDataEntry")]
-	interface ChartDataEntry
+	// @interface ChartDataEntryBase : NSObject
+	[BaseType(typeof(NSObject), Name = "_TtC6Charts18ChartDataEntryBase")]
+	interface ChartDataEntryBase
 	{
-		// @property (nonatomic) double value;
-		[Export("value")]
-		double Value { get; set; }
-
-		// @property (nonatomic) NSInteger xIndex;
-		[Export("xIndex")]
-		nint XIndex { get; set; }
+		// @property (nonatomic) double y;
+		[Export("y")]
+		double Y { get; set; }
 
 		// @property (nonatomic, strong) id _Nullable data;
 		[NullAllowed, Export("data", ArgumentSemantic.Strong)]
 		NSObject Data { get; set; }
 
-		// -(instancetype _Nonnull)initWithValue:(double)value xIndex:(NSInteger)xIndex __attribute__((objc_designated_initializer));
-		[Export("initWithValue:xIndex:")]
+		// -(instancetype _Nonnull)initWithY:(double)y __attribute__((objc_designated_initializer));
+		[Export("initWithY:")]
 		[DesignatedInitializer]
-		IntPtr Constructor(double value, nint xIndex);
+		IntPtr Constructor(double y);
 
-		// -(instancetype _Nonnull)initWithValue:(double)value xIndex:(NSInteger)xIndex data:(id _Nullable)data __attribute__((objc_designated_initializer));
-		[Export("initWithValue:xIndex:data:")]
+		// -(instancetype _Nonnull)initWithY:(double)y data:(id _Nullable)data __attribute__((objc_designated_initializer));
+		[Export("initWithY:data:")]
 		[DesignatedInitializer]
-		IntPtr Constructor(double value, nint xIndex, [NullAllowed] NSObject data);
+		IntPtr Constructor(double y, [NullAllowed] NSObject data);
+
+		// -(BOOL)isEqual:(id _Nullable)object;
+		[Export("isEqual:")]
+		bool IsEqual([NullAllowed] NSObject @object);
+
+		// @property (readonly, copy, nonatomic) NSString * _Nonnull description;
+		[Export("description")]
+		string Description { get; }
+	}
+
+	// @interface ChartDataEntry : ChartDataEntryBase
+	[BaseType(typeof(ChartDataEntryBase), Name = "_TtC6Charts14ChartDataEntry")]
+	interface ChartDataEntry
+	{
+		// @property (nonatomic) double x;
+		[Export("x")]
+		double X { get; set; }
+
+		// -(instancetype _Nonnull)initWithX:(double)x y:(double)y __attribute__((objc_designated_initializer));
+		[Export("initWithX:y:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(double x, double y);
+
+		// -(instancetype _Nonnull)initWithX:(double)x y:(double)y data:(id _Nullable)data __attribute__((objc_designated_initializer));
+		[Export("initWithX:y:data:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(double x, double y, [NullAllowed] NSObject data);
 
 		// -(BOOL)isEqual:(id _Nullable)object;
 		[Export("isEqual:")]
@@ -321,38 +697,36 @@ namespace iOSCharts
 		[Export("description")]
 		string Description { get; }
 
-		//// -(id _Nonnull)copyWithZone:(struct _NSZone * _Null_unspecified)zone;
-		//[Export("copyWithZone:")]
-		//unsafe NSObject CopyWithZone(_NSZone* zone);
+		//u-n-safe NSObject CopyWithZone([NullAllowed] _NSZone* zone);
 	}
 
 	// @interface BarChartDataEntry : ChartDataEntry
 	[BaseType(typeof(ChartDataEntry), Name = "_TtC6Charts17BarChartDataEntry")]
 	interface BarChartDataEntry
 	{
-		// -(instancetype _Nonnull)initWithValues:(NSArray<NSNumber *> * _Nonnull)values xIndex:(NSInteger)xIndex __attribute__((objc_designated_initializer));
-		[Export("initWithValues:xIndex:")]
+		// -(instancetype _Nonnull)initWithX:(double)x yValues:(NSArray<NSNumber *> * _Nonnull)yValues __attribute__((objc_designated_initializer));
+		[Export("initWithX:yValues:")]
 		[DesignatedInitializer]
-		IntPtr Constructor(NSNumber[] values, nint xIndex);
+		IntPtr Constructor(double x, NSNumber[] yValues);
 
-		// -(instancetype _Nonnull)initWithValue:(double)value xIndex:(NSInteger)xIndex __attribute__((objc_designated_initializer));
-		[Export("initWithValue:xIndex:")]
+		// -(instancetype _Nonnull)initWithX:(double)x y:(double)y __attribute__((objc_designated_initializer));
+		[Export("initWithX:y:")]
 		[DesignatedInitializer]
-		IntPtr Constructor(double value, nint xIndex);
+		IntPtr Constructor(double x, double y);
 
-		// -(instancetype _Nonnull)initWithValues:(NSArray<NSNumber *> * _Nonnull)values xIndex:(NSInteger)xIndex label:(NSString * _Nonnull)label __attribute__((objc_designated_initializer));
-		[Export("initWithValues:xIndex:label:")]
+		// -(instancetype _Nonnull)initWithX:(double)x yValues:(NSArray<NSNumber *> * _Nonnull)yValues label:(NSString * _Nonnull)label __attribute__((objc_designated_initializer));
+		[Export("initWithX:yValues:label:")]
 		[DesignatedInitializer]
-		IntPtr Constructor(NSNumber[] values, nint xIndex, string label);
+		IntPtr Constructor(double x, NSNumber[] yValues, string label);
 
-		// -(instancetype _Nonnull)initWithValue:(double)value xIndex:(NSInteger)xIndex data:(id _Nullable)data __attribute__((objc_designated_initializer));
-		[Export("initWithValue:xIndex:data:")]
+		// -(instancetype _Nonnull)initWithX:(double)x y:(double)y data:(id _Nullable)data __attribute__((objc_designated_initializer));
+		[Export("initWithX:y:data:")]
 		[DesignatedInitializer]
-		IntPtr Constructor(double value, nint xIndex, [NullAllowed] NSObject data);
+		IntPtr Constructor(double x, double y, [NullAllowed] NSObject data);
 
-		// -(double)getBelowSum:(NSInteger)stackIndex;
-		[Export("getBelowSum:")]
-		double GetBelowSum(nint stackIndex);
+		// -(double)sumBelowStackIndex:(NSInteger)stackIndex;
+		[Export("sumBelowStackIndex:")]
+		double SumBelowStackIndex(nint stackIndex);
 
 		// @property (readonly, nonatomic) double negativeSum;
 		[Export("negativeSum")]
@@ -366,18 +740,26 @@ namespace iOSCharts
 		[Export("calcPosNegSum")]
 		void CalcPosNegSum();
 
+		// -(void)calcRanges;
+		[Export("calcRanges")]
+		void CalcRanges();
+
 		// @property (readonly, nonatomic) BOOL isStacked;
 		[Export("isStacked")]
 		bool IsStacked { get; }
 
-		// @property (copy, nonatomic) NSArray<NSNumber *> * _Nullable values;
-		[NullAllowed, Export("values", ArgumentSemantic.Copy)]
-		NSNumber[] Values { get; set; }
+		// @property (copy, nonatomic) NSArray<NSNumber *> * _Nullable yValues;
+		[NullAllowed, Export("yValues", ArgumentSemantic.Copy)]
+		NSNumber[] YValues { get; set; }
 
-		//// -(id _Nonnull)copyWithZone:(struct _NSZone * _Null_unspecified)zone;
-		//[Export("copyWithZone:")]
-		//unsafe NSObject CopyWithZone(_NSZone* zone);
+		// @property (readonly, copy, nonatomic) NSArray<ChartRange *> * _Nullable ranges;
+		[NullAllowed, Export("ranges", ArgumentSemantic.Copy)]
+		ChartRange[] Ranges { get; }
+
+		//u-n-safe NSObject CopyWithZone([NullAllowed] _NSZone* zone);
 	}
+
+	interface IChartDataProvider { }
 
 	// @protocol ChartDataProvider
 	[Protocol(Name = "_TtP6Charts17ChartDataProvider_"), Model]
@@ -403,10 +785,15 @@ namespace iOSCharts
 		[Export("chartYMax")]
 		double ChartYMax { get; }
 
-		// @required @property (readonly, nonatomic) NSInteger xValCount;
+		// @required @property (readonly, nonatomic) CGFloat maxHighlightDistance;
 		[Abstract]
-		[Export("xValCount")]
-		nint XValCount { get; }
+		[Export("maxHighlightDistance")]
+		nfloat MaxHighlightDistance { get; }
+
+		// @required @property (readonly, nonatomic) double xRange;
+		[Abstract]
+		[Export("xRange")]
+		double XRange { get; }
 
 		// @required @property (readonly, nonatomic) CGPoint centerOffsets;
 		[Abstract]
@@ -416,7 +803,12 @@ namespace iOSCharts
 		// @required @property (readonly, nonatomic, strong) ChartData * _Nullable data;
 		[Abstract]
 		[NullAllowed, Export("data", ArgumentSemantic.Strong)]
-		ChartData Data { get; set; }
+		ChartData Data { get; }
+
+		// @required @property (readonly, nonatomic) NSInteger maxVisibleCount;
+		[Abstract]
+		[Export("maxVisibleCount")]
+		nint MaxVisibleCount { get; }
 	}
 
 	interface IBarLineScatterCandleBubbleChartDataProvider { }
@@ -425,30 +817,25 @@ namespace iOSCharts
 	[Protocol(Name = "_TtP6Charts43BarLineScatterCandleBubbleChartDataProvider_"), Model]
 	interface BarLineScatterCandleBubbleChartDataProvider : ChartDataProvider
 	{
-		// @required -(ChartTransformer * _Nonnull)getTransformer:(enum AxisDependency)which;
+		// @required -(ChartTransformer * _Nonnull)getTransformerForAxis:(enum AxisDependency)forAxis;
 		[Abstract]
-		[Export("getTransformer:")]
-		ChartTransformer GetTransformer(AxisDependency which);
+		[Export("getTransformerForAxis:")]
+		ChartTransformer GetTransformerForAxis(AxisDependency forAxis);
 
-		// @required @property (readonly, nonatomic) NSInteger maxVisibleValueCount;
+		// @required -(BOOL)isInvertedWithAxis:(enum AxisDependency)axis;
 		[Abstract]
-		[Export("maxVisibleValueCount")]
-		nint MaxVisibleValueCount { get; }
+		[Export("isInvertedWithAxis:")]
+		bool IsInvertedWithAxis(AxisDependency axis);
 
-		// @required -(BOOL)isInverted:(enum AxisDependency)axis;
+		// @required @property (readonly, nonatomic) double lowestVisibleX;
 		[Abstract]
-		[Export("isInverted:")]
-		bool IsInverted(AxisDependency axis);
+		[Export("lowestVisibleX")]
+		double LowestVisibleX { get; }
 
-		// @required @property (readonly, nonatomic) NSInteger lowestVisibleXIndex;
+		// @required @property (readonly, nonatomic) double highestVisibleX;
 		[Abstract]
-		[Export("lowestVisibleXIndex")]
-		nint LowestVisibleXIndex { get; }
-
-		// @required @property (readonly, nonatomic) NSInteger highestVisibleXIndex;
-		[Abstract]
-		[Export("highestVisibleXIndex")]
-		nint HighestVisibleXIndex { get; }
+		[Export("highestVisibleX")]
+		double HighestVisibleX { get; }
 	}
 
 	interface IBarChartDataProvider { }
@@ -472,16 +859,16 @@ namespace iOSCharts
 		[Export("isDrawValueAboveBarEnabled")]
 		bool IsDrawValueAboveBarEnabled { get; }
 
-		// @required @property (readonly, nonatomic) BOOL isDrawHighlightArrowEnabled;
+		// @required @property (readonly, nonatomic) BOOL isHighlightFullBarEnabled;
 		[Abstract]
-		[Export("isDrawHighlightArrowEnabled")]
-		bool IsDrawHighlightArrowEnabled { get; }
+		[Export("isHighlightFullBarEnabled")]
+		bool IsHighlightFullBarEnabled { get; }
 	}
 
 	interface IInterfaceChartDataSet { }
 
 	// @protocol IInterfaceChartDataSet
-	[Protocol(Name = "_TtP6Charts13IChartDataSet_"), Model]
+	[Protocol(Name = "_TtP6Charts13IInterfaceChartDataSet_"), Model]
 	interface InterfaceChartDataSet
 	{
 		// @required -(void)notifyDataSetChanged;
@@ -489,10 +876,15 @@ namespace iOSCharts
 		[Export("notifyDataSetChanged")]
 		void NotifyDataSetChanged();
 
-		// @required -(void)calcMinMaxWithStart:(NSInteger)start end:(NSInteger)end;
+		// @required -(void)calcMinMax;
 		[Abstract]
-		[Export("calcMinMaxWithStart:end:")]
-		void CalcMinMaxWithStart(nint start, nint end);
+		[Export("calcMinMax")]
+		void CalcMinMax();
+
+		// @required -(void)calcMinMaxYFromX:(double)fromX toX:(double)toX;
+		[Abstract]
+		[Export("calcMinMaxYFromX:toX:")]
+		void CalcMinMaxYFromX(double fromX, double toX);
 
 		// @required @property (readonly, nonatomic) double yMin;
 		[Abstract]
@@ -504,20 +896,20 @@ namespace iOSCharts
 		[Export("yMax")]
 		double YMax { get; }
 
+		// @required @property (readonly, nonatomic) double xMin;
+		[Abstract]
+		[Export("xMin")]
+		double XMin { get; }
+
+		// @required @property (readonly, nonatomic) double xMax;
+		[Abstract]
+		[Export("xMax")]
+		double XMax { get; }
+
 		// @required @property (readonly, nonatomic) NSInteger entryCount;
 		[Abstract]
 		[Export("entryCount")]
 		nint EntryCount { get; }
-
-		// @required -(double)yValForXIndex:(NSInteger)x;
-		[Abstract]
-		[Export("yValForXIndex:")]
-		double YValForXIndex(nint x);
-
-		// @required -(NSArray<NSNumber *> * _Nonnull)yValsForXIndex:(NSInteger)x;
-		[Abstract]
-		[Export("yValsForXIndex:")]
-		NSNumber[] YValsForXIndex(nint x);
 
 		// @required -(ChartDataEntry * _Nullable)entryForIndex:(NSInteger)i;
 		[Abstract]
@@ -525,27 +917,27 @@ namespace iOSCharts
 		[return: NullAllowed]
 		ChartDataEntry EntryForIndex(nint i);
 
-		// @required -(ChartDataEntry * _Nullable)entryForXIndex:(NSInteger)x rounding:(enum ChartDataSetRounding)rounding;
+		// @required -(ChartDataEntry * _Nullable)entryForXValue:(double)xValue closestToY:(double)yValue rounding:(enum ChartDataSetRounding)rounding;
 		[Abstract]
-		[Export("entryForXIndex:rounding:")]
+		[Export("entryForXValue:closestToY:rounding:")]
 		[return: NullAllowed]
-		ChartDataEntry EntryForXIndex(nint x, ChartDataSetRounding rounding);
+		ChartDataEntry EntryForXValue(double xValue, double yValue, ChartDataSetRounding rounding);
 
-		// @required -(ChartDataEntry * _Nullable)entryForXIndex:(NSInteger)x;
+		// @required -(ChartDataEntry * _Nullable)entryForXValue:(double)xValue closestToY:(double)yValue;
 		[Abstract]
-		[Export("entryForXIndex:")]
+		[Export("entryForXValue:closestToY:")]
 		[return: NullAllowed]
-		ChartDataEntry EntryForXIndex(nint x);
+		ChartDataEntry EntryForXValue(double xValue, double yValue);
 
-		// @required -(NSArray<ChartDataEntry *> * _Nonnull)entriesForXIndex:(NSInteger)x;
+		// @required -(NSArray<ChartDataEntry *> * _Nonnull)entriesForXValue:(double)xValue;
 		[Abstract]
-		[Export("entriesForXIndex:")]
-		ChartDataEntry[] EntriesForXIndex(nint x);
+		[Export("entriesForXValue:")]
+		ChartDataEntry[] EntriesForXValue(double xValue);
 
-		// @required -(NSInteger)entryIndexWithXIndex:(NSInteger)x rounding:(enum ChartDataSetRounding)rounding;
+		// @required -(NSInteger)entryIndexWithX:(double)xValue closestToY:(double)yValue rounding:(enum ChartDataSetRounding)rounding;
 		[Abstract]
-		[Export("entryIndexWithXIndex:rounding:")]
-		nint EntryIndexWithXIndex(nint x, ChartDataSetRounding rounding);
+		[Export("entryIndexWithX:closestToY:rounding:")]
+		nint EntryIndexWithX(double xValue, double yValue, ChartDataSetRounding rounding);
 
 		// @required -(NSInteger)entryIndexWithEntry:(ChartDataEntry * _Nonnull)e;
 		[Abstract]
@@ -567,21 +959,24 @@ namespace iOSCharts
 		[Export("removeEntry:")]
 		bool RemoveEntry(ChartDataEntry entry);
 
-		// @required -(BOOL)removeEntryWithXIndex:(NSInteger)xIndex;
+		// @required -(BOOL)removeEntryWithIndex:(NSInteger)index;
 		[Abstract]
-		[Export("removeEntryWithXIndex:")]
-		bool RemoveEntryWithXIndex(nint xIndex);
+		[Export("removeEntryWithIndex:")]
+		bool RemoveEntryWithIndex(nint index);
+
+		// @required -(BOOL)removeEntryWithX:(double)x;
+		[Abstract]
+		[Export("removeEntryWithX:")]
+		bool RemoveEntryWithX(double x);
 
 		// @required -(BOOL)removeFirst;
 		[Abstract]
 		[Export("removeFirst")]
-		//[Verify(MethodToProperty)]
 		bool RemoveFirst { get; }
 
 		// @required -(BOOL)removeLast;
 		[Abstract]
 		[Export("removeLast")]
-		//[Verify(MethodToProperty)]
 		bool RemoveLast { get; }
 
 		// @required -(BOOL)contains:(ChartDataEntry * _Nonnull)e;
@@ -614,10 +1009,10 @@ namespace iOSCharts
 		[Export("colors", ArgumentSemantic.Copy)]
 		UIColor[] Colors { get; }
 
-		// @required -(UIColor * _Nonnull)colorAt:(NSInteger)index;
+		// @required -(UIColor * _Nonnull)colorAtIndex:(NSInteger)atIndex;
 		[Abstract]
-		[Export("colorAt:")]
-		UIColor ColorAt(nint index);
+		[Export("colorAtIndex:")]
+		UIColor ColorAtIndex(nint atIndex);
 
 		// @required -(void)resetColors;
 		[Abstract]
@@ -644,10 +1039,15 @@ namespace iOSCharts
 		[Export("isHighlightEnabled")]
 		bool IsHighlightEnabled { get; }
 
-		// @required @property (nonatomic, strong) NSNumberFormatter * _Nullable valueFormatter;
+		// @required @property (nonatomic, strong) id<InterfaceChartValueFormatter> _Nullable valueFormatter;
 		[Abstract]
 		[NullAllowed, Export("valueFormatter", ArgumentSemantic.Strong)]
-		NSNumberFormatter ValueFormatter { get; set; }
+		InterfaceChartValueFormatter ValueFormatter { get; set; }
+
+		// @required @property (readonly, nonatomic) BOOL needsFormatter;
+		[Abstract]
+		[Export("needsFormatter")]
+		bool NeedsFormatter { get; }
 
 		// @required @property (nonatomic, strong) UIColor * _Nonnull valueTextColor;
 		[Abstract]
@@ -663,6 +1063,31 @@ namespace iOSCharts
 		[Abstract]
 		[Export("valueFont", ArgumentSemantic.Strong)]
 		UIFont ValueFont { get; set; }
+
+		// @required @property (readonly, nonatomic) enum ChartLegendForm form;
+		[Abstract]
+		[Export("form")]
+		ChartLegendForm Form { get; }
+
+		// @required @property (readonly, nonatomic) CGFloat formSize;
+		[Abstract]
+		[Export("formSize")]
+		nfloat FormSize { get; }
+
+		// @required @property (readonly, nonatomic) CGFloat formLineWidth;
+		[Abstract]
+		[Export("formLineWidth")]
+		nfloat FormLineWidth { get; }
+
+		// @required @property (readonly, nonatomic) CGFloat formLineDashPhase;
+		[Abstract]
+		[Export("formLineDashPhase")]
+		nfloat FormLineDashPhase { get; }
+
+		// @required @property (readonly, copy, nonatomic) NSArray<NSNumber *> * _Nullable formLineDashLengths;
+		[Abstract]
+		[NullAllowed, Export("formLineDashLengths", ArgumentSemantic.Copy)]
+		NSNumber[] FormLineDashLengths { get; }
 
 		// @required @property (nonatomic) BOOL drawValuesEnabled;
 		[Abstract]
@@ -688,7 +1113,7 @@ namespace iOSCharts
 	interface IInterfaceBarLineScatterCandleBubbleChartDataSet { }
 
 	// @protocol IInterfaceBarLineScatterCandleBubbleChartDataSet <IInterfaceChartDataSet>
-	[Protocol(Name = "_TtP6Charts39IBarLineScatterCandleBubbleChartDataSet_"), Model]
+	[Protocol(Name = "_TtP6Charts39IInterfaceBarLineScatterCandleBubbleChartDataSet_"), Model]
 	interface InterfaceBarLineScatterCandleBubbleChartDataSet : InterfaceChartDataSet
 	{
 		// @required @property (nonatomic, strong) UIColor * _Nonnull highlightColor;
@@ -712,17 +1137,12 @@ namespace iOSCharts
 		NSNumber[] HighlightLineDashLengths { get; set; }
 	}
 
-	interface IInterfaceBarChartDataSet { };
+	interface IInterfaceBarChartDataSet { }
 
 	// @protocol IInterfaceBarChartDataSet <IInterfaceBarLineScatterCandleBubbleChartDataSet>
-	[Protocol(Name = "_TtP6Charts16IBarChartDataSet_"), Model]
+	[Protocol(Name = "_TtP6Charts16IInterfaceBarChartDataSet_"), Model]
 	interface InterfaceBarChartDataSet : InterfaceBarLineScatterCandleBubbleChartDataSet
 	{
-		// @required @property (nonatomic) CGFloat barSpace;
-		[Abstract]
-		[Export("barSpace")]
-		nfloat BarSpace { get; set; }
-
 		// @required @property (readonly, nonatomic) BOOL isStacked;
 		[Abstract]
 		[Export("isStacked")]
@@ -772,9 +1192,13 @@ namespace iOSCharts
 		[Export("notifyDataSetChanged")]
 		void NotifyDataSetChanged();
 
-		// -(void)calcMinMaxWithStart:(NSInteger)start end:(NSInteger)end;
-		[Export("calcMinMaxWithStart:end:")]
-		void CalcMinMaxWithStart(nint start, nint end);
+		// -(void)calcMinMax;
+		[Export("calcMinMax")]
+		void CalcMinMax();
+
+		// -(void)calcMinMaxYFromX:(double)fromX toX:(double)toX;
+		[Export("calcMinMaxYFromX:toX:")]
+		void CalcMinMaxYFromX(double fromX, double toX);
 
 		// @property (readonly, nonatomic) double yMin;
 		[Export("yMin")]
@@ -784,40 +1208,40 @@ namespace iOSCharts
 		[Export("yMax")]
 		double YMax { get; }
 
+		// @property (readonly, nonatomic) double xMin;
+		[Export("xMin")]
+		double XMin { get; }
+
+		// @property (readonly, nonatomic) double xMax;
+		[Export("xMax")]
+		double XMax { get; }
+
 		// @property (readonly, nonatomic) NSInteger entryCount;
 		[Export("entryCount")]
 		nint EntryCount { get; }
-
-		// -(double)yValForXIndex:(NSInteger)x;
-		[Export("yValForXIndex:")]
-		double YValForXIndex(nint x);
-
-		// -(NSArray<NSNumber *> * _Nonnull)yValsForXIndex:(NSInteger)x;
-		[Export("yValsForXIndex:")]
-		NSNumber[] YValsForXIndex(nint x);
 
 		// -(ChartDataEntry * _Nullable)entryForIndex:(NSInteger)i;
 		[Export("entryForIndex:")]
 		[return: NullAllowed]
 		ChartDataEntry EntryForIndex(nint i);
 
-		// -(ChartDataEntry * _Nullable)entryForXIndex:(NSInteger)x rounding:(enum ChartDataSetRounding)rounding;
-		[Export("entryForXIndex:rounding:")]
+		// -(ChartDataEntry * _Nullable)entryForXValue:(double)x closestToY:(double)y rounding:(enum ChartDataSetRounding)rounding;
+		[Export("entryForXValue:closestToY:rounding:")]
 		[return: NullAllowed]
-		ChartDataEntry EntryForXIndex(nint x, ChartDataSetRounding rounding);
+		ChartDataEntry EntryForXValue(double x, double y, ChartDataSetRounding rounding);
 
-		// -(ChartDataEntry * _Nullable)entryForXIndex:(NSInteger)x;
-		[Export("entryForXIndex:")]
+		// -(ChartDataEntry * _Nullable)entryForXValue:(double)x closestToY:(double)y;
+		[Export("entryForXValue:closestToY:")]
 		[return: NullAllowed]
-		ChartDataEntry EntryForXIndex(nint x);
+		ChartDataEntry EntryForXValue(double x, double y);
 
-		// -(NSArray<ChartDataEntry *> * _Nonnull)entriesForXIndex:(NSInteger)x;
-		[Export("entriesForXIndex:")]
-		ChartDataEntry[] EntriesForXIndex(nint x);
+		// -(NSArray<ChartDataEntry *> * _Nonnull)entriesForXValue:(double)x;
+		[Export("entriesForXValue:")]
+		ChartDataEntry[] EntriesForXValue(double x);
 
-		// -(NSInteger)entryIndexWithXIndex:(NSInteger)x rounding:(enum ChartDataSetRounding)rounding;
-		[Export("entryIndexWithXIndex:rounding:")]
-		nint EntryIndexWithXIndex(nint x, ChartDataSetRounding rounding);
+		// -(NSInteger)entryIndexWithX:(double)xValue closestToY:(double)y rounding:(enum ChartDataSetRounding)rounding;
+		[Export("entryIndexWithX:closestToY:rounding:")]
+		nint EntryIndexWithX(double xValue, double y, ChartDataSetRounding rounding);
 
 		// -(NSInteger)entryIndexWithEntry:(ChartDataEntry * _Nonnull)e;
 		[Export("entryIndexWithEntry:")]
@@ -835,18 +1259,20 @@ namespace iOSCharts
 		[Export("removeEntry:")]
 		bool RemoveEntry(ChartDataEntry entry);
 
-		// -(BOOL)removeEntryWithXIndex:(NSInteger)xIndex;
-		[Export("removeEntryWithXIndex:")]
-		bool RemoveEntryWithXIndex(nint xIndex);
+		// -(BOOL)removeEntryWithIndex:(NSInteger)index;
+		[Export("removeEntryWithIndex:")]
+		bool RemoveEntryWithIndex(nint index);
+
+		// -(BOOL)removeEntryWithX:(double)x;
+		[Export("removeEntryWithX:")]
+		bool RemoveEntryWithX(double x);
 
 		// -(BOOL)removeFirst;
 		[Export("removeFirst")]
-		//[Verify(MethodToProperty)]
 		bool RemoveFirst { get; }
 
 		// -(BOOL)removeLast;
 		[Export("removeLast")]
-		//[Verify(MethodToProperty)]
 		bool RemoveLast { get; }
 
 		// -(BOOL)contains:(ChartDataEntry * _Nonnull)e;
@@ -873,9 +1299,9 @@ namespace iOSCharts
 		[Export("axisDependency", ArgumentSemantic.Assign)]
 		AxisDependency AxisDependency { get; set; }
 
-		// -(UIColor * _Nonnull)colorAt:(NSInteger)index;
-		[Export("colorAt:")]
-		UIColor ColorAt(nint index);
+		// -(UIColor * _Nonnull)colorAtIndex:(NSInteger)index;
+		[Export("colorAtIndex:")]
+		UIColor ColorAtIndex(nint index);
 
 		// -(void)resetColors;
 		[Export("resetColors")]
@@ -905,13 +1331,13 @@ namespace iOSCharts
 		[Export("isHighlightEnabled")]
 		bool IsHighlightEnabled { get; }
 
-		// @property (nonatomic, strong) NSNumberFormatter * _Nullable _valueFormatter;
-		[NullAllowed, Export("_valueFormatter", ArgumentSemantic.Strong)]
-		NSNumberFormatter _valueFormatter { get; set; }
-
-		// @property (nonatomic, strong) NSNumberFormatter * _Nullable valueFormatter;
+		// @property (nonatomic, strong) id<InterfaceChartValueFormatter> _Nullable valueFormatter;
 		[NullAllowed, Export("valueFormatter", ArgumentSemantic.Strong)]
-		NSNumberFormatter ValueFormatter { get; set; }
+		InterfaceChartValueFormatter ValueFormatter { get; set; }
+
+		// @property (readonly, nonatomic) BOOL needsFormatter;
+		[Export("needsFormatter")]
+		bool NeedsFormatter { get; }
 
 		// @property (nonatomic, strong) UIColor * _Nonnull valueTextColor;
 		[Export("valueTextColor", ArgumentSemantic.Strong)]
@@ -924,6 +1350,26 @@ namespace iOSCharts
 		// @property (nonatomic, strong) UIFont * _Nonnull valueFont;
 		[Export("valueFont", ArgumentSemantic.Strong)]
 		UIFont ValueFont { get; set; }
+
+		// @property (nonatomic) enum ChartLegendForm form;
+		[Export("form", ArgumentSemantic.Assign)]
+		ChartLegendForm Form { get; set; }
+
+		// @property (nonatomic) CGFloat formSize;
+		[Export("formSize")]
+		nfloat FormSize { get; set; }
+
+		// @property (nonatomic) CGFloat formLineWidth;
+		[Export("formLineWidth")]
+		nfloat FormLineWidth { get; set; }
+
+		// @property (nonatomic) CGFloat formLineDashPhase;
+		[Export("formLineDashPhase")]
+		nfloat FormLineDashPhase { get; set; }
+
+		// @property (copy, nonatomic) NSArray<NSNumber *> * _Nullable formLineDashLengths;
+		[NullAllowed, Export("formLineDashLengths", ArgumentSemantic.Copy)]
+		NSNumber[] FormLineDashLengths { get; set; }
 
 		// @property (nonatomic) BOOL drawValuesEnabled;
 		[Export("drawValuesEnabled")]
@@ -949,9 +1395,7 @@ namespace iOSCharts
 		[Export("debugDescription")]
 		string DebugDescription { get; }
 
-		//// -(id _Nonnull)copyWithZone:(struct _NSZone * _Null_unspecified)zone;
-		//[Export("copyWithZone:")]
-		//unsafe NSObject CopyWithZone(_NSZone* zone);
+		//u-n-safe NSObject CopyWithZone([NullAllowed] _NSZone* zone);
 	}
 
 	// @interface ChartDataSet : ChartBaseDataSet
@@ -963,46 +1407,38 @@ namespace iOSCharts
 		[DesignatedInitializer]
 		IntPtr Constructor([NullAllowed] string label);
 
-		// -(instancetype _Nonnull)initWithYVals:(NSArray<ChartDataEntry *> * _Nullable)yVals label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
-		[Export("initWithYVals:label:")]
+		// -(instancetype _Nonnull)initWithValues:(NSArray<ChartDataEntry *> * _Nullable)values label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
+		[Export("initWithValues:label:")]
 		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] ChartDataEntry[] yVals, [NullAllowed] string label);
+		IntPtr Constructor([NullAllowed] ChartDataEntry[] values, [NullAllowed] string label);
 
-		// -(instancetype _Nonnull)initWithYVals:(NSArray<ChartDataEntry *> * _Nullable)yVals;
-		[Export("initWithYVals:")]
-		IntPtr Constructor([NullAllowed] ChartDataEntry[] yVals);
+		// -(instancetype _Nonnull)initWithValues:(NSArray<ChartDataEntry *> * _Nullable)values;
+		[Export("initWithValues:")]
+		IntPtr Constructor([NullAllowed] ChartDataEntry[] values);
 
-		// @property (copy, nonatomic) NSArray<ChartDataEntry *> * _Null_unspecified _yVals;
-		[Export("_yVals", ArgumentSemantic.Copy)]
-		ChartDataEntry[] _yVals { get; set; }
-
-		// @property (nonatomic) double _yMax;
-		[Export("_yMax")]
-		double _yMax { get; set; }
-
-		// @property (nonatomic) double _yMin;
-		[Export("_yMin")]
-		double _yMin { get; set; }
-
-		// @property (nonatomic) NSInteger _lastStart;
-		[Export("_lastStart")]
-		nint _lastStart { get; set; }
-
-		// @property (nonatomic) NSInteger _lastEnd;
-		[Export("_lastEnd")]
-		nint _lastEnd { get; set; }
-
-		// @property (copy, nonatomic) NSArray<ChartDataEntry *> * _Nonnull yVals;
-		[Export("yVals", ArgumentSemantic.Copy)]
-		ChartDataEntry[] YVals { get; set; }
+		// @property (copy, nonatomic) NSArray<ChartDataEntry *> * _Nonnull values;
+		[Export("values", ArgumentSemantic.Copy)]
+		ChartDataEntry[] Values { get; set; }
 
 		// -(void)notifyDataSetChanged;
 		[Export("notifyDataSetChanged")]
 		void NotifyDataSetChanged();
 
-		// -(void)calcMinMaxWithStart:(NSInteger)start end:(NSInteger)end;
-		[Export("calcMinMaxWithStart:end:")]
-		void CalcMinMaxWithStart(nint start, nint end);
+		// -(void)calcMinMax;
+		[Export("calcMinMax")]
+		void CalcMinMax();
+
+		// -(void)calcMinMaxYFromX:(double)fromX toX:(double)toX;
+		[Export("calcMinMaxYFromX:toX:")]
+		void CalcMinMaxYFromX(double fromX, double toX);
+
+		// -(void)calcMinMaxXWithEntry:(ChartDataEntry * _Nonnull)e;
+		[Export("calcMinMaxXWithEntry:")]
+		void CalcMinMaxXWithEntry(ChartDataEntry e);
+
+		// -(void)calcMinMaxYWithEntry:(ChartDataEntry * _Nonnull)e;
+		[Export("calcMinMaxYWithEntry:")]
+		void CalcMinMaxYWithEntry(ChartDataEntry e);
 
 		// @property (readonly, nonatomic) double yMin;
 		[Export("yMin")]
@@ -1012,40 +1448,40 @@ namespace iOSCharts
 		[Export("yMax")]
 		double YMax { get; }
 
+		// @property (readonly, nonatomic) double xMin;
+		[Export("xMin")]
+		double XMin { get; }
+
+		// @property (readonly, nonatomic) double xMax;
+		[Export("xMax")]
+		double XMax { get; }
+
 		// @property (readonly, nonatomic) NSInteger entryCount;
 		[Export("entryCount")]
 		nint EntryCount { get; }
-
-		// -(double)yValForXIndex:(NSInteger)x;
-		[Export("yValForXIndex:")]
-		double YValForXIndex(nint x);
-
-		// -(NSArray<NSNumber *> * _Nonnull)yValsForXIndex:(NSInteger)x;
-		[Export("yValsForXIndex:")]
-		NSNumber[] YValsForXIndex(nint x);
 
 		// -(ChartDataEntry * _Nullable)entryForIndex:(NSInteger)i;
 		[Export("entryForIndex:")]
 		[return: NullAllowed]
 		ChartDataEntry EntryForIndex(nint i);
 
-		// -(ChartDataEntry * _Nullable)entryForXIndex:(NSInteger)x rounding:(enum ChartDataSetRounding)rounding;
-		[Export("entryForXIndex:rounding:")]
+		// -(ChartDataEntry * _Nullable)entryForXValue:(double)xValue closestToY:(double)yValue rounding:(enum ChartDataSetRounding)rounding;
+		[Export("entryForXValue:closestToY:rounding:")]
 		[return: NullAllowed]
-		ChartDataEntry EntryForXIndex(nint x, ChartDataSetRounding rounding);
+		ChartDataEntry EntryForXValue(double xValue, double yValue, ChartDataSetRounding rounding);
 
-		// -(ChartDataEntry * _Nullable)entryForXIndex:(NSInteger)x;
-		[Export("entryForXIndex:")]
+		// -(ChartDataEntry * _Nullable)entryForXValue:(double)xValue closestToY:(double)yValue;
+		[Export("entryForXValue:closestToY:")]
 		[return: NullAllowed]
-		ChartDataEntry EntryForXIndex(nint x);
+		ChartDataEntry EntryForXValue(double xValue, double yValue);
 
-		// -(NSArray<ChartDataEntry *> * _Nonnull)entriesForXIndex:(NSInteger)x;
-		[Export("entriesForXIndex:")]
-		ChartDataEntry[] EntriesForXIndex(nint x);
+		// -(NSArray<ChartDataEntry *> * _Nonnull)entriesForXValue:(double)xValue;
+		[Export("entriesForXValue:")]
+		ChartDataEntry[] EntriesForXValue(double xValue);
 
-		// -(NSInteger)entryIndexWithXIndex:(NSInteger)x rounding:(enum ChartDataSetRounding)rounding;
-		[Export("entryIndexWithXIndex:rounding:")]
-		nint EntryIndexWithXIndex(nint x, ChartDataSetRounding rounding);
+		// -(NSInteger)entryIndexWithX:(double)xValue closestToY:(double)yValue rounding:(enum ChartDataSetRounding)rounding;
+		[Export("entryIndexWithX:closestToY:rounding:")]
+		nint EntryIndexWithX(double xValue, double yValue, ChartDataSetRounding rounding);
 
 		// -(NSInteger)entryIndexWithEntry:(ChartDataEntry * _Nonnull)e;
 		[Export("entryIndexWithEntry:")]
@@ -1065,12 +1501,10 @@ namespace iOSCharts
 
 		// -(BOOL)removeFirst;
 		[Export("removeFirst")]
-		//[Verify(MethodToProperty)]
 		bool RemoveFirst { get; }
 
 		// -(BOOL)removeLast;
 		[Export("removeLast")]
-		//[Verify(MethodToProperty)]
 		bool RemoveLast { get; }
 
 		// -(BOOL)contains:(ChartDataEntry * _Nonnull)e;
@@ -1081,13 +1515,7 @@ namespace iOSCharts
 		[Export("clear")]
 		void Clear();
 
-		// @property (readonly, nonatomic) NSInteger valueCount;
-		[Export("valueCount")]
-		nint ValueCount { get; }
-
-		//// -(id _Nonnull)copyWithZone:(struct _NSZone * _Null_unspecified)zone;
-		//[Export("copyWithZone:")]
-		//unsafe NSObject CopyWithZone(_NSZone* zone);
+		//u-n-safe NSObject CopyWithZone([NullAllowed] _NSZone* zone);
 	}
 
 	// @interface BarLineScatterCandleBubbleChartDataSet : ChartDataSet <IInterfaceBarLineScatterCandleBubbleChartDataSet>
@@ -1110,33 +1538,31 @@ namespace iOSCharts
 		[NullAllowed, Export("highlightLineDashLengths", ArgumentSemantic.Copy)]
 		NSNumber[] HighlightLineDashLengths { get; set; }
 
-		//// -(id _Nonnull)copyWithZone:(struct _NSZone * _Null_unspecified)zone;
-		//[Export("copyWithZone:")]
-		//unsafe NSObject CopyWithZone(_NSZone* zone);
+		//u-n-safe NSObject CopyWithZone([NullAllowed] _NSZone* zone);
 
 		// -(instancetype _Nonnull)initWithLabel:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
 		[Export("initWithLabel:")]
 		[DesignatedInitializer]
 		IntPtr Constructor([NullAllowed] string label);
 
-		// -(instancetype _Nonnull)initWithYVals:(NSArray<ChartDataEntry *> * _Nullable)yVals label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
-		[Export("initWithYVals:label:")]
+		// -(instancetype _Nonnull)initWithValues:(NSArray<ChartDataEntry *> * _Nullable)values label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
+		[Export("initWithValues:label:")]
 		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] ChartDataEntry[] yVals, [NullAllowed] string label);
+		IntPtr Constructor([NullAllowed] ChartDataEntry[] values, [NullAllowed] string label);
 	}
 
 	// @interface BarChartDataSet : BarLineScatterCandleBubbleChartDataSet <IInterfaceBarChartDataSet>
 	[BaseType(typeof(BarLineScatterCandleBubbleChartDataSet), Name = "_TtC6Charts15BarChartDataSet")]
 	interface BarChartDataSet : InterfaceBarChartDataSet
 	{
-		// -(instancetype _Nonnull)initWithYVals:(NSArray<ChartDataEntry *> * _Nullable)yVals label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
-		[Export("initWithYVals:label:")]
+		// -(instancetype _Nonnull)initWithValues:(NSArray<ChartDataEntry *> * _Nullable)values label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
+		[Export("initWithValues:label:")]
 		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] ChartDataEntry[] yVals, [NullAllowed] string label);
+		IntPtr Constructor([NullAllowed] ChartDataEntry[] values, [NullAllowed] string label);
 
-		// -(void)calcMinMaxWithStart:(NSInteger)start end:(NSInteger)end;
-		[Export("calcMinMaxWithStart:end:")]
-		void CalcMinMaxWithStart(nint start, nint end);
+		// -(void)calcMinMaxWithEntry:(ChartDataEntry * _Nonnull)e;
+		[Export("calcMinMaxWithEntry:")]
+		void CalcMinMaxWithEntry(ChartDataEntry e);
 
 		// @property (readonly, nonatomic) NSInteger stackSize;
 		[Export("stackSize")]
@@ -1154,10 +1580,6 @@ namespace iOSCharts
 		[Export("stackLabels", ArgumentSemantic.Copy)]
 		string[] StackLabels { get; set; }
 
-		// @property (nonatomic) CGFloat barSpace;
-		[Export("barSpace")]
-		nfloat BarSpace { get; set; }
-
 		// @property (nonatomic, strong) UIColor * _Nonnull barShadowColor;
 		[Export("barShadowColor", ArgumentSemantic.Strong)]
 		UIColor BarShadowColor { get; set; }
@@ -1174,184 +1596,78 @@ namespace iOSCharts
 		[Export("highlightAlpha")]
 		nfloat HighlightAlpha { get; set; }
 
-		//// -(id _Nonnull)copyWithZone:(struct _NSZone * _Null_unspecified)zone;
-		//[Export("copyWithZone:")]
-		//unsafe NSObject CopyWithZone(_NSZone* zone);
+		//u-n-safe NSObject CopyWithZone([NullAllowed] _NSZone* zone);
 	}
 
-	// @interface ChartHighlighter : NSObject
-	[BaseType(typeof(NSObject), Name = "_TtC6Charts16ChartHighlighter")]
-	interface ChartHighlighter
-	{
-		// @property (nonatomic, weak) BarLineChartViewBase * _Nullable chart;
-		[NullAllowed, Export("chart", ArgumentSemantic.Weak)]
-		BarLineChartViewBase Chart { get; set; }
-
-		// -(instancetype _Nonnull)initWithChart:(BarLineChartViewBase * _Nonnull)chart __attribute__((objc_designated_initializer));
-		[Export("initWithChart:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(BarLineChartViewBase chart);
-
-		// -(ChartHighlight * _Nullable)getHighlightWithX:(CGFloat)x y:(CGFloat)y;
-		[Export("getHighlightWithX:y:")]
-		[return: NullAllowed]
-		ChartHighlight GetHighlightWithX(nfloat x, nfloat y);
-
-		// -(NSInteger)getXIndex:(CGFloat)x;
-		[Export("getXIndex:")]
-		nint GetXIndex(nfloat x);
-	}
-
-	// @interface BarChartHighlighter : ChartHighlighter
-	[BaseType(typeof(ChartHighlighter), Name = "_TtC6Charts19BarChartHighlighter")]
-	interface BarChartHighlighter
-	{
-		// -(ChartHighlight * _Nullable)getHighlightWithX:(CGFloat)x y:(CGFloat)y;
-		[Export("getHighlightWithX:y:")]
-		[return: NullAllowed]
-		ChartHighlight GetHighlightWithX(nfloat x, nfloat y);
-
-		// -(NSInteger)getXIndex:(CGFloat)x;
-		[Export("getXIndex:")]
-		nint GetXIndex(nfloat x);
-
-		// -(ChartHighlight * _Nullable)getStackedHighlightWithSelectionDetail:(ChartSelectionDetail * _Nonnull)selectionDetail set:(id<IInterfaceBarChartDataSet> _Nonnull)set xIndex:(NSInteger)xIndex yValue:(double)yValue;
-		[Export("getStackedHighlightWithSelectionDetail:set:xIndex:yValue:")]
-		[return: NullAllowed]
-		ChartHighlight GetStackedHighlightWithSelectionDetail(ChartSelectionDetail selectionDetail, IInterfaceBarChartDataSet set, nint xIndex, double yValue);
-
-		// -(NSInteger)getClosestStackIndexWithRanges:(NSArray<ChartRange *> * _Nullable)ranges value:(double)value;
-		[Export("getClosestStackIndexWithRanges:value:")]
-		nint GetClosestStackIndexWithRanges([NullAllowed] ChartRange[] ranges, double value);
-
-		// -(double)getBase:(CGFloat)x;
-		[Export("getBase:")]
-		double GetBase(nfloat x);
-
-		// -(NSArray<ChartRange *> * _Nullable)getRangesWithEntry:(BarChartDataEntry * _Nonnull)entry;
-		[Export("getRangesWithEntry:")]
-		[return: NullAllowed]
-		ChartRange[] GetRangesWithEntry(BarChartDataEntry entry);
-
-		// -(instancetype _Nonnull)initWithChart:(BarLineChartViewBase * _Nonnull)chart __attribute__((objc_designated_initializer));
-		[Export("initWithChart:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(BarLineChartViewBase chart);
-	}
-
-	// @interface ChartRendererBase : NSObject
-	[BaseType(typeof(NSObject), Name = "_TtC6Charts17ChartRendererBase")]
-	interface ChartRendererBase
-	{
-		// @property (nonatomic, strong) ChartViewPortHandler * _Null_unspecified viewPortHandler;
-		[Export("viewPortHandler", ArgumentSemantic.Strong)]
-		ChartViewPortHandler ViewPortHandler { get; set; }
-
-		// @property (nonatomic) NSInteger minX;
-		[Export("minX")]
-		nint MinX { get; set; }
-
-		// @property (nonatomic) NSInteger maxX;
-		[Export("maxX")]
-		nint MaxX { get; set; }
-
-		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler __attribute__((objc_designated_initializer));
-		[Export("initWithViewPortHandler:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(ChartViewPortHandler viewPortHandler);
-
-		// -(void)calcXBoundsWithChart:(id<BarLineScatterCandleBubbleChartDataProvider> _Nonnull)chart xAxisModulus:(NSInteger)xAxisModulus;
-		[Export("calcXBoundsWithChart:xAxisModulus:")]
-		void CalcXBoundsWithChart(IBarLineScatterCandleBubbleChartDataProvider chart, nint xAxisModulus);
-	}
-
-	// @interface ChartDataRendererBase : ChartRendererBase
-	[BaseType(typeof(ChartRendererBase), Name = "_TtC6Charts21ChartDataRendererBase")]
+	// @interface ChartDataRendererBase : ChartRenderer
+	[BaseType(typeof(ChartRenderer), Name = "DataRenderer")]
+	[DisableDefaultCtor]
 	interface ChartDataRendererBase
 	{
 		// @property (nonatomic, strong) ChartAnimator * _Nullable animator;
 		[NullAllowed, Export("animator", ArgumentSemantic.Strong)]
 		ChartAnimator Animator { get; set; }
 
-		// -(instancetype _Nonnull)initWithAnimator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler __attribute__((objc_designated_initializer));
+		// -(instancetype _Nonnull)initWithAnimator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler __attribute__((objc_designated_initializer));
 		[Export("initWithAnimator:viewPortHandler:")]
 		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] ChartAnimator animator, ChartViewPortHandler viewPortHandler);
+		IntPtr Constructor([NullAllowed] ChartAnimator animator, [NullAllowed] ChartViewPortHandler viewPortHandler);
 
-		//// -(void)drawDataWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawDataWithContext:")]
-		//unsafe void DrawDataWithContext(CGContextRef* context);
+		//u-n-safe void DrawDataWithContext(CGContextRef* context);
 
-		//// -(void)drawValuesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawValuesWithContext:")]
-		//unsafe void DrawValuesWithContext(CGContextRef* context);
+		//u-n-safe void DrawValuesWithContext(CGContextRef* context);
 
-		//// -(void)drawExtrasWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawExtrasWithContext:")]
-		//unsafe void DrawExtrasWithContext(CGContextRef* context);
+		//u-n-safe void DrawExtrasWithContext(CGContextRef* context);
 
-		//// -(void)drawHighlightedWithContext:(CGContextRef _Nonnull)context indices:(NSArray<ChartHighlight *> * _Nonnull)indices;
-		//[Export("drawHighlightedWithContext:indices:")]
-		//unsafe void DrawHighlightedWithContext(CGContextRef* context, ChartHighlight[] indices);
+		//u-n-safe void DrawHighlightedWithContext(CGContextRef* context, ChartHighlight[] indices);
+
+		// -(void)initBuffers __attribute__((objc_method_family("none")));
+		[Export("initBuffers")]
+		void InitBuffers();
+
+		// -(BOOL)isDrawingValuesAllowedWithDataProvider:(id<ChartDataProvider> _Nullable)dataProvider;
+		[Export("isDrawingValuesAllowedWithDataProvider:")]
+		bool IsDrawingValuesAllowedWithDataProvider([NullAllowed] IChartDataProvider dataProvider);
 	}
 
-	// @interface BarChartRenderer : ChartDataRendererBase
-	[BaseType(typeof(ChartDataRendererBase), Name = "_TtC6Charts16BarChartRenderer")]
+	// @interface BarLineScatterCandleBubbleChartRenderer : ChartDataRendererBase
+	[BaseType(typeof(ChartDataRendererBase), Name = "BarLineScatterCandleBubbleRenderer")]
+	interface BarLineScatterCandleBubbleChartRenderer
+	{
+		// -(instancetype _Nonnull)initWithAnimator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler __attribute__((objc_designated_initializer));
+		[Export("initWithAnimator:viewPortHandler:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] ChartAnimator animator, [NullAllowed] ChartViewPortHandler viewPortHandler);
+	}
+
+	// @interface BarChartRenderer : BarLineScatterCandleBubbleChartRenderer
+	[BaseType(typeof(BarLineScatterCandleBubbleChartRenderer), Name = "_TtC6Charts16BarChartRenderer")]
 	interface BarChartRenderer
 	{
 		// @property (nonatomic, weak) id<BarChartDataProvider> _Nullable dataProvider;
 		[NullAllowed, Export("dataProvider", ArgumentSemantic.Weak)]
 		IBarChartDataProvider DataProvider { get; set; }
 
-		// -(instancetype _Nonnull)initWithDataProvider:(id<BarChartDataProvider> _Nullable)dataProvider animator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler __attribute__((objc_designated_initializer));
+		// -(instancetype _Nonnull)initWithDataProvider:(id<BarChartDataProvider> _Nullable)dataProvider animator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler __attribute__((objc_designated_initializer));
 		[Export("initWithDataProvider:animator:viewPortHandler:")]
 		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] IBarChartDataProvider dataProvider, [NullAllowed] ChartAnimator animator, ChartViewPortHandler viewPortHandler);
+		IntPtr Constructor([NullAllowed] IBarChartDataProvider dataProvider, [NullAllowed] ChartAnimator animator, [NullAllowed] ChartViewPortHandler viewPortHandler);
 
-		//// -(void)drawDataWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawDataWithContext:")]
-		//unsafe void DrawDataWithContext(CGContextRef* context);
+		// -(void)initBuffers __attribute__((objc_method_family("none")));
+		[Export("initBuffers")]
+		void InitBuffers();
 
-		//// -(void)drawDataSetWithContext:(CGContextRef _Nonnull)context dataSet:(id<IInterfaceBarChartDataSet> _Nonnull)dataSet index:(NSInteger)index;
-		//[Export("drawDataSetWithContext:dataSet:index:")]
-		//unsafe void DrawDataSetWithContext(CGContextRef* context, IInterfaceBarChartDataSet dataSet, nint index);
+		//u-n-safe void DrawDataWithContext(CGContextRef* context);
 
-		//// -(void)drawValuesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawValuesWithContext:")]
-		//unsafe void DrawValuesWithContext(CGContextRef* context);
+		//u-n-safe void DrawDataSetWithContext(CGContextRef* context, IInterfaceBarChartDataSet dataSet, nint index);
 
-		//// -(void)drawValueWithContext:(CGContextRef _Nonnull)context value:(NSString * _Nonnull)value xPos:(CGFloat)xPos yPos:(CGFloat)yPos font:(UIFont * _Nonnull)font align:(NSTextAlignment)align color:(UIColor * _Nonnull)color;
-		//[Export("drawValueWithContext:value:xPos:yPos:font:align:color:")]
-		//unsafe void DrawValueWithContext(CGContextRef* context, string value, nfloat xPos, nfloat yPos, UIFont font, NSTextAlignment align, UIColor color);
+		//u-n-safe void DrawValuesWithContext(CGContextRef* context);
 
-		//// -(void)drawExtrasWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawExtrasWithContext:")]
-		//unsafe void DrawExtrasWithContext(CGContextRef* context);
+		//u-n-safe void DrawValueWithContext(CGContextRef* context, string value, nfloat xPos, nfloat yPos, UIFont font, NSTextAlignment align, UIColor color);
 
-		//// -(void)drawHighlightedWithContext:(CGContextRef _Nonnull)context indices:(NSArray<ChartHighlight *> * _Nonnull)indices;
-		//[Export("drawHighlightedWithContext:indices:")]
-		//unsafe void DrawHighlightedWithContext(CGContextRef* context, ChartHighlight[] indices);
+		//u-n-safe void DrawExtrasWithContext(CGContextRef* context);
 
-		// -(BOOL)passesCheck;
-		[Export("passesCheck")]
-		//[Verify(MethodToProperty)]
-		bool PassesCheck { get; }
-	}
-
-	// @protocol ChartAnimatorDelegate
-	[BaseType(typeof(NSObject), Name = "_TtP6Charts21ChartAnimatorDelegate_")]
-	[Protocol(Name = "_TtP6Charts21ChartAnimatorDelegate_"), Model]
-	interface ChartAnimatorDelegate
-	{
-		// @required -(void)chartAnimatorUpdated:(ChartAnimator * _Nonnull)chartAnimator;
-		[Abstract]
-		[Export("chartAnimatorUpdated:")]
-		void ChartAnimatorUpdated(ChartAnimator chartAnimator);
-
-		// @required -(void)chartAnimatorStopped:(ChartAnimator * _Nonnull)chartAnimator;
-		[Abstract]
-		[Export("chartAnimatorStopped:")]
-		void ChartAnimatorStopped(ChartAnimator chartAnimator);
+		//u-n-safe void DrawHighlightedWithContext(CGContextRef* context, ChartHighlight[] indices);
 	}
 
 	// @interface NSUIView : UIView
@@ -1370,9 +1686,9 @@ namespace iOSCharts
 		[Export("touchesEnded:withEvent:")]
 		void TouchesEnded(NSSet<UITouch> touches, [NullAllowed] UIEvent @event);
 
-		// -(void)touchesCancelled:(NSSet<UITouch *> * _Nullable)touches withEvent:(UIEvent * _Nullable)event;
+		// -(void)touchesCancelled:(NSSet<UITouch *> * _Nonnull)touches withEvent:(UIEvent * _Nullable)event;
 		[Export("touchesCancelled:withEvent:")]
-		void TouchesCancelled([NullAllowed] NSSet<UITouch> touches, [NullAllowed] UIEvent @event);
+		void TouchesCancelled(NSSet<UITouch> touches, [NullAllowed] UIEvent @event);
 
 		// -(void)nsuiTouchesBegan:(NSSet<UITouch *> * _Nonnull)touches withEvent:(UIEvent * _Nullable)event;
 		[Export("nsuiTouchesBegan:withEvent:")]
@@ -1390,10 +1706,6 @@ namespace iOSCharts
 		[Export("nsuiTouchesCancelled:withEvent:")]
 		void NsuiTouchesCancelled([NullAllowed] NSSet<UITouch> touches, [NullAllowed] UIEvent @event);
 
-		// @property (readonly, nonatomic, strong) CALayer * _Nullable nsuiLayer;
-		[NullAllowed, Export("nsuiLayer", ArgumentSemantic.Strong)]
-		CALayer NsuiLayer { get; }
-
 		// -(instancetype _Nonnull)initWithFrame:(CGRect)frame __attribute__((objc_designated_initializer));
 		[Export("initWithFrame:")]
 		[DesignatedInitializer]
@@ -1407,23 +1719,23 @@ namespace iOSCharts
 
 	// @interface ChartViewBase : NSUIView <ChartDataProvider, ChartAnimatorDelegate>
 	[BaseType(typeof(NSUIView), Name = "_TtC6Charts13ChartViewBase")]
-	interface ChartViewBase : ChartDataProvider, ChartAnimatorDelegate
+	interface ChartViewBase : IChartDataProvider, IChartAnimatorDelegate
 	{
 		// @property (readonly, nonatomic, strong) ChartXAxis * _Nonnull xAxis;
 		[Export("xAxis", ArgumentSemantic.Strong)]
 		ChartXAxis XAxis { get; }
 
-		// @property (nonatomic, strong) NSNumberFormatter * _Nonnull _defaultValueFormatter;
-		[Export("_defaultValueFormatter", ArgumentSemantic.Strong)]
-		NSNumberFormatter _defaultValueFormatter { get; set; }
-
-		// @property (nonatomic, strong) ChartData * _Nullable _data;
-		[NullAllowed, Export("_data", ArgumentSemantic.Strong)]
-		ChartData _data { get; set; }
-
 		// @property (nonatomic) BOOL dragDecelerationEnabled;
 		[Export("dragDecelerationEnabled")]
 		bool DragDecelerationEnabled { get; set; }
+
+		// @property (nonatomic, strong) ChartDescription * _Nullable chartDescription;
+		[NullAllowed, Export("chartDescription", ArgumentSemantic.Strong)]
+		ChartDescription ChartDescription { get; set; }
+
+		// @property (copy, nonatomic) NSString * _Nonnull descriptionText;
+		[Export("descriptionText")]
+		string DescriptionText { get; set; }
 
 		// @property (nonatomic, strong) UIFont * _Nullable descriptionFont;
 		[NullAllowed, Export("descriptionFont", ArgumentSemantic.Strong)]
@@ -1437,30 +1749,6 @@ namespace iOSCharts
 		//[Export("descriptionTextAlign", ArgumentSemantic.Assign)]
 		//NSTextAlignment DescriptionTextAlign { get; set; }
 
-		// @property (nonatomic, strong) UIFont * _Null_unspecified infoFont;
-		[Export("infoFont", ArgumentSemantic.Strong)]
-		UIFont InfoFont { get; set; }
-
-		// @property (nonatomic, strong) UIColor * _Null_unspecified infoTextColor;
-		[Export("infoTextColor", ArgumentSemantic.Strong)]
-		UIColor InfoTextColor { get; set; }
-
-		// @property (copy, nonatomic) NSString * _Nonnull descriptionText;
-		[Export("descriptionText")]
-		string DescriptionText { get; set; }
-
-		// @property (nonatomic) BOOL _drawUnitInChart;
-		[Export("_drawUnitInChart")]
-		bool _drawUnitInChart { get; set; }
-
-		// @property (nonatomic, strong) ChartXAxis * _Null_unspecified _xAxis;
-		[Export("_xAxis", ArgumentSemantic.Strong)]
-		ChartXAxis _xAxis { get; set; }
-
-		// @property (nonatomic, strong) ChartLegend * _Null_unspecified _legend;
-		[Export("_legend", ArgumentSemantic.Strong)]
-		ChartLegend _legend { get; set; }
-
 		[Wrap("WeakDelegate")]
 		[NullAllowed]
 		ChartViewDelegate Delegate { get; set; }
@@ -1473,41 +1761,33 @@ namespace iOSCharts
 		[Export("noDataText")]
 		string NoDataText { get; set; }
 
-		// @property (copy, nonatomic) NSString * _Nullable noDataTextDescription;
-		[NullAllowed, Export("noDataTextDescription")]
-		string NoDataTextDescription { get; set; }
+		// @property (nonatomic, strong) UIFont * _Null_unspecified noDataFont;
+		[Export("noDataFont", ArgumentSemantic.Strong)]
+		UIFont NoDataFont { get; set; }
 
-		// @property (nonatomic, strong) ChartLegendRenderer * _Null_unspecified _legendRenderer;
-		[Export("_legendRenderer", ArgumentSemantic.Strong)]
-		ChartLegendRenderer _legendRenderer { get; set; }
+		// @property (nonatomic, strong) UIColor * _Nonnull noDataTextColor;
+		[Export("noDataTextColor", ArgumentSemantic.Strong)]
+		UIColor NoDataTextColor { get; set; }
 
 		// @property (nonatomic, strong) ChartDataRendererBase * _Nullable renderer;
 		[NullAllowed, Export("renderer", ArgumentSemantic.Strong)]
 		ChartDataRendererBase Renderer { get; set; }
 
-		// @property (nonatomic, strong) ChartHighlighter * _Nullable highlighter;
+		// @property (nonatomic, strong) id<IInterfaceChartHighlighter> _Nullable highlighter;
 		[NullAllowed, Export("highlighter", ArgumentSemantic.Strong)]
-		ChartHighlighter Highlighter { get; set; }
-
-		// @property (nonatomic, strong) ChartViewPortHandler * _Null_unspecified _viewPortHandler;
-		[Export("_viewPortHandler", ArgumentSemantic.Strong)]
-		ChartViewPortHandler _viewPortHandler { get; set; }
-
-		// @property (nonatomic, strong) ChartAnimator * _Null_unspecified _animator;
-		[Export("_animator", ArgumentSemantic.Strong)]
-		ChartAnimator _animator { get; set; }
-
-		// @property (copy, nonatomic) NSArray<ChartHighlight *> * _Nonnull _indicesToHighlight;
-		[Export("_indicesToHighlight", ArgumentSemantic.Copy)]
-		ChartHighlight[] _indicesToHighlight { get; set; }
+		IInterfaceChartHighlighter Highlighter { get; set; }
 
 		// @property (nonatomic) BOOL drawMarkers;
 		[Export("drawMarkers")]
 		bool DrawMarkers { get; set; }
 
-		// @property (nonatomic, strong) ChartMarker * _Nullable marker;
+		// @property (readonly, nonatomic) BOOL isDrawMarkersEnabled;
+		[Export("isDrawMarkersEnabled")]
+		bool IsDrawMarkersEnabled { get; }
+
+		// @property (nonatomic, strong) id<InterfaceChartMarker> _Nullable marker;
 		[NullAllowed, Export("marker", ArgumentSemantic.Strong)]
-		ChartMarker Marker { get; set; }
+		InterfaceChartMarker Marker { get; set; }
 
 		// @property (nonatomic) CGFloat extraTopOffset;
 		[Export("extraTopOffset")]
@@ -1539,10 +1819,6 @@ namespace iOSCharts
 		//[DesignatedInitializer]
 		//IntPtr Constructor(NSCoder aDecoder);
 
-		// -(void)initialize;
-		[Export("initialize")]
-		void Initialize();
-
 		// @property (nonatomic, strong) ChartData * _Nullable data;
 		[NullAllowed, Export("data", ArgumentSemantic.Strong)]
 		ChartData Data { get; set; }
@@ -1557,32 +1833,15 @@ namespace iOSCharts
 
 		// -(BOOL)isEmpty;
 		[Export("isEmpty")]
-		//[Verify(MethodToProperty)]
 		bool IsEmpty { get; }
 
 		// -(void)notifyDataSetChanged;
 		[Export("notifyDataSetChanged")]
 		void NotifyDataSetChanged();
 
-		// -(void)calculateOffsets;
-		[Export("calculateOffsets")]
-		void CalculateOffsets();
-
-		// -(void)calcMinMax;
-		[Export("calcMinMax")]
-		void CalcMinMax();
-
-		// -(void)calculateFormatterWithMin:(double)min max:(double)max;
-		[Export("calculateFormatterWithMin:max:")]
-		void CalculateFormatterWithMin(double min, double max);
-
 		// -(void)drawRect:(CGRect)rect;
 		[Export("drawRect:")]
 		void DrawRect(CGRect rect);
-
-		//// -(void)drawDescriptionWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawDescriptionWithContext:")]
-		//unsafe void DrawDescriptionWithContext(CGContextRef* context);
 
 		// @property (readonly, copy, nonatomic) NSArray<ChartHighlight *> * _Nonnull highlighted;
 		[Export("highlighted", ArgumentSemantic.Copy)]
@@ -1598,56 +1857,64 @@ namespace iOSCharts
 
 		// -(BOOL)valuesToHighlight;
 		[Export("valuesToHighlight")]
-		//[Verify(MethodToProperty)]
 		bool ValuesToHighlight { get; }
 
 		// -(void)highlightValues:(NSArray<ChartHighlight *> * _Nullable)highs;
 		[Export("highlightValues:")]
 		void HighlightValues([NullAllowed] ChartHighlight[] highs);
 
+		// -(void)highlightValueWithX:(double)x dataSetIndex:(NSInteger)dataSetIndex;
+		[Export("highlightValueWithX:dataSetIndex:")]
+		void HighlightValueWithX(double x, nint dataSetIndex);
+
+		// -(void)highlightValueWithX:(double)x y:(double)y dataSetIndex:(NSInteger)dataSetIndex;
+		[Export("highlightValueWithX:y:dataSetIndex:")]
+		void HighlightValueWithX(double x, double y, nint dataSetIndex);
+
+		// -(void)highlightValueWithX:(double)x dataSetIndex:(NSInteger)dataSetIndex callDelegate:(BOOL)callDelegate;
+		[Export("highlightValueWithX:dataSetIndex:callDelegate:")]
+		void HighlightValueWithX(double x, nint dataSetIndex, bool callDelegate);
+
+		// -(void)highlightValueWithX:(double)x y:(double)y dataSetIndex:(NSInteger)dataSetIndex callDelegate:(BOOL)callDelegate;
+		[Export("highlightValueWithX:y:dataSetIndex:callDelegate:")]
+		void HighlightValueWithX(double x, double y, nint dataSetIndex, bool callDelegate);
+
 		// -(void)highlightValue:(ChartHighlight * _Nullable)highlight;
 		[Export("highlightValue:")]
 		void HighlightValue([NullAllowed] ChartHighlight highlight);
 
-		// -(void)highlightValueWithXIndex:(NSInteger)xIndex dataSetIndex:(NSInteger)dataSetIndex;
-		[Export("highlightValueWithXIndex:dataSetIndex:")]
-		void HighlightValueWithXIndex(nint xIndex, nint dataSetIndex);
+		// -(void)highlightValue:(ChartHighlight * _Nullable)highlight callDelegate:(BOOL)callDelegate;
+		[Export("highlightValue:callDelegate:")]
+		void HighlightValue([NullAllowed] ChartHighlight highlight, bool callDelegate);
 
-		// -(void)highlightValueWithXIndex:(NSInteger)xIndex dataSetIndex:(NSInteger)dataSetIndex callDelegate:(BOOL)callDelegate;
-		[Export("highlightValueWithXIndex:dataSetIndex:callDelegate:")]
-		void HighlightValueWithXIndex(nint xIndex, nint dataSetIndex, bool callDelegate);
-
-		// -(void)highlightValueWithHighlight:(ChartHighlight * _Nullable)highlight callDelegate:(BOOL)callDelegate;
-		[Export("highlightValueWithHighlight:callDelegate:")]
-		void HighlightValueWithHighlight([NullAllowed] ChartHighlight highlight, bool callDelegate);
+		// -(ChartHighlight * _Nullable)getHighlightByTouchPoint:(CGPoint)pt;
+		[Export("getHighlightByTouchPoint:")]
+		[return: NullAllowed]
+		ChartHighlight GetHighlightByTouchPoint(CGPoint pt);
 
 		// @property (nonatomic, strong) ChartHighlight * _Nullable lastHighlighted;
 		[NullAllowed, Export("lastHighlighted", ArgumentSemantic.Strong)]
 		ChartHighlight LastHighlighted { get; set; }
 
-		//// -(void)drawMarkersWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawMarkersWithContext:")]
-		//unsafe void DrawMarkersWithContext(CGContextRef* context);
-
-		// -(CGPoint)getMarkerPositionWithEntry:(ChartDataEntry * _Nonnull)entry highlight:(ChartHighlight * _Nonnull)highlight;
-		[Export("getMarkerPositionWithEntry:highlight:")]
-		CGPoint GetMarkerPositionWithEntry(ChartDataEntry entry, ChartHighlight highlight);
+		// -(CGPoint)getMarkerPositionWithHighlight:(ChartHighlight * _Nonnull)highlight;
+		[Export("getMarkerPositionWithHighlight:")]
+		CGPoint GetMarkerPositionWithHighlight(ChartHighlight highlight);
 
 		// @property (readonly, nonatomic, strong) ChartAnimator * _Null_unspecified chartAnimator;
 		[Export("chartAnimator", ArgumentSemantic.Strong)]
 		ChartAnimator ChartAnimator { get; }
 
-		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration yAxisDuration:(NSTimeInterval)yAxisDuration easingX:(CGFloat (^ _Nullable)(NSTimeInterval, NSTimeInterval))easingX easingY:(CGFloat (^ _Nullable)(NSTimeInterval, NSTimeInterval))easingY;
+		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration yAxisDuration:(NSTimeInterval)yAxisDuration easingX:(double (^ _Nullable)(NSTimeInterval, NSTimeInterval))easingX easingY:(double (^ _Nullable)(NSTimeInterval, NSTimeInterval))easingY;
 		[Export("animateWithXAxisDuration:yAxisDuration:easingX:easingY:")]
-		void AnimateWithXAxisDuration(double xAxisDuration, double yAxisDuration, [NullAllowed] Func<double, double, nfloat> easingX, [NullAllowed] Func<double, double, nfloat> easingY);
+		void AnimateWithXAxisDuration(double xAxisDuration, double yAxisDuration, [NullAllowed] Func<double, double, double> easingX, [NullAllowed] Func<double, double, double> easingY);
 
 		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration yAxisDuration:(NSTimeInterval)yAxisDuration easingOptionX:(enum ChartEasingOption)easingOptionX easingOptionY:(enum ChartEasingOption)easingOptionY;
 		[Export("animateWithXAxisDuration:yAxisDuration:easingOptionX:easingOptionY:")]
 		void AnimateWithXAxisDuration(double xAxisDuration, double yAxisDuration, ChartEasingOption easingOptionX, ChartEasingOption easingOptionY);
 
-		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration yAxisDuration:(NSTimeInterval)yAxisDuration easing:(CGFloat (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing;
+		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration yAxisDuration:(NSTimeInterval)yAxisDuration easing:(double (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing;
 		[Export("animateWithXAxisDuration:yAxisDuration:easing:")]
-		void AnimateWithXAxisDuration(double xAxisDuration, double yAxisDuration, [NullAllowed] Func<double, double, nfloat> easing);
+		void AnimateWithXAxisDuration(double xAxisDuration, double yAxisDuration, [NullAllowed] Func<double, double, double> easing);
 
 		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration yAxisDuration:(NSTimeInterval)yAxisDuration easingOption:(enum ChartEasingOption)easingOption;
 		[Export("animateWithXAxisDuration:yAxisDuration:easingOption:")]
@@ -1657,9 +1924,9 @@ namespace iOSCharts
 		[Export("animateWithXAxisDuration:yAxisDuration:")]
 		void AnimateWithXAxisDuration(double xAxisDuration, double yAxisDuration);
 
-		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration easing:(CGFloat (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing;
+		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration easing:(double (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing;
 		[Export("animateWithXAxisDuration:easing:")]
-		void AnimateWithXAxisDuration(double xAxisDuration, [NullAllowed] Func<double, double, nfloat> easing);
+		void AnimateWithXAxisDuration(double xAxisDuration, [NullAllowed] Func<double, double, double> easing);
 
 		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration easingOption:(enum ChartEasingOption)easingOption;
 		[Export("animateWithXAxisDuration:easingOption:")]
@@ -1669,9 +1936,9 @@ namespace iOSCharts
 		[Export("animateWithXAxisDuration:")]
 		void AnimateWithXAxisDuration(double xAxisDuration);
 
-		// -(void)animateWithYAxisDuration:(NSTimeInterval)yAxisDuration easing:(CGFloat (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing;
+		// -(void)animateWithYAxisDuration:(NSTimeInterval)yAxisDuration easing:(double (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing;
 		[Export("animateWithYAxisDuration:easing:")]
-		void AnimateWithYAxisDuration(double yAxisDuration, [NullAllowed] Func<double, double, nfloat> easing);
+		void AnimateWithYAxisDuration(double yAxisDuration, [NullAllowed] Func<double, double, double> easing);
 
 		// -(void)animateWithYAxisDuration:(NSTimeInterval)yAxisDuration easingOption:(enum ChartEasingOption)easingOption;
 		[Export("animateWithYAxisDuration:easingOption:")]
@@ -1697,21 +1964,13 @@ namespace iOSCharts
 		[Export("chartXMin")]
 		double ChartXMin { get; }
 
-		// @property (readonly, nonatomic) NSInteger xValCount;
-		[Export("xValCount")]
-		nint XValCount { get; }
-
-		// @property (readonly, nonatomic) NSInteger valueCount;
-		[Export("valueCount")]
-		nint ValueCount { get; }
+		// @property (readonly, nonatomic) double xRange;
+		[Export("xRange")]
+		double XRange { get; }
 
 		// @property (readonly, nonatomic) CGPoint midPoint;
 		[Export("midPoint")]
 		CGPoint MidPoint { get; }
-
-		// -(void)setDescriptionTextPositionWithX:(CGFloat)x y:(CGFloat)y;
-		[Export("setDescriptionTextPositionWithX:y:")]
-		void SetDescriptionTextPositionWithX(nfloat x, nfloat y);
 
 		// @property (readonly, nonatomic) CGPoint centerOffsets;
 		[Export("centerOffsets")]
@@ -1729,14 +1988,6 @@ namespace iOSCharts
 		[Export("contentRect")]
 		CGRect ContentRect { get; }
 
-		// -(NSString * _Null_unspecified)getXValue:(NSInteger)index;
-		[Export("getXValue:")]
-		string GetXValue(nint index);
-
-		// -(NSArray<ChartDataEntry *> * _Nonnull)getEntriesAtIndex:(NSInteger)xIndex;
-		[Export("getEntriesAtIndex:")]
-		ChartDataEntry[] GetEntriesAtIndex(nint xIndex);
-
 		// @property (readonly, nonatomic, strong) ChartViewPortHandler * _Null_unspecified viewPortHandler;
 		[Export("viewPortHandler", ArgumentSemantic.Strong)]
 		ChartViewPortHandler ViewPortHandler { get; }
@@ -1746,17 +1997,19 @@ namespace iOSCharts
 		[return: NullAllowed]
 		UIImage GetChartImageWithTransparent(bool transparent);
 
-		// -(void)saveToCameraRoll;
-		[Export("saveToCameraRoll")]
-		void SaveToCameraRoll();
+		//u-n-safe void ObserveValueForKeyPath([NullAllowed] string keyPath, [NullAllowed] NSObject @object, [NullAllowed] NSDictionary<NSString, NSObject> change, [NullAllowed] void* context);
 
-		//// -(void)observeValueForKeyPath:(NSString * _Nullable)keyPath ofObject:(id _Nullable)object change:(NSDictionary<NSString *,id> * _Nullable)change context:(void * _Null_unspecified)context;
-		//[Export("observeValueForKeyPath:ofObject:change:context:")]
-		//unsafe void ObserveValueForKeyPath([NullAllowed] string keyPath, [NullAllowed] NSObject @object, [NullAllowed] NSDictionary<NSString, NSObject> change, void* context);
+		// -(void)removeViewportJob:(ChartViewPortJob * _Nonnull)job;
+		[Export("removeViewportJob:")]
+		void RemoveViewportJob(ChartViewPortJob job);
 
 		// -(void)clearAllViewportJobs;
 		[Export("clearAllViewportJobs")]
 		void ClearAllViewportJobs();
+
+		// -(void)addViewportJob:(ChartViewPortJob * _Nonnull)job;
+		[Export("addViewportJob:")]
+		void AddViewportJob(ChartViewPortJob job);
 
 		// @property (readonly, nonatomic) BOOL isDragDecelerationEnabled;
 		[Export("isDragDecelerationEnabled")]
@@ -1766,13 +2019,21 @@ namespace iOSCharts
 		[Export("dragDecelerationFrictionCoef")]
 		nfloat DragDecelerationFrictionCoef { get; set; }
 
-		// -(void)chartAnimatorUpdated:(ChartAnimator * _Nonnull)chartAnimator;
-		[Export("chartAnimatorUpdated:")]
-		void ChartAnimatorUpdated(ChartAnimator chartAnimator);
+		// @property (nonatomic) CGFloat maxHighlightDistance;
+		[Export("maxHighlightDistance")]
+		nfloat MaxHighlightDistance { get; set; }
 
-		// -(void)chartAnimatorStopped:(ChartAnimator * _Nonnull)chartAnimator;
-		[Export("chartAnimatorStopped:")]
-		void ChartAnimatorStopped(ChartAnimator chartAnimator);
+		// @property (readonly, nonatomic) NSInteger maxVisibleCount;
+		[Export("maxVisibleCount")]
+		nint MaxVisibleCount { get; }
+
+		// -(void)animatorUpdated:(ChartAnimator * _Nonnull)chartAnimator;
+		[Export("animatorUpdated:")]
+		void AnimatorUpdated(ChartAnimator chartAnimator);
+
+		// -(void)animatorStopped:(ChartAnimator * _Nonnull)chartAnimator;
+		[Export("animatorStopped:")]
+		void AnimatorStopped(ChartAnimator chartAnimator);
 
 		// -(void)nsuiTouchesBegan:(NSSet<UITouch *> * _Nonnull)touches withEvent:(UIEvent * _Nullable)event;
 		[Export("nsuiTouchesBegan:withEvent:")]
@@ -1795,10 +2056,6 @@ namespace iOSCharts
 	[BaseType(typeof(ChartViewBase), Name = "_TtC6Charts20BarLineChartViewBase")]
 	interface BarLineChartViewBase : BarLineScatterCandleBubbleChartDataProvider, IUIGestureRecognizerDelegate
 	{
-		// @property (nonatomic) NSInteger _maxVisibleValueCount;
-		[Export("_maxVisibleValueCount")]
-		nint _maxVisibleValueCount { get; set; }
-
 		// @property (nonatomic, strong) UIColor * _Nonnull gridBackgroundColor;
 		[Export("gridBackgroundColor", ArgumentSemantic.Strong)]
 		UIColor GridBackgroundColor { get; set; }
@@ -1827,50 +2084,6 @@ namespace iOSCharts
 		[Export("keepPositionOnRotation")]
 		bool KeepPositionOnRotation { get; set; }
 
-		// @property (nonatomic, strong) ChartYAxis * _Null_unspecified _leftAxis;
-		[Export("_leftAxis", ArgumentSemantic.Strong)]
-		ChartYAxis _leftAxis { get; set; }
-
-		// @property (nonatomic, strong) ChartYAxis * _Null_unspecified _rightAxis;
-		[Export("_rightAxis", ArgumentSemantic.Strong)]
-		ChartYAxis _rightAxis { get; set; }
-
-		// @property (nonatomic, strong) ChartYAxisRenderer * _Null_unspecified _leftYAxisRenderer;
-		[Export("_leftYAxisRenderer", ArgumentSemantic.Strong)]
-		ChartYAxisRenderer _leftYAxisRenderer { get; set; }
-
-		// @property (nonatomic, strong) ChartYAxisRenderer * _Null_unspecified _rightYAxisRenderer;
-		[Export("_rightYAxisRenderer", ArgumentSemantic.Strong)]
-		ChartYAxisRenderer _rightYAxisRenderer { get; set; }
-
-		// @property (nonatomic, strong) ChartTransformer * _Null_unspecified _leftAxisTransformer;
-		[Export("_leftAxisTransformer", ArgumentSemantic.Strong)]
-		ChartTransformer _leftAxisTransformer { get; set; }
-
-		// @property (nonatomic, strong) ChartTransformer * _Null_unspecified _rightAxisTransformer;
-		[Export("_rightAxisTransformer", ArgumentSemantic.Strong)]
-		ChartTransformer _rightAxisTransformer { get; set; }
-
-		// @property (nonatomic, strong) ChartXAxisRenderer * _Null_unspecified _xAxisRenderer;
-		[Export("_xAxisRenderer", ArgumentSemantic.Strong)]
-		ChartXAxisRenderer _xAxisRenderer { get; set; }
-
-		// @property (nonatomic, strong) UITapGestureRecognizer * _Null_unspecified _tapGestureRecognizer;
-		[Export("_tapGestureRecognizer", ArgumentSemantic.Strong)]
-		UITapGestureRecognizer _tapGestureRecognizer { get; set; }
-
-		// @property (nonatomic, strong) UITapGestureRecognizer * _Null_unspecified _doubleTapGestureRecognizer;
-		[Export("_doubleTapGestureRecognizer", ArgumentSemantic.Strong)]
-		UITapGestureRecognizer _doubleTapGestureRecognizer { get; set; }
-
-		// @property (nonatomic, strong) UIPinchGestureRecognizer * _Null_unspecified _pinchGestureRecognizer;
-		[Export("_pinchGestureRecognizer", ArgumentSemantic.Strong)]
-		UIPinchGestureRecognizer _pinchGestureRecognizer { get; set; }
-
-		// @property (nonatomic, strong) UIPanGestureRecognizer * _Null_unspecified _panGestureRecognizer;
-		[Export("_panGestureRecognizer", ArgumentSemantic.Strong)]
-		UIPanGestureRecognizer _panGestureRecognizer { get; set; }
-
 		// -(instancetype _Nonnull)initWithFrame:(CGRect)frame __attribute__((objc_designated_initializer));
 		[Export("initWithFrame:")]
 		[DesignatedInitializer]
@@ -1881,49 +2094,15 @@ namespace iOSCharts
 		//[DesignatedInitializer]
 		//IntPtr Constructor(NSCoder aDecoder);
 
-		// -(void)initialize;
-		[Export("initialize")]
-		void Initialize();
-
-		//// -(void)observeValueForKeyPath:(NSString * _Nullable)keyPath ofObject:(id _Nullable)object change:(NSDictionary<NSString *,id> * _Nullable)change context:(void * _Null_unspecified)context;
-		//[Export("observeValueForKeyPath:ofObject:change:context:")]
-		//unsafe void ObserveValueForKeyPath([NullAllowed] string keyPath, [NullAllowed] NSObject @object, [NullAllowed] NSDictionary<NSString, NSObject> change, void* context);
+		//u-n-safe void ObserveValueForKeyPath([NullAllowed] string keyPath, [NullAllowed] NSObject @object, [NullAllowed] NSDictionary<NSString, NSObject> change, [NullAllowed] void* context);
 
 		// -(void)drawRect:(CGRect)rect;
 		[Export("drawRect:")]
 		void DrawRect(CGRect rect);
 
-		// -(void)prepareValuePxMatrix;
-		[Export("prepareValuePxMatrix")]
-		void PrepareValuePxMatrix();
-
-		// -(void)prepareOffsetMatrix;
-		[Export("prepareOffsetMatrix")]
-		void PrepareOffsetMatrix();
-
 		// -(void)notifyDataSetChanged;
 		[Export("notifyDataSetChanged")]
 		void NotifyDataSetChanged();
-
-		// -(void)calcMinMax;
-		[Export("calcMinMax")]
-		void CalcMinMax();
-
-		// -(void)calculateOffsets;
-		[Export("calculateOffsets")]
-		void CalculateOffsets();
-
-		// -(void)calcModulus;
-		[Export("calcModulus")]
-		void CalcModulus();
-
-		// -(CGPoint)getMarkerPositionWithEntry:(ChartDataEntry * _Nonnull)e highlight:(ChartHighlight * _Nonnull)highlight;
-		[Export("getMarkerPositionWithEntry:highlight:")]
-		CGPoint GetMarkerPositionWithEntry(ChartDataEntry e, ChartHighlight highlight);
-
-		//// -(void)drawGridBackgroundWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawGridBackgroundWithContext:")]
-		//unsafe void DrawGridBackgroundWithContext(CGContextRef* context);
 
 		// -(void)stopDeceleration;
 		[Export("stopDeceleration")]
@@ -1945,25 +2124,29 @@ namespace iOSCharts
 		[Export("zoomOut")]
 		void ZoomOut();
 
-		// -(void)zoom:(CGFloat)scaleX scaleY:(CGFloat)scaleY x:(CGFloat)x y:(CGFloat)y;
-		[Export("zoom:scaleY:x:y:")]
-		void Zoom(nfloat scaleX, nfloat scaleY, nfloat x, nfloat y);
+		// -(void)zoomWithScaleX:(CGFloat)scaleX scaleY:(CGFloat)scaleY x:(CGFloat)x y:(CGFloat)y;
+		[Export("zoomWithScaleX:scaleY:x:y:")]
+		void ZoomWithScaleX(nfloat scaleX, nfloat scaleY, nfloat x, nfloat y);
 
-		// -(void)zoom:(CGFloat)scaleX scaleY:(CGFloat)scaleY xIndex:(CGFloat)xIndex yValue:(double)yValue axis:(enum AxisDependency)axis;
-		[Export("zoom:scaleY:xIndex:yValue:axis:")]
-		void Zoom(nfloat scaleX, nfloat scaleY, nfloat xIndex, double yValue, AxisDependency axis);
+		// -(void)zoomWithScaleX:(CGFloat)scaleX scaleY:(CGFloat)scaleY xValue:(double)xValue yValue:(double)yValue axis:(enum AxisDependency)axis;
+		[Export("zoomWithScaleX:scaleY:xValue:yValue:axis:")]
+		void ZoomWithScaleX(nfloat scaleX, nfloat scaleY, double xValue, double yValue, AxisDependency axis);
 
-		// -(void)zoomAndCenterViewAnimatedWithScaleX:(CGFloat)scaleX scaleY:(CGFloat)scaleY xIndex:(CGFloat)xIndex yValue:(double)yValue axis:(enum AxisDependency)axis duration:(NSTimeInterval)duration easing:(CGFloat (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing;
-		[Export("zoomAndCenterViewAnimatedWithScaleX:scaleY:xIndex:yValue:axis:duration:easing:")]
-		void ZoomAndCenterViewAnimatedWithScaleX(nfloat scaleX, nfloat scaleY, nfloat xIndex, double yValue, AxisDependency axis, double duration, [NullAllowed] Func<double, double, nfloat> easing);
+		// -(void)zoomToCenterWithScaleX:(CGFloat)scaleX scaleY:(CGFloat)scaleY;
+		[Export("zoomToCenterWithScaleX:scaleY:")]
+		void ZoomToCenterWithScaleX(nfloat scaleX, nfloat scaleY);
 
-		// -(void)zoomAndCenterViewAnimatedWithScaleX:(CGFloat)scaleX scaleY:(CGFloat)scaleY xIndex:(CGFloat)xIndex yValue:(double)yValue axis:(enum AxisDependency)axis duration:(NSTimeInterval)duration easingOption:(enum ChartEasingOption)easingOption;
-		[Export("zoomAndCenterViewAnimatedWithScaleX:scaleY:xIndex:yValue:axis:duration:easingOption:")]
-		void ZoomAndCenterViewAnimatedWithScaleX(nfloat scaleX, nfloat scaleY, nfloat xIndex, double yValue, AxisDependency axis, double duration, ChartEasingOption easingOption);
+		// -(void)zoomAndCenterViewAnimatedWithScaleX:(CGFloat)scaleX scaleY:(CGFloat)scaleY xValue:(double)xValue yValue:(double)yValue axis:(enum AxisDependency)axis duration:(NSTimeInterval)duration easing:(double (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing;
+		[Export("zoomAndCenterViewAnimatedWithScaleX:scaleY:xValue:yValue:axis:duration:easing:")]
+		void ZoomAndCenterViewAnimatedWithScaleX(nfloat scaleX, nfloat scaleY, double xValue, double yValue, AxisDependency axis, double duration, [NullAllowed] Func<double, double, double> easing);
 
-		// -(void)zoomAndCenterViewAnimatedWithScaleX:(CGFloat)scaleX scaleY:(CGFloat)scaleY xIndex:(CGFloat)xIndex yValue:(double)yValue axis:(enum AxisDependency)axis duration:(NSTimeInterval)duration;
-		[Export("zoomAndCenterViewAnimatedWithScaleX:scaleY:xIndex:yValue:axis:duration:")]
-		void ZoomAndCenterViewAnimatedWithScaleX(nfloat scaleX, nfloat scaleY, nfloat xIndex, double yValue, AxisDependency axis, double duration);
+		// -(void)zoomAndCenterViewAnimatedWithScaleX:(CGFloat)scaleX scaleY:(CGFloat)scaleY xValue:(double)xValue yValue:(double)yValue axis:(enum AxisDependency)axis duration:(NSTimeInterval)duration easingOption:(enum ChartEasingOption)easingOption;
+		[Export("zoomAndCenterViewAnimatedWithScaleX:scaleY:xValue:yValue:axis:duration:easingOption:")]
+		void ZoomAndCenterViewAnimatedWithScaleX(nfloat scaleX, nfloat scaleY, double xValue, double yValue, AxisDependency axis, double duration, ChartEasingOption easingOption);
+
+		// -(void)zoomAndCenterViewAnimatedWithScaleX:(CGFloat)scaleX scaleY:(CGFloat)scaleY xValue:(double)xValue yValue:(double)yValue axis:(enum AxisDependency)axis duration:(NSTimeInterval)duration;
+		[Export("zoomAndCenterViewAnimatedWithScaleX:scaleY:xValue:yValue:axis:duration:")]
+		void ZoomAndCenterViewAnimatedWithScaleX(nfloat scaleX, nfloat scaleY, double xValue, double yValue, AxisDependency axis, double duration);
 
 		// -(void)fitScreen;
 		[Export("fitScreen")]
@@ -1973,61 +2156,73 @@ namespace iOSCharts
 		[Export("setScaleMinima:scaleY:")]
 		void SetScaleMinima(nfloat scaleX, nfloat scaleY);
 
-		// -(void)setVisibleXRangeMaximum:(CGFloat)maxXRange;
+		// @property (readonly, nonatomic) double visibleXRange;
+		[Export("visibleXRange")]
+		double VisibleXRange { get; }
+
+		// -(void)setVisibleXRangeMaximum:(double)maxXRange;
 		[Export("setVisibleXRangeMaximum:")]
-		void SetVisibleXRangeMaximum(nfloat maxXRange);
+		void SetVisibleXRangeMaximum(double maxXRange);
 
-		// -(void)setVisibleXRangeMinimum:(CGFloat)minXRange;
+		// -(void)setVisibleXRangeMinimum:(double)minXRange;
 		[Export("setVisibleXRangeMinimum:")]
-		void SetVisibleXRangeMinimum(nfloat minXRange);
+		void SetVisibleXRangeMinimum(double minXRange);
 
-		// -(void)setVisibleXRangeWithMinXRange:(CGFloat)minXRange maxXRange:(CGFloat)maxXRange;
+		// -(void)setVisibleXRangeWithMinXRange:(double)minXRange maxXRange:(double)maxXRange;
 		[Export("setVisibleXRangeWithMinXRange:maxXRange:")]
-		void SetVisibleXRangeWithMinXRange(nfloat minXRange, nfloat maxXRange);
+		void SetVisibleXRangeWithMinXRange(double minXRange, double maxXRange);
 
-		// -(void)setVisibleYRangeMaximum:(CGFloat)maxYRange axis:(enum AxisDependency)axis;
+		// -(void)setVisibleYRangeMaximum:(double)maxYRange axis:(enum AxisDependency)axis;
 		[Export("setVisibleYRangeMaximum:axis:")]
-		void SetVisibleYRangeMaximum(nfloat maxYRange, AxisDependency axis);
+		void SetVisibleYRangeMaximum(double maxYRange, AxisDependency axis);
 
-		// -(void)moveViewToX:(CGFloat)xIndex;
+		// -(void)setVisibleYRangeMinimum:(double)minYRange axis:(enum AxisDependency)axis;
+		[Export("setVisibleYRangeMinimum:axis:")]
+		void SetVisibleYRangeMinimum(double minYRange, AxisDependency axis);
+
+		// -(void)setVisibleYRangeWithMinYRange:(double)minYRange maxYRange:(double)maxYRange axis:(enum AxisDependency)axis;
+		[Export("setVisibleYRangeWithMinYRange:maxYRange:axis:")]
+		void SetVisibleYRangeWithMinYRange(double minYRange, double maxYRange, AxisDependency axis);
+
+		// -(void)moveViewToX:(double)xValue;
 		[Export("moveViewToX:")]
-		void MoveViewToX(nfloat xIndex);
+		void MoveViewToX(double xValue);
 
 		// -(void)moveViewToY:(double)yValue axis:(enum AxisDependency)axis;
 		[Export("moveViewToY:axis:")]
 		void MoveViewToY(double yValue, AxisDependency axis);
 
-		// -(void)moveViewToXIndex:(CGFloat)xIndex yValue:(double)yValue axis:(enum AxisDependency)axis;
-		[Export("moveViewToXIndex:yValue:axis:")]
-		void MoveViewToXIndex(nfloat xIndex, double yValue, AxisDependency axis);
+		// -(void)moveViewToXValue:(double)xValue yValue:(double)yValue axis:(enum AxisDependency)axis;
+		[Export("moveViewToXValue:yValue:axis:")]
+		void MoveViewToXValue(double xValue, double yValue, AxisDependency axis);
 
-		// -(void)moveViewToAnimatedWithXIndex:(CGFloat)xIndex yValue:(double)yValue axis:(enum AxisDependency)axis duration:(NSTimeInterval)duration easing:(CGFloat (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing;
-		[Export("moveViewToAnimatedWithXIndex:yValue:axis:duration:easing:")]
-		void MoveViewToAnimatedWithXIndex(nfloat xIndex, double yValue, AxisDependency axis, double duration, [NullAllowed] Func<double, double, nfloat> easing);
+		// -(void)moveViewToAnimatedWithXValue:(double)xValue yValue:(double)yValue axis:(enum AxisDependency)axis duration:(NSTimeInterval)duration easing:(double (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing;
+		[Export("moveViewToAnimatedWithXValue:yValue:axis:duration:easing:")]
+		void MoveViewToAnimatedWithXValue(double xValue, double yValue, AxisDependency axis, double duration, [NullAllowed] Func<double, double, double> easing);
 
-		// -(void)moveViewToAnimatedWithXIndex:(CGFloat)xIndex yValue:(double)yValue axis:(enum AxisDependency)axis duration:(NSTimeInterval)duration easingOption:(enum ChartEasingOption)easingOption;
-		[Export("moveViewToAnimatedWithXIndex:yValue:axis:duration:easingOption:")]
-		void MoveViewToAnimatedWithXIndex(nfloat xIndex, double yValue, AxisDependency axis, double duration, ChartEasingOption easingOption);
+		// -(void)moveViewToAnimatedWithXValue:(double)xValue yValue:(double)yValue axis:(enum AxisDependency)axis duration:(NSTimeInterval)duration easingOption:(enum ChartEasingOption)easingOption;
+		[Export("moveViewToAnimatedWithXValue:yValue:axis:duration:easingOption:")]
+		void MoveViewToAnimatedWithXValue(double xValue, double yValue, AxisDependency axis, double duration, ChartEasingOption easingOption);
 
-		// -(void)moveViewToAnimatedWithXIndex:(CGFloat)xIndex yValue:(double)yValue axis:(enum AxisDependency)axis duration:(NSTimeInterval)duration;
-		[Export("moveViewToAnimatedWithXIndex:yValue:axis:duration:")]
-		void MoveViewToAnimatedWithXIndex(nfloat xIndex, double yValue, AxisDependency axis, double duration);
+		// -(void)moveViewToAnimatedWithXValue:(double)xValue yValue:(double)yValue axis:(enum AxisDependency)axis duration:(NSTimeInterval)duration;
+		[Export("moveViewToAnimatedWithXValue:yValue:axis:duration:")]
+		void MoveViewToAnimatedWithXValue(double xValue, double yValue, AxisDependency axis, double duration);
 
-		// -(void)centerViewToXIndex:(CGFloat)xIndex yValue:(double)yValue axis:(enum AxisDependency)axis;
-		[Export("centerViewToXIndex:yValue:axis:")]
-		void CenterViewToXIndex(nfloat xIndex, double yValue, AxisDependency axis);
+		// -(void)centerViewToXValue:(double)xValue yValue:(double)yValue axis:(enum AxisDependency)axis;
+		[Export("centerViewToXValue:yValue:axis:")]
+		void CenterViewToXValue(double xValue, double yValue, AxisDependency axis);
 
-		// -(void)centerViewToAnimatedWithXIndex:(CGFloat)xIndex yValue:(double)yValue axis:(enum AxisDependency)axis duration:(NSTimeInterval)duration easing:(CGFloat (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing;
-		[Export("centerViewToAnimatedWithXIndex:yValue:axis:duration:easing:")]
-		void CenterViewToAnimatedWithXIndex(nfloat xIndex, double yValue, AxisDependency axis, double duration, [NullAllowed] Func<double, double, nfloat> easing);
+		// -(void)centerViewToAnimatedWithXValue:(double)xValue yValue:(double)yValue axis:(enum AxisDependency)axis duration:(NSTimeInterval)duration easing:(double (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing;
+		[Export("centerViewToAnimatedWithXValue:yValue:axis:duration:easing:")]
+		void CenterViewToAnimatedWithXValue(double xValue, double yValue, AxisDependency axis, double duration, [NullAllowed] Func<double, double, double> easing);
 
-		// -(void)centerViewToAnimatedWithXIndex:(CGFloat)xIndex yValue:(double)yValue axis:(enum AxisDependency)axis duration:(NSTimeInterval)duration easingOption:(enum ChartEasingOption)easingOption;
-		[Export("centerViewToAnimatedWithXIndex:yValue:axis:duration:easingOption:")]
-		void CenterViewToAnimatedWithXIndex(nfloat xIndex, double yValue, AxisDependency axis, double duration, ChartEasingOption easingOption);
+		// -(void)centerViewToAnimatedWithXValue:(double)xValue yValue:(double)yValue axis:(enum AxisDependency)axis duration:(NSTimeInterval)duration easingOption:(enum ChartEasingOption)easingOption;
+		[Export("centerViewToAnimatedWithXValue:yValue:axis:duration:easingOption:")]
+		void CenterViewToAnimatedWithXValue(double xValue, double yValue, AxisDependency axis, double duration, ChartEasingOption easingOption);
 
-		// -(void)centerViewToAnimatedWithXIndex:(CGFloat)xIndex yValue:(double)yValue axis:(enum AxisDependency)axis duration:(NSTimeInterval)duration;
-		[Export("centerViewToAnimatedWithXIndex:yValue:axis:duration:")]
-		void CenterViewToAnimatedWithXIndex(nfloat xIndex, double yValue, AxisDependency axis, double duration);
+		// -(void)centerViewToAnimatedWithXValue:(double)xValue yValue:(double)yValue axis:(enum AxisDependency)axis duration:(NSTimeInterval)duration;
+		[Export("centerViewToAnimatedWithXValue:yValue:axis:duration:")]
+		void CenterViewToAnimatedWithXValue(double xValue, double yValue, AxisDependency axis, double duration);
 
 		// -(void)setViewPortOffsetsWithLeft:(CGFloat)left top:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom;
 		[Export("setViewPortOffsetsWithLeft:top:right:bottom:")]
@@ -2037,13 +2232,13 @@ namespace iOSCharts
 		[Export("resetViewPortOffsets")]
 		void ResetViewPortOffsets();
 
-		// -(CGFloat)getDeltaY:(enum AxisDependency)axis;
-		[Export("getDeltaY:")]
-		nfloat GetDeltaY(AxisDependency axis);
+		// -(double)getAxisRangeWithAxis:(enum AxisDependency)axis;
+		[Export("getAxisRangeWithAxis:")]
+		double GetAxisRangeWithAxis(AxisDependency axis);
 
-		// -(CGPoint)getPosition:(ChartDataEntry * _Nonnull)e axis:(enum AxisDependency)axis;
-		[Export("getPosition:axis:")]
-		CGPoint GetPosition(ChartDataEntry e, AxisDependency axis);
+		// -(CGPoint)getPositionWithEntry:(ChartDataEntry * _Nonnull)e axis:(enum AxisDependency)axis;
+		[Export("getPositionWithEntry:axis:")]
+		CGPoint GetPositionWithEntry(ChartDataEntry e, AxisDependency axis);
 
 		// @property (nonatomic) BOOL dragEnabled;
 		[Export("dragEnabled")]
@@ -2089,14 +2284,6 @@ namespace iOSCharts
 		[Export("isHighlightPerDragEnabled")]
 		bool IsHighlightPerDragEnabled { get; }
 
-		// @property (nonatomic) BOOL highlightFullBarEnabled;
-		[Export("highlightFullBarEnabled")]
-		bool HighlightFullBarEnabled { get; set; }
-
-		// @property (readonly, nonatomic) BOOL isHighlightFullBarEnabled;
-		[Export("isHighlightFullBarEnabled")]
-		bool IsHighlightFullBarEnabled { get; }
-
 		// @property (readonly, nonatomic) BOOL isDrawGridBackgroundEnabled;
 		[Export("isDrawGridBackgroundEnabled")]
 		bool IsDrawGridBackgroundEnabled { get; }
@@ -2105,30 +2292,21 @@ namespace iOSCharts
 		[Export("isDrawBordersEnabled")]
 		bool IsDrawBordersEnabled { get; }
 
-		// -(ChartHighlight * _Nullable)getHighlightByTouchPoint:(CGPoint)pt;
-		[Export("getHighlightByTouchPoint:")]
-		[return: NullAllowed]
-		ChartHighlight GetHighlightByTouchPoint(CGPoint pt);
+		// -(CGPoint)valueForTouchPointWithPoint:(CGPoint)pt axis:(enum AxisDependency)axis;
+		[Export("valueForTouchPointWithPoint:axis:")]
+		CGPoint ValueForTouchPointWithPoint(CGPoint pt, AxisDependency axis);
 
-		// -(CGPoint)getValueByTouchPointWithPt:(CGPoint)pt axis:(enum AxisDependency)axis;
-		[Export("getValueByTouchPointWithPt:axis:")]
-		CGPoint GetValueByTouchPointWithPt(CGPoint pt, AxisDependency axis);
+		// -(CGPoint)pixelForValuesWithX:(double)x y:(double)y axis:(enum AxisDependency)axis;
+		[Export("pixelForValuesWithX:y:axis:")]
+		CGPoint PixelForValuesWithX(double x, double y, AxisDependency axis);
 
-		// -(CGPoint)getPixelForValue:(double)x y:(double)y axis:(enum AxisDependency)axis;
-		[Export("getPixelForValue:y:axis:")]
-		CGPoint GetPixelForValue(double x, double y, AxisDependency axis);
+		// -(ChartDataEntry * _Null_unspecified)getEntryByTouchPointWithPoint:(CGPoint)pt;
+		[Export("getEntryByTouchPointWithPoint:")]
+		ChartDataEntry GetEntryByTouchPointWithPoint(CGPoint pt);
 
-		// -(CGFloat)getYValueByTouchPointWithPt:(CGPoint)pt axis:(enum AxisDependency)axis;
-		[Export("getYValueByTouchPointWithPt:axis:")]
-		nfloat GetYValueByTouchPointWithPt(CGPoint pt, AxisDependency axis);
-
-		// -(ChartDataEntry * _Null_unspecified)getEntryByTouchPoint:(CGPoint)pt;
-		[Export("getEntryByTouchPoint:")]
-		ChartDataEntry GetEntryByTouchPoint(CGPoint pt);
-
-		// -(id<IInterfaceBarLineScatterCandleBubbleChartDataSet> _Null_unspecified)getDataSetByTouchPoint:(CGPoint)pt;
-		[Export("getDataSetByTouchPoint:")]
-		IInterfaceBarLineScatterCandleBubbleChartDataSet GetDataSetByTouchPoint(CGPoint pt);
+		// -(id<IInterfaceBarLineScatterCandleBubbleChartDataSet> _Null_unspecified)getDataSetByTouchPointWithPoint:(CGPoint)pt;
+		[Export("getDataSetByTouchPointWithPoint:")]
+		IInterfaceBarLineScatterCandleBubbleChartDataSet GetDataSetByTouchPointWithPoint(CGPoint pt);
 
 		// @property (readonly, nonatomic) CGFloat scaleX;
 		[Export("scaleX")]
@@ -2206,79 +2384,67 @@ namespace iOSCharts
 		[Export("isAutoScaleMinMaxEnabled")]
 		bool IsAutoScaleMinMaxEnabled { get; }
 
-		// -(void)setYAxisMinWidth:(enum AxisDependency)which width:(CGFloat)width;
+		// -(void)setYAxisMinWidth:(enum AxisDependency)axis width:(CGFloat)width;
 		[Export("setYAxisMinWidth:width:")]
-		void SetYAxisMinWidth(AxisDependency which, nfloat width);
+		void SetYAxisMinWidth(AxisDependency axis, nfloat width);
 
-		// -(CGFloat)getYAxisMinWidth:(enum AxisDependency)which;
+		// -(CGFloat)getYAxisMinWidth:(enum AxisDependency)axis;
 		[Export("getYAxisMinWidth:")]
-		nfloat GetYAxisMinWidth(AxisDependency which);
+		nfloat GetYAxisMinWidth(AxisDependency axis);
 
-		// -(void)setYAxisMaxWidth:(enum AxisDependency)which width:(CGFloat)width;
+		// -(void)setYAxisMaxWidth:(enum AxisDependency)axis width:(CGFloat)width;
 		[Export("setYAxisMaxWidth:width:")]
-		void SetYAxisMaxWidth(AxisDependency which, nfloat width);
+		void SetYAxisMaxWidth(AxisDependency axis, nfloat width);
 
-		// -(CGFloat)getYAxisMaxWidth:(enum AxisDependency)which;
+		// -(CGFloat)getYAxisMaxWidth:(enum AxisDependency)axis;
 		[Export("getYAxisMaxWidth:")]
-		nfloat GetYAxisMaxWidth(AxisDependency which);
+		nfloat GetYAxisMaxWidth(AxisDependency axis);
 
-		// -(CGFloat)getYAxisWidth:(enum AxisDependency)which;
+		// -(CGFloat)getYAxisWidth:(enum AxisDependency)axis;
 		[Export("getYAxisWidth:")]
-		nfloat GetYAxisWidth(AxisDependency which);
+		nfloat GetYAxisWidth(AxisDependency axis);
 
-		// -(ChartTransformer * _Nonnull)getTransformer:(enum AxisDependency)which;
-		[Export("getTransformer:")]
-		ChartTransformer GetTransformer(AxisDependency which);
+		// -(ChartTransformer * _Nonnull)getTransformerForAxis:(enum AxisDependency)axis;
+		[Export("getTransformerForAxis:")]
+		ChartTransformer GetTransformerForAxis(AxisDependency axis);
 
-		// @property (nonatomic) NSInteger maxVisibleValueCount;
-		[Export("maxVisibleValueCount")]
-		nint MaxVisibleValueCount { get; set; }
+		// @property (nonatomic) NSInteger maxVisibleCount;
+		[Export("maxVisibleCount")]
+		nint MaxVisibleCount { get; set; }
 
-		// -(BOOL)isInverted:(enum AxisDependency)axis;
-		[Export("isInverted:")]
-		bool IsInverted(AxisDependency axis);
+		// -(BOOL)isInvertedWithAxis:(enum AxisDependency)axis;
+		[Export("isInvertedWithAxis:")]
+		bool IsInvertedWithAxis(AxisDependency axis);
 
-		// @property (readonly, nonatomic) NSInteger lowestVisibleXIndex;
-		[Export("lowestVisibleXIndex")]
-		nint LowestVisibleXIndex { get; }
+		// @property (readonly, nonatomic) double lowestVisibleX;
+		[Export("lowestVisibleX")]
+		double LowestVisibleX { get; }
 
-		// @property (readonly, nonatomic) NSInteger highestVisibleXIndex;
-		[Export("highestVisibleXIndex")]
-		nint HighestVisibleXIndex { get; }
+		// @property (readonly, nonatomic) double highestVisibleX;
+		[Export("highestVisibleX")]
+		double HighestVisibleX { get; }
 	}
 
 	// @interface BarChartView : BarLineChartViewBase <BarChartDataProvider>
 	[BaseType(typeof(BarLineChartViewBase), Name = "_TtC6Charts12BarChartView")]
 	interface BarChartView : BarChartDataProvider
 	{
-		// -(void)initialize;
-		[Export("initialize")]
-		void Initialize();
-
-		// -(void)calcMinMax;
-		[Export("calcMinMax")]
-		void CalcMinMax();
-
 		// -(ChartHighlight * _Nullable)getHighlightByTouchPoint:(CGPoint)pt;
 		[Export("getHighlightByTouchPoint:")]
 		[return: NullAllowed]
 		ChartHighlight GetHighlightByTouchPoint(CGPoint pt);
 
-		// -(CGRect)getBarBounds:(BarChartDataEntry * _Nonnull)e;
-		[Export("getBarBounds:")]
-		CGRect GetBarBounds(BarChartDataEntry e);
+		// -(CGRect)getBarBoundsWithEntry:(BarChartDataEntry * _Nonnull)e;
+		[Export("getBarBoundsWithEntry:")]
+		CGRect GetBarBoundsWithEntry(BarChartDataEntry e);
 
-		// @property (readonly, nonatomic) NSInteger lowestVisibleXIndex;
-		[Export("lowestVisibleXIndex")]
-		nint LowestVisibleXIndex { get; }
+		// -(void)groupBarsFromX:(double)fromX groupSpace:(double)groupSpace barSpace:(double)barSpace;
+		[Export("groupBarsFromX:groupSpace:barSpace:")]
+		void GroupBarsFromX(double fromX, double groupSpace, double barSpace);
 
-		// @property (readonly, nonatomic) NSInteger highestVisibleXIndex;
-		[Export("highestVisibleXIndex")]
-		nint HighestVisibleXIndex { get; }
-
-		// @property (nonatomic) BOOL drawHighlightArrowEnabled;
-		[Export("drawHighlightArrowEnabled")]
-		bool DrawHighlightArrowEnabled { get; set; }
+		// -(void)highlightValueWithX:(double)x dataSetIndex:(NSInteger)dataSetIndex stackIndex:(NSInteger)stackIndex;
+		[Export("highlightValueWithX:dataSetIndex:stackIndex:")]
+		void HighlightValueWithX(double x, nint dataSetIndex, nint stackIndex);
 
 		// @property (nonatomic) BOOL drawValueAboveBarEnabled;
 		[Export("drawValueAboveBarEnabled")]
@@ -2288,13 +2454,21 @@ namespace iOSCharts
 		[Export("drawBarShadowEnabled")]
 		bool DrawBarShadowEnabled { get; set; }
 
+		// @property (nonatomic) BOOL fitBars;
+		[Export("fitBars")]
+		bool FitBars { get; set; }
+
+		// @property (nonatomic) BOOL highlightFullBarEnabled;
+		[Export("highlightFullBarEnabled")]
+		bool HighlightFullBarEnabled { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isHighlightFullBarEnabled;
+		[Export("isHighlightFullBarEnabled")]
+		bool IsHighlightFullBarEnabled { get; }
+
 		// @property (readonly, nonatomic, strong) BarChartData * _Nullable barData;
 		[NullAllowed, Export("barData", ArgumentSemantic.Strong)]
 		BarChartData BarData { get; }
-
-		// @property (readonly, nonatomic) BOOL isDrawHighlightArrowEnabled;
-		[Export("isDrawHighlightArrowEnabled")]
-		bool IsDrawHighlightArrowEnabled { get; }
 
 		// @property (readonly, nonatomic) BOOL isDrawValueAboveBarEnabled;
 		[Export("isDrawValueAboveBarEnabled")]
@@ -2315,14 +2489,85 @@ namespace iOSCharts
 		//IntPtr Constructor(NSCoder aDecoder);
 	}
 
+	interface IInterfaceChartHighlighter { }
+
+	// @protocol IInterfaceChartHighlighter <NSObject>
+	[Protocol, Model]
+	[BaseType(typeof(NSObject), Name = "IHighlighter")]
+	interface InterfaceChartHighlighter
+	{
+		// @required -(ChartHighlight * _Nullable)getHighlightWithX:(CGFloat)x y:(CGFloat)y;
+		[Abstract]
+		[Export("getHighlightWithX:y:")]
+		[return: NullAllowed]
+		ChartHighlight Y(nfloat x, nfloat y);
+	}
+
+	// @interface ChartHighlighter : NSObject <IInterfaceChartHighlighter>
+	[BaseType(typeof(NSObject), Name = "_TtC6Charts16ChartHighlighter")]
+	[DisableDefaultCtor]
+	interface ChartHighlighter : IInterfaceChartHighlighter
+	{
+		// @property (nonatomic, weak) id<ChartDataProvider> _Nullable chart;
+		[NullAllowed, Export("chart", ArgumentSemantic.Weak)]
+		IChartDataProvider Chart { get; set; }
+
+		// -(instancetype _Nonnull)initWithChart:(id<ChartDataProvider> _Nonnull)chart __attribute__((objc_designated_initializer));
+		[Export("initWithChart:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(IChartDataProvider chart);
+
+		// -(ChartHighlight * _Nullable)getHighlightWithX:(CGFloat)x y:(CGFloat)y;
+		[Export("getHighlightWithX:y:")]
+		[return: NullAllowed]
+		ChartHighlight GetHighlightWithX(nfloat x, nfloat y);
+
+		// -(CGPoint)getValsForTouchWithX:(CGFloat)x y:(CGFloat)y;
+		[Export("getValsForTouchWithX:y:")]
+		CGPoint GetValsForTouchWithX(nfloat x, nfloat y);
+
+		// -(ChartHighlight * _Nullable)getHighlightWithXValue:(double)xVal x:(CGFloat)x y:(CGFloat)y;
+		[Export("getHighlightWithXValue:x:y:")]
+		[return: NullAllowed]
+		ChartHighlight GetHighlightWithXValue(double xVal, nfloat x, nfloat y);
+
+		// -(NSArray<ChartHighlight *> * _Nonnull)getHighlightsWithXValue:(double)xValue x:(CGFloat)x y:(CGFloat)y;
+		[Export("getHighlightsWithXValue:x:y:")]
+		ChartHighlight[] GetHighlightsWithXValue(double xValue, nfloat x, nfloat y);
+	}
+
+	// @interface BarChartHighlighter : ChartHighlighter
+	[BaseType(typeof(ChartHighlighter), Name = "BarHighlighter")]
+	interface BarChartHighlighter
+	{
+		// -(ChartHighlight * _Nullable)getHighlightWithX:(CGFloat)x y:(CGFloat)y;
+		[Export("getHighlightWithX:y:")]
+		[return: NullAllowed]
+		ChartHighlight GetHighlightWithX(nfloat x, nfloat y);
+
+		// -(ChartHighlight * _Nullable)getStackedHighlightWithHigh:(ChartHighlight * _Nonnull)high set:(id<IInterfaceBarChartDataSet> _Nonnull)set xValue:(double)xValue yValue:(double)yValue;
+		[Export("getStackedHighlightWithHigh:set:xValue:yValue:")]
+		[return: NullAllowed]
+		ChartHighlight GetStackedHighlightWithHigh(ChartHighlight high, IInterfaceBarChartDataSet set, double xValue, double yValue);
+
+		// -(NSInteger)getClosestStackIndexWithRanges:(NSArray<ChartRange *> * _Nullable)ranges value:(double)value;
+		[Export("getClosestStackIndexWithRanges:value:")]
+		nint GetClosestStackIndexWithRanges([NullAllowed] ChartRange[] ranges, double value);
+
+		// -(instancetype _Nonnull)initWithChart:(id<ChartDataProvider> _Nonnull)chart __attribute__((objc_designated_initializer));
+		[Export("initWithChart:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(IChartDataProvider chart);
+	}
+
 	// @interface BubbleChartData : BarLineScatterCandleBubbleChartData
 	[BaseType(typeof(BarLineScatterCandleBubbleChartData), Name = "_TtC6Charts15BubbleChartData")]
 	interface BubbleChartData
 	{
-		// -(instancetype _Nonnull)initWithXVals:(NSArray<NSObject *> * _Nullable)xVals dataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nullable)dataSets __attribute__((objc_designated_initializer));
-		[Export("initWithXVals:dataSets:")]
+		// -(instancetype _Nonnull)initWithDataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nullable)dataSets __attribute__((objc_designated_initializer));
+		[Export("initWithDataSets:")]
 		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] NSObject[] xVals, [NullAllowed] IInterfaceChartDataSet[] dataSets);
+		IntPtr Constructor([NullAllowed] IInterfaceChartDataSet[] dataSets);
 
 		// -(void)setHighlightCircleWidth:(CGFloat)width;
 		[Export("setHighlightCircleWidth:")]
@@ -2337,19 +2582,17 @@ namespace iOSCharts
 		[Export("size")]
 		nfloat Size { get; set; }
 
-		// -(instancetype _Nonnull)initWithXIndex:(NSInteger)xIndex value:(double)value size:(CGFloat)size __attribute__((objc_designated_initializer));
-		[Export("initWithXIndex:value:size:")]
+		// -(instancetype _Nonnull)initWithX:(double)x y:(double)y size:(CGFloat)size __attribute__((objc_designated_initializer));
+		[Export("initWithX:y:size:")]
 		[DesignatedInitializer]
-		IntPtr Constructor(nint xIndex, double value, nfloat size);
+		IntPtr Constructor(double x, double y, nfloat size);
 
-		// -(instancetype _Nonnull)initWithXIndex:(NSInteger)xIndex value:(double)value size:(CGFloat)size data:(id _Nullable)data __attribute__((objc_designated_initializer));
-		[Export("initWithXIndex:value:size:data:")]
+		// -(instancetype _Nonnull)initWithX:(double)x y:(double)y size:(CGFloat)size data:(id _Nullable)data __attribute__((objc_designated_initializer));
+		[Export("initWithX:y:size:data:")]
 		[DesignatedInitializer]
-		IntPtr Constructor(nint xIndex, double value, nfloat size, [NullAllowed] NSObject data);
+		IntPtr Constructor(double x, double y, nfloat size, [NullAllowed] NSObject data);
 
-		//// -(id _Nonnull)copyWithZone:(struct _NSZone * _Null_unspecified)zone;
-		//[Export("copyWithZone:")]
-		//unsafe NSObject CopyWithZone(_NSZone* zone);
+		//u-n-safe NSObject CopyWithZone([NullAllowed] _NSZone* zone);
 	}
 
 	interface IBubbleChartDataProvider { }
@@ -2364,20 +2607,12 @@ namespace iOSCharts
 		BubbleChartData BubbleData { get; }
 	}
 
-	// @protocol InterfaceBubbleChartDataSet <IInterfaceBarLineScatterCandleBubbleChartDataSet>
-	[Protocol(Name = "_TtP6Charts19IBubbleChartDataSet_"), Model]
+	interface IInterfaceBubbleChartDataSet { }
+
+	// @protocol IInterfaceBubbleChartDataSet <IInterfaceBarLineScatterCandleBubbleChartDataSet>
+	[Protocol(Name = "_TtP6Charts19IInterfaceBubbleChartDataSet_"), Model]
 	interface InterfaceBubbleChartDataSet : InterfaceBarLineScatterCandleBubbleChartDataSet
 	{
-		// @required @property (readonly, nonatomic) double xMin;
-		[Abstract]
-		[Export("xMin")]
-		double XMin { get; }
-
-		// @required @property (readonly, nonatomic) double xMax;
-		[Abstract]
-		[Export("xMax")]
-		double XMax { get; }
-
 		// @required @property (readonly, nonatomic) CGFloat maxSize;
 		[Abstract]
 		[Export("maxSize")]
@@ -2394,30 +2629,10 @@ namespace iOSCharts
 		nfloat HighlightCircleWidth { get; set; }
 	}
 
-	// @interface BubbleChartDataSet : BarLineScatterCandleBubbleChartDataSet <InterfaceBubbleChartDataSet>
+	// @interface BubbleChartDataSet : BarLineScatterCandleBubbleChartDataSet <IInterfaceBubbleChartDataSet>
 	[BaseType(typeof(BarLineScatterCandleBubbleChartDataSet), Name = "_TtC6Charts18BubbleChartDataSet")]
 	interface BubbleChartDataSet : InterfaceBubbleChartDataSet
 	{
-		// @property (nonatomic) double _xMax;
-		[Export("_xMax")]
-		double _xMax { get; set; }
-
-		// @property (nonatomic) double _xMin;
-		[Export("_xMin")]
-		double _xMin { get; set; }
-
-		// @property (nonatomic) CGFloat _maxSize;
-		[Export("_maxSize")]
-		nfloat _maxSize { get; set; }
-
-		// @property (readonly, nonatomic) double xMin;
-		[Export("xMin")]
-		double XMin { get; }
-
-		// @property (readonly, nonatomic) double xMax;
-		[Export("xMax")]
-		double XMax { get; }
-
 		// @property (readonly, nonatomic) CGFloat maxSize;
 		[Export("maxSize")]
 		nfloat MaxSize { get; }
@@ -2430,74 +2645,58 @@ namespace iOSCharts
 		[Export("isNormalizeSizeEnabled")]
 		bool IsNormalizeSizeEnabled { get; }
 
-		// -(void)calcMinMaxWithStart:(NSInteger)start end:(NSInteger)end;
-		[Export("calcMinMaxWithStart:end:")]
-		void CalcMinMaxWithStart(nint start, nint end);
+		// -(void)calcMinMaxWithEntry:(ChartDataEntry * _Nonnull)e;
+		[Export("calcMinMaxWithEntry:")]
+		void CalcMinMaxWithEntry(ChartDataEntry e);
 
 		// @property (nonatomic) CGFloat highlightCircleWidth;
 		[Export("highlightCircleWidth")]
 		nfloat HighlightCircleWidth { get; set; }
 
-		//// -(id _Nonnull)copyWithZone:(struct _NSZone * _Null_unspecified)zone;
-		//[Export("copyWithZone:")]
-		//unsafe NSObject CopyWithZone(_NSZone* zone);
+		//u-n-safe NSObject CopyWithZone([NullAllowed] _NSZone* zone);
 
 		// -(instancetype _Nonnull)initWithLabel:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
 		[Export("initWithLabel:")]
 		[DesignatedInitializer]
 		IntPtr Constructor([NullAllowed] string label);
 
-		// -(instancetype _Nonnull)initWithYVals:(NSArray<ChartDataEntry *> * _Nullable)yVals label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
-		[Export("initWithYVals:label:")]
+		// -(instancetype _Nonnull)initWithValues:(NSArray<ChartDataEntry *> * _Nullable)values label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
+		[Export("initWithValues:label:")]
 		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] ChartDataEntry[] yVals, [NullAllowed] string label);
+		IntPtr Constructor([NullAllowed] ChartDataEntry[] values, [NullAllowed] string label);
 	}
 
-	// @interface BubbleChartRenderer : ChartDataRendererBase
-	[BaseType(typeof(ChartDataRendererBase), Name = "_TtC6Charts19BubbleChartRenderer")]
+	// @interface BubbleChartRenderer : BarLineScatterCandleBubbleChartRenderer
+	[BaseType(typeof(BarLineScatterCandleBubbleChartRenderer), Name = "_TtC6Charts19BubbleChartRenderer")]
 	interface BubbleChartRenderer
 	{
 		// @property (nonatomic, weak) id<BubbleChartDataProvider> _Nullable dataProvider;
 		[NullAllowed, Export("dataProvider", ArgumentSemantic.Weak)]
 		IBubbleChartDataProvider DataProvider { get; set; }
 
-		// -(instancetype _Nonnull)initWithDataProvider:(id<BubbleChartDataProvider> _Nullable)dataProvider animator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler __attribute__((objc_designated_initializer));
+		// -(instancetype _Nonnull)initWithDataProvider:(id<BubbleChartDataProvider> _Nullable)dataProvider animator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler __attribute__((objc_designated_initializer));
 		[Export("initWithDataProvider:animator:viewPortHandler:")]
 		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] IBubbleChartDataProvider dataProvider, [NullAllowed] ChartAnimator animator, ChartViewPortHandler viewPortHandler);
+		IntPtr Constructor([NullAllowed] IBubbleChartDataProvider dataProvider, [NullAllowed] ChartAnimator animator, [NullAllowed] ChartViewPortHandler viewPortHandler);
 
-		//// -(void)drawDataWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawDataWithContext:")]
-		//unsafe void DrawDataWithContext(CGContextRef* context);
+		//u-n-safe void DrawDataWithContext(CGContextRef* context);
 
-		//// -(void)drawDataSetWithContext:(CGContextRef _Nonnull)context dataSet:(id<InterfaceBubbleChartDataSet> _Nonnull)dataSet;
-		//[Export("drawDataSetWithContext:dataSet:")]
-		//unsafe void DrawDataSetWithContext(CGContextRef* context, InterfaceBubbleChartDataSet dataSet);
+		//u-n-safe void DrawDataSetWithContext(CGContextRef* context, IInterfaceBubbleChartDataSet dataSet);
 
-		//// -(void)drawValuesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawValuesWithContext:")]
-		//unsafe void DrawValuesWithContext(CGContextRef* context);
+		//u-n-safe void DrawValuesWithContext(CGContextRef* context);
 
-		//// -(void)drawExtrasWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawExtrasWithContext:")]
-		//unsafe void DrawExtrasWithContext(CGContextRef* context);
+		//u-n-safe void DrawExtrasWithContext(CGContextRef* context);
 
-		//// -(void)drawHighlightedWithContext:(CGContextRef _Nonnull)context indices:(NSArray<ChartHighlight *> * _Nonnull)indices;
-		//[Export("drawHighlightedWithContext:indices:")]
-		//unsafe void DrawHighlightedWithContext(CGContextRef* context, ChartHighlight[] indices);
+		//u-n-safe void DrawHighlightedWithContext(CGContextRef* context, ChartHighlight[] indices);
 	}
 
 	// @interface BubbleChartView : BarLineChartViewBase <BubbleChartDataProvider>
 	[BaseType(typeof(BarLineChartViewBase), Name = "_TtC6Charts15BubbleChartView")]
-	interface BubbleChartView : BubbleChartDataProvider
+	interface BubbleChartView : IBubbleChartDataProvider
 	{
-		// -(void)initialize;
+		// -(void)initialize __attribute__((objc_method_family("none")));
 		[Export("initialize")]
 		void Initialize();
-
-		// -(void)calcMinMax;
-		[Export("calcMinMax")]
-		void CalcMinMax();
 
 		// @property (readonly, nonatomic, strong) BubbleChartData * _Nullable bubbleData;
 		[NullAllowed, Export("bubbleData", ArgumentSemantic.Strong)]
@@ -2507,7 +2706,6 @@ namespace iOSCharts
 		[Export("initWithFrame:")]
 		[DesignatedInitializer]
 		IntPtr Constructor(CGRect frame);
-
 
 		//// -(instancetype _Nullable)initWithCoder:(NSCoder * _Nonnull)aDecoder __attribute__((objc_designated_initializer));
 		//[Export("initWithCoder:")]
@@ -2519,10 +2717,10 @@ namespace iOSCharts
 	[BaseType(typeof(BarLineScatterCandleBubbleChartData), Name = "_TtC6Charts15CandleChartData")]
 	interface CandleChartData
 	{
-		// -(instancetype _Nonnull)initWithXVals:(NSArray<NSObject *> * _Nullable)xVals dataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nullable)dataSets __attribute__((objc_designated_initializer));
-		[Export("initWithXVals:dataSets:")]
+		// -(instancetype _Nonnull)initWithDataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nullable)dataSets __attribute__((objc_designated_initializer));
+		[Export("initWithDataSets:")]
 		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] NSObject[] xVals, [NullAllowed] IInterfaceChartDataSet[] dataSets);
+		IntPtr Constructor([NullAllowed] IInterfaceChartDataSet[] dataSets);
 	}
 
 	// @interface CandleChartDataEntry : ChartDataEntry
@@ -2545,15 +2743,15 @@ namespace iOSCharts
 		[Export("open")]
 		double Open { get; set; }
 
-		// -(instancetype _Nonnull)initWithXIndex:(NSInteger)xIndex shadowH:(double)shadowH shadowL:(double)shadowL open:(double)open close:(double)close __attribute__((objc_designated_initializer));
-		[Export("initWithXIndex:shadowH:shadowL:open:close:")]
+		// -(instancetype _Nonnull)initWithX:(double)x shadowH:(double)shadowH shadowL:(double)shadowL open:(double)open close:(double)close __attribute__((objc_designated_initializer));
+		[Export("initWithX:shadowH:shadowL:open:close:")]
 		[DesignatedInitializer]
-		IntPtr Constructor(nint xIndex, double shadowH, double shadowL, double open, double close);
+		IntPtr Constructor(double x, double shadowH, double shadowL, double open, double close);
 
-		// -(instancetype _Nonnull)initWithXIndex:(NSInteger)xIndex shadowH:(double)shadowH shadowL:(double)shadowL open:(double)open close:(double)close data:(id _Nullable)data __attribute__((objc_designated_initializer));
-		[Export("initWithXIndex:shadowH:shadowL:open:close:data:")]
+		// -(instancetype _Nonnull)initWithX:(double)x shadowH:(double)shadowH shadowL:(double)shadowL open:(double)open close:(double)close data:(id _Nullable)data __attribute__((objc_designated_initializer));
+		[Export("initWithX:shadowH:shadowL:open:close:data:")]
 		[DesignatedInitializer]
-		IntPtr Constructor(nint xIndex, double shadowH, double shadowL, double open, double close, [NullAllowed] NSObject data);
+		IntPtr Constructor(double x, double shadowH, double shadowL, double open, double close, [NullAllowed] NSObject data);
 
 		// @property (readonly, nonatomic) double shadowRange;
 		[Export("shadowRange")]
@@ -2563,13 +2761,11 @@ namespace iOSCharts
 		[Export("bodyRange")]
 		double BodyRange { get; }
 
-		// @property (nonatomic) double value;
-		[Export("value")]
-		double Value { get; set; }
+		// @property (nonatomic) double y;
+		[Export("y")]
+		double Y { get; set; }
 
-		//// -(id _Nonnull)copyWithZone:(struct _NSZone * _Null_unspecified)zone;
-		//[Export("copyWithZone:")]
-		//unsafe NSObject CopyWithZone(_NSZone* zone);
+		//u-n-safe NSObject CopyWithZone([NullAllowed] _NSZone* zone);
 	}
 
 	interface ICandleChartDataProvider { }
@@ -2587,7 +2783,7 @@ namespace iOSCharts
 	interface IInterfaceLineScatterCandleRadarChartDataSet { }
 
 	// @protocol IInterfaceLineScatterCandleRadarChartDataSet <IInterfaceBarLineScatterCandleBubbleChartDataSet>
-	[Protocol(Name = "_TtP6Charts35ILineScatterCandleRadarChartDataSet_"), Model]
+	[Protocol(Name = "_TtP6Charts35IInterfaceLineScatterCandleRadarChartDataSet_"), Model]
 	interface InterfaceLineScatterCandleRadarChartDataSet : InterfaceBarLineScatterCandleBubbleChartDataSet
 	{
 		// @required @property (nonatomic) BOOL drawHorizontalHighlightIndicatorEnabled;
@@ -2616,8 +2812,10 @@ namespace iOSCharts
 		void SetDrawHighlightIndicators(bool enabled);
 	}
 
-	// @protocol InterfaceCandleChartDataSet <IInterfaceLineScatterCandleRadarChartDataSet>
-	[Protocol(Name = "_TtP6Charts19ICandleChartDataSet_"), Model]
+	interface IInterfaceCandleChartDataSet { }
+
+	// @protocol IInterfaceCandleChartDataSet <IInterfaceLineScatterCandleRadarChartDataSet>
+	[Protocol(Name = "_TtP6Charts19IInterfaceCandleChartDataSet_"), Model]
 	interface InterfaceCandleChartDataSet : InterfaceLineScatterCandleRadarChartDataSet
 	{
 		// @required @property (nonatomic) CGFloat barSpace;
@@ -2710,33 +2908,35 @@ namespace iOSCharts
 		[Export("setDrawHighlightIndicators:")]
 		void SetDrawHighlightIndicators(bool enabled);
 
-		//// -(id _Nonnull)copyWithZone:(struct _NSZone * _Null_unspecified)zone;
-		//[Export("copyWithZone:")]
-		//unsafe NSObject CopyWithZone(_NSZone* zone);
+		//u-n-safe NSObject CopyWithZone([NullAllowed] _NSZone* zone);
 
 		// -(instancetype _Nonnull)initWithLabel:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
 		[Export("initWithLabel:")]
 		[DesignatedInitializer]
 		IntPtr Constructor([NullAllowed] string label);
 
-		// -(instancetype _Nonnull)initWithYVals:(NSArray<ChartDataEntry *> * _Nullable)yVals label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
-		[Export("initWithYVals:label:")]
+		// -(instancetype _Nonnull)initWithValues:(NSArray<ChartDataEntry *> * _Nullable)values label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
+		[Export("initWithValues:label:")]
 		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] ChartDataEntry[] yVals, [NullAllowed] string label);
+		IntPtr Constructor([NullAllowed] ChartDataEntry[] values, [NullAllowed] string label);
 	}
 
-	// @interface CandleChartDataSet : LineScatterCandleRadarChartDataSet <InterfaceCandleChartDataSet>
+	// @interface CandleChartDataSet : LineScatterCandleRadarChartDataSet <IInterfaceCandleChartDataSet>
 	[BaseType(typeof(LineScatterCandleRadarChartDataSet), Name = "_TtC6Charts18CandleChartDataSet")]
 	interface CandleChartDataSet : InterfaceCandleChartDataSet
 	{
-		// -(instancetype _Nonnull)initWithYVals:(NSArray<ChartDataEntry *> * _Nullable)yVals label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
-		[Export("initWithYVals:label:")]
+		// -(instancetype _Nonnull)initWithValues:(NSArray<ChartDataEntry *> * _Nullable)values label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
+		[Export("initWithValues:label:")]
 		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] ChartDataEntry[] yVals, [NullAllowed] string label);
+		IntPtr Constructor([NullAllowed] ChartDataEntry[] values, [NullAllowed] string label);
 
-		// -(void)calcMinMaxWithStart:(NSInteger)start end:(NSInteger)end;
-		[Export("calcMinMaxWithStart:end:")]
-		void CalcMinMaxWithStart(nint start, nint end);
+		// -(void)calcMinMaxWithEntry:(ChartDataEntry * _Nonnull)e;
+		[Export("calcMinMaxWithEntry:")]
+		void CalcMinMaxWithEntry(ChartDataEntry e);
+
+		// -(void)calcMinMaxYWithEntry:(ChartDataEntry * _Nonnull)e;
+		[Export("calcMinMaxYWithEntry:")]
+		void CalcMinMaxYWithEntry(ChartDataEntry e);
 
 		// @property (nonatomic) CGFloat barSpace;
 		[Export("barSpace")]
@@ -2791,18 +2991,16 @@ namespace iOSCharts
 		bool IsDecreasingFilled { get; }
 	}
 
-	// @interface LineScatterCandleRadarChartRenderer : ChartDataRendererBase
-	[BaseType(typeof(ChartDataRendererBase), Name = "_TtC6Charts35LineScatterCandleRadarChartRenderer")]
+	// @interface LineScatterCandleRadarChartRenderer : BarLineScatterCandleBubbleChartRenderer
+	[BaseType(typeof(BarLineScatterCandleBubbleChartRenderer), Name = "LineScatterCandleRadarRenderer")]
 	interface LineScatterCandleRadarChartRenderer
 	{
-		// -(instancetype _Nonnull)initWithAnimator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler __attribute__((objc_designated_initializer));
+		// -(instancetype _Nonnull)initWithAnimator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler __attribute__((objc_designated_initializer));
 		[Export("initWithAnimator:viewPortHandler:")]
 		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] ChartAnimator animator, ChartViewPortHandler viewPortHandler);
+		IntPtr Constructor([NullAllowed] ChartAnimator animator, [NullAllowed] ChartViewPortHandler viewPortHandler);
 
-		//// -(void)drawHighlightLinesWithContext:(CGContextRef _Nonnull)context point:(CGPoint)point set:(id<IInterfaceLineScatterCandleRadarChartDataSet> _Nonnull)set;
-		//[Export("drawHighlightLinesWithContext:point:set:")]
-		//unsafe void DrawHighlightLinesWithContext(CGContextRef* context, CGPoint point, IInterfaceLineScatterCandleRadarChartDataSet set);
+		//u-n-safe void DrawHighlightLinesWithContext(CGContextRef* context, CGPoint point, IInterfaceLineScatterCandleRadarChartDataSet set);
 	}
 
 	// @interface CandleStickChartRenderer : LineScatterCandleRadarChartRenderer
@@ -2813,44 +3011,26 @@ namespace iOSCharts
 		[NullAllowed, Export("dataProvider", ArgumentSemantic.Weak)]
 		ICandleChartDataProvider DataProvider { get; set; }
 
-		// -(instancetype _Nonnull)initWithDataProvider:(id<CandleChartDataProvider> _Nullable)dataProvider animator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler __attribute__((objc_designated_initializer));
+		// -(instancetype _Nonnull)initWithDataProvider:(id<CandleChartDataProvider> _Nullable)dataProvider animator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler __attribute__((objc_designated_initializer));
 		[Export("initWithDataProvider:animator:viewPortHandler:")]
 		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] ICandleChartDataProvider dataProvider, [NullAllowed] ChartAnimator animator, ChartViewPortHandler viewPortHandler);
+		IntPtr Constructor([NullAllowed] ICandleChartDataProvider dataProvider, [NullAllowed] ChartAnimator animator, [NullAllowed] ChartViewPortHandler viewPortHandler);
 
-		//// -(void)drawDataWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawDataWithContext:")]
-		//unsafe void DrawDataWithContext(CGContextRef* context);
+		//u-n-safe void DrawDataWithContext(CGContextRef* context);
 
-		//// -(void)drawDataSetWithContext:(CGContextRef _Nonnull)context dataSet:(id<InterfaceCandleChartDataSet> _Nonnull)dataSet;
-		//[Export("drawDataSetWithContext:dataSet:")]
-		//unsafe void DrawDataSetWithContext(CGContextRef* context, InterfaceCandleChartDataSet dataSet);
+		//u-n-safe void DrawDataSetWithContext(CGContextRef* context, IInterfaceCandleChartDataSet dataSet);
 
-		//// -(void)drawValuesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawValuesWithContext:")]
-		//unsafe void DrawValuesWithContext(CGContextRef* context);
+		//u-n-safe void DrawValuesWithContext(CGContextRef* context);
 
-		//// -(void)drawExtrasWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawExtrasWithContext:")]
-		//unsafe void DrawExtrasWithContext(CGContextRef* context);
+		//u-n-safe void DrawExtrasWithContext(CGContextRef* context);
 
-		//// -(void)drawHighlightedWithContext:(CGContextRef _Nonnull)context indices:(NSArray<ChartHighlight *> * _Nonnull)indices;
-		//[Export("drawHighlightedWithContext:indices:")]
-		//unsafe void DrawHighlightedWithContext(CGContextRef* context, ChartHighlight[] indices);
+		//u-n-safe void DrawHighlightedWithContext(CGContextRef* context, ChartHighlight[] indices);
 	}
 
 	// @interface CandleStickChartView : BarLineChartViewBase <CandleChartDataProvider>
 	[BaseType(typeof(BarLineChartViewBase), Name = "_TtC6Charts20CandleStickChartView")]
-	interface CandleStickChartView : CandleChartDataProvider
+	interface CandleStickChartView : ICandleChartDataProvider
 	{
-		// -(void)initialize;
-		[Export("initialize")]
-		void Initialize();
-
-		// -(void)calcMinMax;
-		[Export("calcMinMax")]
-		void CalcMinMax();
-
 		// @property (readonly, nonatomic, strong) CandleChartData * _Nullable candleData;
 		[NullAllowed, Export("candleData", ArgumentSemantic.Strong)]
 		CandleChartData CandleData { get; }
@@ -2866,284 +3046,6 @@ namespace iOSCharts
 		//IntPtr Constructor(NSCoder aDecoder);
 	}
 
-	// @interface ChartAnimator : NSObject
-	[BaseType(typeof(NSObject), Name = "_TtC6Charts13ChartAnimator")]
-	interface ChartAnimator
-	{
-		[Wrap("WeakDelegate")]
-		[NullAllowed]
-		ChartAnimatorDelegate Delegate { get; set; }
-
-		// @property (nonatomic, weak) id<ChartAnimatorDelegate> _Nullable delegate;
-		[NullAllowed, Export("delegate", ArgumentSemantic.Weak)]
-		NSObject WeakDelegate { get; set; }
-
-		// @property (copy, nonatomic) void (^ _Nullable)(void) updateBlock;
-		[NullAllowed, Export("updateBlock", ArgumentSemantic.Copy)]
-		Action UpdateBlock { get; set; }
-
-		// @property (copy, nonatomic) void (^ _Nullable)(void) stopBlock;
-		[NullAllowed, Export("stopBlock", ArgumentSemantic.Copy)]
-		Action StopBlock { get; set; }
-
-		// @property (nonatomic) CGFloat phaseX;
-		[Export("phaseX")]
-		nfloat PhaseX { get; set; }
-
-		// @property (nonatomic) CGFloat phaseY;
-		[Export("phaseY")]
-		nfloat PhaseY { get; set; }
-
-		// -(void)stop;
-		[Export("stop")]
-		void Stop();
-
-		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration yAxisDuration:(NSTimeInterval)yAxisDuration easingX:(CGFloat (^ _Nullable)(NSTimeInterval, NSTimeInterval))easingX easingY:(CGFloat (^ _Nullable)(NSTimeInterval, NSTimeInterval))easingY;
-		[Export("animateWithXAxisDuration:yAxisDuration:easingX:easingY:")]
-		void AnimateWithXAxisDuration(double xAxisDuration, double yAxisDuration, [NullAllowed] Func<double, double, nfloat> easingX, [NullAllowed] Func<double, double, nfloat> easingY);
-
-		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration yAxisDuration:(NSTimeInterval)yAxisDuration easingOptionX:(enum ChartEasingOption)easingOptionX easingOptionY:(enum ChartEasingOption)easingOptionY;
-		[Export("animateWithXAxisDuration:yAxisDuration:easingOptionX:easingOptionY:")]
-		void AnimateWithXAxisDuration(double xAxisDuration, double yAxisDuration, ChartEasingOption easingOptionX, ChartEasingOption easingOptionY);
-
-		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration yAxisDuration:(NSTimeInterval)yAxisDuration easing:(CGFloat (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing;
-		[Export("animateWithXAxisDuration:yAxisDuration:easing:")]
-		void AnimateWithXAxisDuration(double xAxisDuration, double yAxisDuration, [NullAllowed] Func<double, double, nfloat> easing);
-
-		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration yAxisDuration:(NSTimeInterval)yAxisDuration easingOption:(enum ChartEasingOption)easingOption;
-		[Export("animateWithXAxisDuration:yAxisDuration:easingOption:")]
-		void AnimateWithXAxisDuration(double xAxisDuration, double yAxisDuration, ChartEasingOption easingOption);
-
-		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration yAxisDuration:(NSTimeInterval)yAxisDuration;
-		[Export("animateWithXAxisDuration:yAxisDuration:")]
-		void AnimateWithXAxisDuration(double xAxisDuration, double yAxisDuration);
-
-		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration easing:(CGFloat (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing;
-		[Export("animateWithXAxisDuration:easing:")]
-		void AnimateWithXAxisDuration(double xAxisDuration, [NullAllowed] Func<double, double, nfloat> easing);
-
-		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration easingOption:(enum ChartEasingOption)easingOption;
-		[Export("animateWithXAxisDuration:easingOption:")]
-		void AnimateWithXAxisDuration(double xAxisDuration, ChartEasingOption easingOption);
-
-		// -(void)animateWithXAxisDuration:(NSTimeInterval)xAxisDuration;
-		[Export("animateWithXAxisDuration:")]
-		void AnimateWithXAxisDuration(double xAxisDuration);
-
-		// -(void)animateWithYAxisDuration:(NSTimeInterval)yAxisDuration easing:(CGFloat (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing;
-		[Export("animateWithYAxisDuration:easing:")]
-		void AnimateWithYAxisDuration(double yAxisDuration, [NullAllowed] Func<double, double, nfloat> easing);
-
-		// -(void)animateWithYAxisDuration:(NSTimeInterval)yAxisDuration easingOption:(enum ChartEasingOption)easingOption;
-		[Export("animateWithYAxisDuration:easingOption:")]
-		void AnimateWithYAxisDuration(double yAxisDuration, ChartEasingOption easingOption);
-
-		// -(void)animateWithYAxisDuration:(NSTimeInterval)yAxisDuration;
-		[Export("animateWithYAxisDuration:")]
-		void AnimateWithYAxisDuration(double yAxisDuration);
-	}
-
-	// @interface ChartComponentBase : NSObject
-	[BaseType(typeof(NSObject), Name = "_TtC6Charts18ChartComponentBase")]
-	interface ChartComponentBase
-	{
-		// @property (nonatomic) BOOL enabled;
-		[Export("enabled")]
-		bool Enabled { get; set; }
-
-		// @property (nonatomic) CGFloat xOffset;
-		[Export("xOffset")]
-		nfloat XOffset { get; set; }
-
-		// @property (nonatomic) CGFloat yOffset;
-		[Export("yOffset")]
-		nfloat YOffset { get; set; }
-
-		// @property (readonly, nonatomic) BOOL isEnabled;
-		[Export("isEnabled")]
-		bool IsEnabled { get; }
-	}
-
-	// @interface ChartAxisBase : ChartComponentBase
-	[BaseType(typeof(ChartComponentBase), Name = "_TtC6Charts13ChartAxisBase")]
-	interface ChartAxisBase
-	{
-		// @property (nonatomic, strong) UIFont * _Nonnull labelFont;
-		[Export("labelFont", ArgumentSemantic.Strong)]
-		UIFont LabelFont { get; set; }
-
-		// @property (nonatomic, strong) UIColor * _Nonnull labelTextColor;
-		[Export("labelTextColor", ArgumentSemantic.Strong)]
-		UIColor LabelTextColor { get; set; }
-
-		// @property (nonatomic, strong) UIColor * _Nonnull axisLineColor;
-		[Export("axisLineColor", ArgumentSemantic.Strong)]
-		UIColor AxisLineColor { get; set; }
-
-		// @property (nonatomic) CGFloat axisLineWidth;
-		[Export("axisLineWidth")]
-		nfloat AxisLineWidth { get; set; }
-
-		// @property (nonatomic) CGFloat axisLineDashPhase;
-		[Export("axisLineDashPhase")]
-		nfloat AxisLineDashPhase { get; set; }
-
-		// @property (copy, nonatomic) NSArray<NSNumber *> * _Null_unspecified axisLineDashLengths;
-		[Export("axisLineDashLengths", ArgumentSemantic.Copy)]
-		NSNumber[] AxisLineDashLengths { get; set; }
-
-		// @property (nonatomic, strong) UIColor * _Nonnull gridColor;
-		[Export("gridColor", ArgumentSemantic.Strong)]
-		UIColor GridColor { get; set; }
-
-		// @property (nonatomic) CGFloat gridLineWidth;
-		[Export("gridLineWidth")]
-		nfloat GridLineWidth { get; set; }
-
-		// @property (nonatomic) CGFloat gridLineDashPhase;
-		[Export("gridLineDashPhase")]
-		nfloat GridLineDashPhase { get; set; }
-
-		// @property (copy, nonatomic) NSArray<NSNumber *> * _Null_unspecified gridLineDashLengths;
-		[Export("gridLineDashLengths", ArgumentSemantic.Copy)]
-		NSNumber[] GridLineDashLengths { get; set; }
-
-		// @property (nonatomic) CGLineCap gridLineCap;
-		[Export("gridLineCap", ArgumentSemantic.Assign)]
-		CGLineCap GridLineCap { get; set; }
-
-		// @property (nonatomic) BOOL drawGridLinesEnabled;
-		[Export("drawGridLinesEnabled")]
-		bool DrawGridLinesEnabled { get; set; }
-
-		// @property (nonatomic) BOOL drawAxisLineEnabled;
-		[Export("drawAxisLineEnabled")]
-		bool DrawAxisLineEnabled { get; set; }
-
-		// @property (nonatomic) BOOL drawLabelsEnabled;
-		[Export("drawLabelsEnabled")]
-		bool DrawLabelsEnabled { get; set; }
-
-		// @property (nonatomic) BOOL drawLimitLinesBehindDataEnabled;
-		[Export("drawLimitLinesBehindDataEnabled")]
-		bool DrawLimitLinesBehindDataEnabled { get; set; }
-
-		// @property (nonatomic) BOOL gridAntialiasEnabled;
-		[Export("gridAntialiasEnabled")]
-		bool GridAntialiasEnabled { get; set; }
-
-		// -(NSString * _Nonnull)getLongestLabel;
-		[Export("getLongestLabel")]
-		//[Verify(MethodToProperty)]
-		string LongestLabel { get; }
-
-		// @property (readonly, nonatomic) BOOL isDrawGridLinesEnabled;
-		[Export("isDrawGridLinesEnabled")]
-		bool IsDrawGridLinesEnabled { get; }
-
-		// @property (readonly, nonatomic) BOOL isDrawAxisLineEnabled;
-		[Export("isDrawAxisLineEnabled")]
-		bool IsDrawAxisLineEnabled { get; }
-
-		// @property (readonly, nonatomic) BOOL isDrawLabelsEnabled;
-		[Export("isDrawLabelsEnabled")]
-		bool IsDrawLabelsEnabled { get; }
-
-		// @property (readonly, nonatomic) BOOL isDrawLimitLinesBehindDataEnabled;
-		[Export("isDrawLimitLinesBehindDataEnabled")]
-		bool IsDrawLimitLinesBehindDataEnabled { get; }
-
-		// @property (nonatomic) BOOL _customAxisMin;
-		[Export("_customAxisMin")]
-		bool _customAxisMin { get; set; }
-
-		// @property (nonatomic) BOOL _customAxisMax;
-		[Export("_customAxisMax")]
-		bool _customAxisMax { get; set; }
-
-		// @property (nonatomic) double _axisMinimum;
-		[Export("_axisMinimum")]
-		double _axisMinimum { get; set; }
-
-		// @property (nonatomic) double _axisMaximum;
-		[Export("_axisMaximum")]
-		double _axisMaximum { get; set; }
-
-		// @property (nonatomic) double axisRange;
-		[Export("axisRange")]
-		double AxisRange { get; set; }
-
-		// -(void)addLimitLine:(ChartLimitLine * _Nonnull)line;
-		[Export("addLimitLine:")]
-		void AddLimitLine(ChartLimitLine line);
-
-		// -(void)removeLimitLine:(ChartLimitLine * _Nonnull)line;
-		[Export("removeLimitLine:")]
-		void RemoveLimitLine(ChartLimitLine line);
-
-		// -(void)removeAllLimitLines;
-		[Export("removeAllLimitLines")]
-		void RemoveAllLimitLines();
-
-		// @property (readonly, copy, nonatomic) NSArray<ChartLimitLine *> * _Nonnull limitLines;
-		[Export("limitLines", ArgumentSemantic.Copy)]
-		ChartLimitLine[] LimitLines { get; }
-
-		// -(void)resetCustomAxisMin;
-		[Export("resetCustomAxisMin")]
-		void ResetCustomAxisMin();
-
-		// @property (readonly, nonatomic) BOOL isAxisMinCustom;
-		[Export("isAxisMinCustom")]
-		bool IsAxisMinCustom { get; }
-
-		// -(void)resetCustomAxisMax;
-		[Export("resetCustomAxisMax")]
-		void ResetCustomAxisMax();
-
-		// @property (readonly, nonatomic) BOOL isAxisMaxCustom;
-		[Export("isAxisMaxCustom")]
-		bool IsAxisMaxCustom { get; }
-
-		// @property (nonatomic) double axisMinValue;
-		[Export("axisMinValue")]
-		double AxisMinValue { get; set; }
-
-		// @property (nonatomic) double axisMaxValue;
-		[Export("axisMaxValue")]
-		double AxisMaxValue { get; set; }
-	}
-
-	// @interface ChartAxisRendererBase : ChartRendererBase
-	[BaseType(typeof(ChartRendererBase), Name = "_TtC6Charts21ChartAxisRendererBase")]
-	interface ChartAxisRendererBase
-	{
-		// @property (nonatomic, strong) ChartTransformer * _Null_unspecified transformer;
-		[Export("transformer", ArgumentSemantic.Strong)]
-		ChartTransformer Transformer { get; set; }
-
-		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler transformer:(ChartTransformer * _Null_unspecified)transformer __attribute__((objc_designated_initializer));
-		[Export("initWithViewPortHandler:transformer:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(ChartViewPortHandler viewPortHandler, ChartTransformer transformer);
-
-		//// -(void)renderAxisLabelsWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderAxisLabelsWithContext:")]
-		//unsafe void RenderAxisLabelsWithContext(CGContextRef* context);
-
-		//// -(void)renderGridLinesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderGridLinesWithContext:")]
-		//unsafe void RenderGridLinesWithContext(CGContextRef* context);
-
-		//// -(void)renderAxisLineWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderAxisLineWithContext:")]
-		//unsafe void RenderAxisLineWithContext(CGContextRef* context);
-
-		//// -(void)renderLimitLinesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderLimitLinesWithContext:")]
-		//unsafe void RenderLimitLinesWithContext(CGContextRef* context);
-	}
-
 	// @interface ChartColorTemplates : NSObject
 	[BaseType(typeof(NSObject), Name = "_TtC6Charts19ChartColorTemplates")]
 	interface ChartColorTemplates
@@ -3151,37 +3053,31 @@ namespace iOSCharts
 		// +(NSArray<UIColor *> * _Nonnull)liberty;
 		[Static]
 		[Export("liberty")]
-		//[Verify(MethodToProperty)]
 		UIColor[] Liberty { get; }
 
 		// +(NSArray<UIColor *> * _Nonnull)joyful;
 		[Static]
 		[Export("joyful")]
-		//[Verify(MethodToProperty)]
 		UIColor[] Joyful { get; }
 
 		// +(NSArray<UIColor *> * _Nonnull)pastel;
 		[Static]
 		[Export("pastel")]
-		//[Verify(MethodToProperty)]
 		UIColor[] Pastel { get; }
 
 		// +(NSArray<UIColor *> * _Nonnull)colorful;
 		[Static]
 		[Export("colorful")]
-		//[Verify(MethodToProperty)]
 		UIColor[] Colorful { get; }
 
 		// +(NSArray<UIColor *> * _Nonnull)vordiplom;
 		[Static]
 		[Export("vordiplom")]
-		//[Verify(MethodToProperty)]
 		UIColor[] Vordiplom { get; }
 
 		// +(NSArray<UIColor *> * _Nonnull)material;
 		[Static]
 		[Export("material")]
-		//[Verify(MethodToProperty)]
 		UIColor[] Material { get; }
 
 		// +(UIColor * _Nonnull)colorFromString:(NSString * _Nonnull)colorString;
@@ -3190,62 +3086,446 @@ namespace iOSCharts
 		UIColor ColorFromString(string colorString);
 	}
 
-	// @interface ChartDataBaseFilter : NSObject
-	[BaseType(typeof(NSObject), Name = "_TtC6Charts19ChartDataBaseFilter")]
-	interface ChartDataBaseFilter
+	// @interface ChartLimitLine : ChartComponentBase
+	[BaseType(typeof(ChartComponentBase), Name = "_TtC6Charts14ChartLimitLine")]
+	interface ChartLimitLine
 	{
-		// -(NSArray<ChartDataEntry *> * _Nonnull)filter:(NSArray<ChartDataEntry *> * _Nonnull)points;
-		[Export("filter:")]
-		ChartDataEntry[] Filter(ChartDataEntry[] points);
-	}
+		// @property (nonatomic) double limit;
+		[Export("limit")]
+		double Limit { get; set; }
 
-	// @interface ChartDataApproximatorFilter : ChartDataBaseFilter
-	[BaseType(typeof(ChartDataBaseFilter), Name = "_TtC6Charts27ChartDataApproximatorFilter")]
-	interface ChartDataApproximatorFilter
-	{
-		// @property (nonatomic) enum ApproximatorType type;
-		[Export("type", ArgumentSemantic.Assign)]
-		ApproximatorType Type { get; set; }
+		// @property (nonatomic, strong) UIColor * _Nonnull lineColor;
+		[Export("lineColor", ArgumentSemantic.Strong)]
+		UIColor LineColor { get; set; }
 
-		// @property (nonatomic) double tolerance;
-		[Export("tolerance")]
-		double Tolerance { get; set; }
+		// @property (nonatomic) CGFloat lineDashPhase;
+		[Export("lineDashPhase")]
+		nfloat LineDashPhase { get; set; }
 
-		// @property (nonatomic) double scaleRatio;
-		[Export("scaleRatio")]
-		double ScaleRatio { get; set; }
+		// @property (copy, nonatomic) NSArray<NSNumber *> * _Nullable lineDashLengths;
+		[NullAllowed, Export("lineDashLengths", ArgumentSemantic.Copy)]
+		NSNumber[] LineDashLengths { get; set; }
 
-		// @property (nonatomic) double deltaRatio;
-		[Export("deltaRatio")]
-		double DeltaRatio { get; set; }
+		// @property (nonatomic, strong) UIColor * _Nonnull valueTextColor;
+		[Export("valueTextColor", ArgumentSemantic.Strong)]
+		UIColor ValueTextColor { get; set; }
 
-		// -(instancetype _Nonnull)initWithType:(enum ApproximatorType)type tolerance:(double)tolerance __attribute__((objc_designated_initializer));
-		[Export("initWithType:tolerance:")]
+		// @property (nonatomic, strong) UIFont * _Nonnull valueFont;
+		[Export("valueFont", ArgumentSemantic.Strong)]
+		UIFont ValueFont { get; set; }
+
+		// @property (nonatomic) BOOL drawLabelEnabled;
+		[Export("drawLabelEnabled")]
+		bool DrawLabelEnabled { get; set; }
+
+		// @property (copy, nonatomic) NSString * _Nonnull label;
+		[Export("label")]
+		string Label { get; set; }
+
+		// @property (nonatomic) enum ChartLimitLabelPosition labelPosition;
+		[Export("labelPosition", ArgumentSemantic.Assign)]
+		ChartLimitLabelPosition LabelPosition { get; set; }
+
+		// -(instancetype _Nonnull)initWithLimit:(double)limit __attribute__((objc_designated_initializer));
+		[Export("initWithLimit:")]
 		[DesignatedInitializer]
-		IntPtr Constructor(ApproximatorType type, double tolerance);
+		IntPtr Constructor(double limit);
 
-		// -(void)setup:(enum ApproximatorType)type tolerance:(double)tolerance;
-		[Export("setup:tolerance:")]
-		void Setup(ApproximatorType type, double tolerance);
+		// -(instancetype _Nonnull)initWithLimit:(double)limit label:(NSString * _Nonnull)label __attribute__((objc_designated_initializer));
+		[Export("initWithLimit:label:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(double limit, string label);
 
-		// -(void)setRatios:(double)deltaRatio scaleRatio:(double)scaleRatio;
-		[Export("setRatios:scaleRatio:")]
-		void SetRatios(double deltaRatio, double scaleRatio);
-
-		// -(NSArray<ChartDataEntry *> * _Nonnull)filter:(NSArray<ChartDataEntry *> * _Nonnull)points;
-		[Export("filter:")]
-		ChartDataEntry[] Filter(ChartDataEntry[] points);
-
-		// -(NSArray<ChartDataEntry *> * _Nonnull)filter:(NSArray<ChartDataEntry *> * _Nonnull)points tolerance:(double)tolerance;
-		[Export("filter:tolerance:")]
-		ChartDataEntry[] Filter(ChartDataEntry[] points, double tolerance);
+		// @property (nonatomic) CGFloat lineWidth;
+		[Export("lineWidth")]
+		nfloat LineWidth { get; set; }
 	}
 
-	interface IChartFillFormatter { }
+	interface IChartViewDelegate { }
 
-	// @protocol ChartFillFormatter
-	[Protocol(Name = "_TtP6Charts18ChartFillFormatter_"), Model]
-	interface ChartFillFormatter
+	// @protocol ChartViewDelegate
+	[BaseType(typeof(NSObject), Name = "_TtP6Charts17ChartViewDelegate_")]
+	[Protocol(Name = "_TtP6Charts17ChartViewDelegate_"), Model]
+	interface ChartViewDelegate
+	{
+		// @optional -(void)chartValueSelected:(ChartViewBase * _Nonnull)chartView entry:(ChartDataEntry * _Nonnull)entry highlight:(ChartHighlight * _Nonnull)highlight;
+		[Export("chartValueSelected:entry:highlight:")]
+		void ChartValueSelected(ChartViewBase chartView, ChartDataEntry entry, ChartHighlight highlight);
+
+		// @optional -(void)chartValueNothingSelected:(ChartViewBase * _Nonnull)chartView;
+		[Export("chartValueNothingSelected:")]
+		void ChartValueNothingSelected(ChartViewBase chartView);
+
+		// @optional -(void)chartScaled:(ChartViewBase * _Nonnull)chartView scaleX:(CGFloat)scaleX scaleY:(CGFloat)scaleY;
+		[Export("chartScaled:scaleX:scaleY:")]
+		void ChartScaled(ChartViewBase chartView, nfloat scaleX, nfloat scaleY);
+
+		// @optional -(void)chartTranslated:(ChartViewBase * _Nonnull)chartView dX:(CGFloat)dX dY:(CGFloat)dY;
+		[Export("chartTranslated:dX:dY:")]
+		void ChartTranslated(ChartViewBase chartView, nfloat dX, nfloat dY);
+	}
+
+	interface IInterfaceShapeRenderer { }
+
+	// @protocol InterfaceShapeRenderer <NSObject>
+	[Protocol, Model]
+	[BaseType(typeof(NSObject), Name = "_TtP6Charts14InterfaceShapeRenderer_")]
+	interface InterfaceShapeRenderer
+	{
+		//u-n-safe void DataSet(CGContextRef* context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, CGPoint point, UIColor color);
+	}
+
+	// @interface ChevronDownShapeRenderer : NSObject <InterfaceShapeRenderer>
+	[BaseType(typeof(NSObject), Name = "_TtC6Charts24ChevronDownShapeRenderer")]
+	interface ChevronDownShapeRenderer : IInterfaceShapeRenderer
+	{
+		//u-n-safe void RenderShapeWithContext(CGContextRef* context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, CGPoint point, UIColor color);
+	}
+
+	// @interface ChevronUpShapeRenderer : NSObject <InterfaceShapeRenderer>
+	[BaseType(typeof(NSObject), Name = "_TtC6Charts22ChevronUpShapeRenderer")]
+	interface ChevronUpShapeRenderer : IInterfaceShapeRenderer
+	{
+		//u-n-safe void RenderShapeWithContext(CGContextRef* context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, CGPoint point, UIColor color);
+	}
+
+	// @interface CircleShapeRenderer : NSObject <InterfaceShapeRenderer>
+	[BaseType(typeof(NSObject), Name = "_TtC6Charts19CircleShapeRenderer")]
+	interface CircleShapeRenderer : IInterfaceShapeRenderer
+	{
+		//u-n-safe void RenderShapeWithContext(CGContextRef* context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, CGPoint point, UIColor color);
+	}
+
+	// @interface CombinedChartData : BarLineScatterCandleBubbleChartData
+	[BaseType(typeof(BarLineScatterCandleBubbleChartData), Name = "_TtC6Charts17CombinedChartData")]
+	interface CombinedChartData
+	{
+		// -(instancetype _Nonnull)initWithDataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nullable)dataSets __attribute__((objc_designated_initializer));
+		[Export("initWithDataSets:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] IInterfaceChartDataSet[] dataSets);
+
+		// @property (nonatomic, strong) LineChartData * _Null_unspecified lineData;
+		[Export("lineData", ArgumentSemantic.Strong)]
+		LineChartData LineData { get; set; }
+
+		// @property (nonatomic, strong) BarChartData * _Null_unspecified barData;
+		[Export("barData", ArgumentSemantic.Strong)]
+		BarChartData BarData { get; set; }
+
+		// @property (nonatomic, strong) ScatterChartData * _Null_unspecified scatterData;
+		[Export("scatterData", ArgumentSemantic.Strong)]
+		ScatterChartData ScatterData { get; set; }
+
+		// @property (nonatomic, strong) CandleChartData * _Null_unspecified candleData;
+		[Export("candleData", ArgumentSemantic.Strong)]
+		CandleChartData CandleData { get; set; }
+
+		// @property (nonatomic, strong) BubbleChartData * _Null_unspecified bubbleData;
+		[Export("bubbleData", ArgumentSemantic.Strong)]
+		BubbleChartData BubbleData { get; set; }
+
+		// -(void)calcMinMax;
+		[Export("calcMinMax")]
+		void CalcMinMax();
+
+		// @property (readonly, copy, nonatomic) NSArray<ChartData *> * _Nonnull allData;
+		[Export("allData", ArgumentSemantic.Copy)]
+		ChartData[] AllData { get; }
+
+		// -(ChartData * _Nonnull)dataByIndex:(NSInteger)index;
+		[Export("dataByIndex:")]
+		ChartData DataByIndex(nint index);
+
+		// -(BOOL)removeDataSet:(id<IInterfaceChartDataSet> _Null_unspecified)dataSet;
+		[Export("removeDataSet:")]
+		bool RemoveDataSet(IInterfaceChartDataSet dataSet);
+
+		// -(BOOL)removeDataSetByIndex:(NSInteger)index;
+		[Export("removeDataSetByIndex:")]
+		bool RemoveDataSetByIndex(nint index);
+
+		// -(BOOL)removeEntry:(ChartDataEntry * _Nonnull)entry dataSetIndex:(NSInteger)dataSetIndex;
+		[Export("removeEntry:dataSetIndex:")]
+		bool RemoveEntry(ChartDataEntry entry, nint dataSetIndex);
+
+		// -(BOOL)removeEntryWithXValue:(double)xValue dataSetIndex:(NSInteger)dataSetIndex;
+		[Export("removeEntryWithXValue:dataSetIndex:")]
+		bool RemoveEntryWithXValue(double xValue, nint dataSetIndex);
+
+		// -(void)notifyDataChanged;
+		[Export("notifyDataChanged")]
+		void NotifyDataChanged();
+
+		// -(ChartDataEntry * _Nullable)entryForHighlight:(ChartHighlight * _Nonnull)highlight;
+		[Export("entryForHighlight:")]
+		[return: NullAllowed]
+		ChartDataEntry EntryForHighlight(ChartHighlight highlight);
+	}
+
+	interface IScatterChartDataProvider { }
+
+	// @protocol ScatterChartDataProvider <BarLineScatterCandleBubbleChartDataProvider>
+	[Protocol(Name = "_TtP6Charts24ScatterChartDataProvider_"), Model]
+	interface ScatterChartDataProvider : BarLineScatterCandleBubbleChartDataProvider
+	{
+		// @required @property (readonly, nonatomic, strong) ScatterChartData * _Nullable scatterData;
+		[Abstract]
+		[NullAllowed, Export("scatterData", ArgumentSemantic.Strong)]
+		ScatterChartData ScatterData { get; }
+	}
+
+	interface ILineChartDataProvider { }
+
+	// @protocol LineChartDataProvider <BarLineScatterCandleBubbleChartDataProvider>
+	[Protocol(Name = "_TtP6Charts21LineChartDataProvider_"), Model]
+	interface LineChartDataProvider : BarLineScatterCandleBubbleChartDataProvider
+	{
+		// @required @property (readonly, nonatomic, strong) LineChartData * _Nullable lineData;
+		[Abstract]
+		[NullAllowed, Export("lineData", ArgumentSemantic.Strong)]
+		LineChartData LineData { get; }
+
+		// @required -(ChartYAxis * _Nonnull)getAxis:(enum AxisDependency)axis;
+		[Abstract]
+		[Export("getAxis:")]
+		ChartYAxis GetAxis(AxisDependency axis);
+	}
+
+	interface ICombinedChartDataProvider { }
+
+	// @protocol CombinedChartDataProvider <LineChartDataProvider, BarChartDataProvider, BubbleChartDataProvider, CandleChartDataProvider, ScatterChartDataProvider>
+	[Protocol(Name = "_TtP6Charts25CombinedChartDataProvider_"), Model]
+	interface CombinedChartDataProvider : LineChartDataProvider, BarChartDataProvider, BubbleChartDataProvider, CandleChartDataProvider, ScatterChartDataProvider
+	{
+		// @required @property (readonly, nonatomic, strong) CombinedChartData * _Nullable combinedData;
+		[Abstract]
+		[NullAllowed, Export("combinedData", ArgumentSemantic.Strong)]
+		CombinedChartData CombinedData { get; }
+	}
+
+	// @interface CombinedChartRenderer : ChartDataRendererBase
+	[BaseType(typeof(ChartDataRendererBase), Name = "_TtC6Charts21CombinedChartRenderer")]
+	interface CombinedChartRenderer
+	{
+		// @property (nonatomic, weak) CombinedChartView * _Nullable chart;
+		[NullAllowed, Export("chart", ArgumentSemantic.Weak)]
+		CombinedChartView Chart { get; set; }
+
+		// @property (nonatomic) BOOL drawValueAboveBarEnabled;
+		[Export("drawValueAboveBarEnabled")]
+		bool DrawValueAboveBarEnabled { get; set; }
+
+		// @property (nonatomic) BOOL drawBarShadowEnabled;
+		[Export("drawBarShadowEnabled")]
+		bool DrawBarShadowEnabled { get; set; }
+
+		// -(instancetype _Nonnull)initWithChart:(CombinedChartView * _Nullable)chart animator:(ChartAnimator * _Nonnull)animator viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler __attribute__((objc_designated_initializer));
+		[Export("initWithChart:animator:viewPortHandler:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] CombinedChartView chart, ChartAnimator animator, [NullAllowed] ChartViewPortHandler viewPortHandler);
+
+		// -(void)initBuffers __attribute__((objc_method_family("none")));
+		[Export("initBuffers")]
+		void InitBuffers();
+
+		//u-n-safe void DrawDataWithContext(CGContextRef* context);
+
+		//u-n-safe void DrawValuesWithContext(CGContextRef* context);
+
+		//u-n-safe void DrawExtrasWithContext(CGContextRef* context);
+
+		//u-n-safe void DrawHighlightedWithContext(CGContextRef* context, ChartHighlight[] indices);
+
+		// -(ChartDataRendererBase * _Nullable)getSubRendererWithIndex:(NSInteger)index;
+		[Export("getSubRendererWithIndex:")]
+		[return: NullAllowed]
+		ChartDataRendererBase GetSubRendererWithIndex(nint index);
+
+		// @property (copy, nonatomic) NSArray<ChartDataRendererBase *> * _Nonnull subRenderers;
+		[Export("subRenderers", ArgumentSemantic.Copy)]
+		ChartDataRendererBase[] SubRenderers { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isDrawValueAboveBarEnabled;
+		[Export("isDrawValueAboveBarEnabled")]
+		bool IsDrawValueAboveBarEnabled { get; }
+
+		// @property (readonly, nonatomic) BOOL isDrawBarShadowEnabled;
+		[Export("isDrawBarShadowEnabled")]
+		bool IsDrawBarShadowEnabled { get; }
+	}
+
+	// @interface CombinedChartView : BarLineChartViewBase <CombinedChartDataProvider>
+	[BaseType(typeof(BarLineChartViewBase), Name = "_TtC6Charts17CombinedChartView")]
+	interface CombinedChartView : ICombinedChartDataProvider
+	{
+		// -(void)initialize __attribute__((objc_method_family("none")));
+		[Export("initialize")]
+		void Initialize();
+
+		// @property (nonatomic, strong) ChartData * _Nullable data;
+		[NullAllowed, Export("data", ArgumentSemantic.Strong)]
+		ChartData Data { get; set; }
+
+		// @property (nonatomic, strong) id<InterfaceChartFillFormatter> _Nonnull fillFormatter;
+		[Export("fillFormatter", ArgumentSemantic.Strong)]
+		IInterfaceChartFillFormatter FillFormatter { get; set; }
+
+		// -(ChartHighlight * _Nullable)getHighlightByTouchPoint:(CGPoint)pt;
+		[Export("getHighlightByTouchPoint:")]
+		[return: NullAllowed]
+		ChartHighlight GetHighlightByTouchPoint(CGPoint pt);
+
+		// @property (readonly, nonatomic, strong) CombinedChartData * _Nullable combinedData;
+		[NullAllowed, Export("combinedData", ArgumentSemantic.Strong)]
+		CombinedChartData CombinedData { get; }
+
+		// @property (readonly, nonatomic, strong) LineChartData * _Nullable lineData;
+		[NullAllowed, Export("lineData", ArgumentSemantic.Strong)]
+		LineChartData LineData { get; }
+
+		// @property (readonly, nonatomic, strong) BarChartData * _Nullable barData;
+		[NullAllowed, Export("barData", ArgumentSemantic.Strong)]
+		BarChartData BarData { get; }
+
+		// @property (readonly, nonatomic, strong) ScatterChartData * _Nullable scatterData;
+		[NullAllowed, Export("scatterData", ArgumentSemantic.Strong)]
+		ScatterChartData ScatterData { get; }
+
+		// @property (readonly, nonatomic, strong) CandleChartData * _Nullable candleData;
+		[NullAllowed, Export("candleData", ArgumentSemantic.Strong)]
+		CandleChartData CandleData { get; }
+
+		// @property (readonly, nonatomic, strong) BubbleChartData * _Nullable bubbleData;
+		[NullAllowed, Export("bubbleData", ArgumentSemantic.Strong)]
+		BubbleChartData BubbleData { get; }
+
+		// @property (nonatomic) BOOL drawValueAboveBarEnabled;
+		[Export("drawValueAboveBarEnabled")]
+		bool DrawValueAboveBarEnabled { get; set; }
+
+		// @property (nonatomic) BOOL drawBarShadowEnabled;
+		[Export("drawBarShadowEnabled")]
+		bool DrawBarShadowEnabled { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isDrawValueAboveBarEnabled;
+		[Export("isDrawValueAboveBarEnabled")]
+		bool IsDrawValueAboveBarEnabled { get; }
+
+		// @property (readonly, nonatomic) BOOL isDrawBarShadowEnabled;
+		[Export("isDrawBarShadowEnabled")]
+		bool IsDrawBarShadowEnabled { get; }
+
+		// @property (copy, nonatomic) NSArray<NSNumber *> * _Nonnull drawOrder;
+		[Export("drawOrder", ArgumentSemantic.Copy)]
+		NSNumber[] DrawOrder { get; set; }
+
+		// @property (nonatomic) BOOL highlightFullBarEnabled;
+		[Export("highlightFullBarEnabled")]
+		bool HighlightFullBarEnabled { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isHighlightFullBarEnabled;
+		[Export("isHighlightFullBarEnabled")]
+		bool IsHighlightFullBarEnabled { get; }
+
+		// -(instancetype _Nonnull)initWithFrame:(CGRect)frame __attribute__((objc_designated_initializer));
+		[Export("initWithFrame:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(CGRect frame);
+
+		//// -(instancetype _Nullable)initWithCoder:(NSCoder * _Nonnull)aDecoder __attribute__((objc_designated_initializer));
+		//[Export("initWithCoder:")]
+		//[DesignatedInitializer]
+		//IntPtr Constructor(NSCoder aDecoder);
+	}
+
+	// @interface CombinedChartHighlighter : ChartHighlighter
+	[BaseType(typeof(ChartHighlighter), Name = "CombinedHighlighter")]
+	interface CombinedChartHighlighter
+	{
+		// -(instancetype _Nonnull)initWithChart:(id<CombinedChartDataProvider> _Nonnull)chart barDataProvider:(id<BarChartDataProvider> _Nonnull)barDataProvider __attribute__((objc_designated_initializer));
+		[Export("initWithChart:barDataProvider:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(ICombinedChartDataProvider chart, IBarChartDataProvider barDataProvider);
+
+		// -(NSArray<ChartHighlight *> * _Nonnull)getHighlightsWithXValue:(double)xValue x:(CGFloat)x y:(CGFloat)y;
+		[Export("getHighlightsWithXValue:x:y:")]
+		ChartHighlight[] GetHighlightsWithXValue(double xValue, nfloat x, nfloat y);
+	}
+
+	// @interface CrossShapeRenderer : NSObject <InterfaceShapeRenderer>
+	[BaseType(typeof(NSObject), Name = "_TtC6Charts18CrossShapeRenderer")]
+	interface CrossShapeRenderer : IInterfaceShapeRenderer
+	{
+		//u-n-safe void RenderShapeWithContext(CGContextRef* context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, CGPoint point, UIColor color);
+	}
+
+	// @interface ChartDataApproximator : NSObject
+	[BaseType(typeof(NSObject), Name = "DataApproximator")]
+	interface ChartDataApproximator
+	{
+	}
+
+	interface IInterfaceChartAxisValueFormatter { }
+
+	// @protocol InterfaceChartAxisValueFormatter <NSObject>
+	[Protocol, Model]
+	[BaseType(typeof(NSObject), Name = "IAxisValueFormatter")]
+	interface InterfaceChartAxisValueFormatter
+	{
+		// @required -(NSString * _Nonnull)stringForValue:(double)value axis:(ChartAxisBase * _Nullable)axis;
+		[Abstract]
+		[Export("stringForValue:axis:")]
+		string Axis(double value, [NullAllowed] ChartAxisBase axis);
+	}
+
+	// @interface ChartDefaultAxisValueFormatter : NSObject <InterfaceChartAxisValueFormatter>
+	[BaseType(typeof(NSObject), Name = "DefaultAxisValueFormatter")]
+	interface ChartDefaultAxisValueFormatter : IInterfaceChartAxisValueFormatter
+	{
+		// @property (copy, nonatomic) NSString * _Nonnull (^ _Nullable)(double, ChartAxisBase * _Nullable) block;
+		[NullAllowed, Export("block", ArgumentSemantic.Copy)]
+		Func<double, ChartAxisBase, NSString> Block { get; set; }
+
+		// @property (nonatomic) BOOL hasAutoDecimals;
+		[Export("hasAutoDecimals")]
+		bool HasAutoDecimals { get; set; }
+
+		// @property (nonatomic, strong) NSNumberFormatter * _Nullable formatter;
+		[NullAllowed, Export("formatter", ArgumentSemantic.Strong)]
+		NSNumberFormatter Formatter { get; set; }
+
+		// -(instancetype _Nonnull)initWithFormatter:(NSNumberFormatter * _Nonnull)formatter __attribute__((objc_designated_initializer));
+		[Export("initWithFormatter:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(NSNumberFormatter formatter);
+
+		// -(instancetype _Nonnull)initWithDecimals:(NSInteger)decimals __attribute__((objc_designated_initializer));
+		[Export("initWithDecimals:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(nint decimals);
+
+		// -(instancetype _Nonnull)initWithBlock:(NSString * _Nonnull (^ _Nonnull)(double, ChartAxisBase * _Nullable))block __attribute__((objc_designated_initializer));
+		[Export("initWithBlock:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(Func<double, ChartAxisBase, NSString> block);
+
+		// +(ChartDefaultAxisValueFormatter * _Nullable)withBlock:(NSString * _Nonnull (^ _Nonnull)(double, ChartAxisBase * _Nullable))block;
+		[Static]
+		[Export("withBlock:")]
+		[return: NullAllowed]
+		ChartDefaultAxisValueFormatter WithBlock(Func<double, ChartAxisBase, NSString> block);
+
+		// -(NSString * _Nonnull)stringForValue:(double)value axis:(ChartAxisBase * _Nullable)axis;
+		[Export("stringForValue:axis:")]
+		string StringForValue(double value, [NullAllowed] ChartAxisBase axis);
+	}
+
+	interface IInterfaceChartFillFormatter { }
+
+	// @protocol InterfaceChartFillFormatter
+	[Protocol(Name = "IFillFormatter"), Model]
+	interface InterfaceChartFillFormatter
 	{
 		// @required -(CGFloat)getFillLinePositionWithDataSet:(id<IInterfaceLineChartDataSet> _Nonnull)dataSet dataProvider:(id<LineChartDataProvider> _Nonnull)dataProvider;
 		[Abstract]
@@ -3253,51 +3533,117 @@ namespace iOSCharts
 		nfloat DataProvider(IInterfaceLineChartDataSet dataSet, ILineChartDataProvider dataProvider);
 	}
 
-	// @interface ChartDefaultFillFormatter : NSObject <ChartFillFormatter>
-	[BaseType(typeof(NSObject), Name = "_TtC6Charts25ChartDefaultFillFormatter")]
-	interface ChartDefaultFillFormatter : ChartFillFormatter
+	// @interface ChartDefaultFillFormatter : NSObject <InterfaceChartFillFormatter>
+	[BaseType(typeof(NSObject), Name = "DefaultFillFormatter")]
+	interface ChartDefaultFillFormatter : IInterfaceChartFillFormatter
 	{
-		//// -(CGFloat)getFillLinePositionWithDataSet:(id<IInterfaceLineChartDataSet> _Nonnull)dataSet dataProvider:(id<LineChartDataProvider> _Nonnull)dataProvider;
-		//[Export("getFillLinePositionWithDataSet:dataProvider:")]
-		//nfloat GetFillLinePositionWithDataSet(IInterfaceLineChartDataSet dataSet, ILineChartDataProvider dataProvider);
+		// @property (copy, nonatomic) CGFloat (^ _Nullable)(id<IInterfaceLineChartDataSet> _Nonnull, id<LineChartDataProvider> _Nonnull) block;
+		[NullAllowed, Export("block", ArgumentSemantic.Copy)]
+		Func<IInterfaceLineChartDataSet, ILineChartDataProvider, nfloat> Block { get; set; }
+
+		// -(instancetype _Nonnull)initWithBlock:(CGFloat (^ _Nonnull)(id<IInterfaceLineChartDataSet> _Nonnull, id<LineChartDataProvider> _Nonnull))block __attribute__((objc_designated_initializer));
+		[Export("initWithBlock:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(Func<IInterfaceLineChartDataSet, ILineChartDataProvider, nfloat> block);
+
+		// +(ChartDefaultFillFormatter * _Nullable)withBlock:(CGFloat (^ _Nonnull)(id<IInterfaceLineChartDataSet> _Nonnull, id<LineChartDataProvider> _Nonnull))block;
+		[Static]
+		[Export("withBlock:")]
+		[return: NullAllowed]
+		ChartDefaultFillFormatter WithBlock(Func<IInterfaceLineChartDataSet, ILineChartDataProvider, nfloat> block);
+
+		// -(CGFloat)getFillLinePositionWithDataSet:(id<IInterfaceLineChartDataSet> _Nonnull)dataSet dataProvider:(id<LineChartDataProvider> _Nonnull)dataProvider;
+		[Export("getFillLinePositionWithDataSet:dataProvider:")]
+		nfloat GetFillLinePositionWithDataSet(IInterfaceLineChartDataSet dataSet, ILineChartDataProvider dataProvider);
 	}
 
-	interface IChartXAxisValueFormatter { }
+	interface IInterfaceChartValueFormatter { }
 
-	// @protocol ChartXAxisValueFormatter
-	[Protocol(Name = "_TtP6Charts24ChartXAxisValueFormatter_"), Model]
-	interface ChartXAxisValueFormatter
+	// @protocol InterfaceChartValueFormatter <NSObject>
+	[Protocol, Model]
+	[BaseType(typeof(NSObject), Name = "IValueFormatter")]
+	interface InterfaceChartValueFormatter
 	{
-		// @required -(NSString * _Nonnull)stringForXValue:(NSInteger)index original:(NSString * _Nonnull)original viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler;
+		// @required -(NSString * _Nonnull)stringForValue:(double)value entry:(ChartDataEntry * _Nonnull)entry dataSetIndex:(NSInteger)dataSetIndex viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler;
 		[Abstract]
-		[Export("stringForXValue:original:viewPortHandler:")]
-		string Original(nint index, string original, ChartViewPortHandler viewPortHandler);
+		[Export("stringForValue:entry:dataSetIndex:viewPortHandler:")]
+		string Entry(double value, ChartDataEntry entry, nint dataSetIndex, [NullAllowed] ChartViewPortHandler viewPortHandler);
 	}
 
-	// @interface ChartDefaultXAxisValueFormatter : NSObject <ChartXAxisValueFormatter>
-	[BaseType(typeof(NSObject), Name = "_TtC6Charts31ChartDefaultXAxisValueFormatter")]
-	interface ChartDefaultXAxisValueFormatter : ChartXAxisValueFormatter
+	// @interface ChartDefaultValueFormatter : NSObject <InterfaceChartValueFormatter>
+	[BaseType(typeof(NSObject), Name = "DefaultValueFormatter")]
+	interface ChartDefaultValueFormatter : IInterfaceChartValueFormatter
 	{
-		//// -(NSString * _Nonnull)stringForXValue:(NSInteger)index original:(NSString * _Nonnull)original viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler;
-		//[Export("stringForXValue:original:viewPortHandler:")]
-		//string StringForXValue(nint index, string original, ChartViewPortHandler viewPortHandler);
+		// @property (copy, nonatomic) NSString * _Nonnull (^ _Nullable)(double, ChartDataEntry * _Nonnull, NSInteger, ChartViewPortHandler * _Nullable) block;
+		[NullAllowed, Export("block", ArgumentSemantic.Copy)]
+		Func<double, ChartDataEntry, nint, ChartViewPortHandler, NSString> Block { get; set; }
+
+		// @property (nonatomic) BOOL hasAutoDecimals;
+		[Export("hasAutoDecimals")]
+		bool HasAutoDecimals { get; set; }
+
+		// @property (nonatomic, strong) NSNumberFormatter * _Nullable formatter;
+		[NullAllowed, Export("formatter", ArgumentSemantic.Strong)]
+		NSNumberFormatter Formatter { get; set; }
+
+		// -(instancetype _Nonnull)initWithFormatter:(NSNumberFormatter * _Nonnull)formatter __attribute__((objc_designated_initializer));
+		[Export("initWithFormatter:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(NSNumberFormatter formatter);
+
+		// -(instancetype _Nonnull)initWithDecimals:(NSInteger)decimals __attribute__((objc_designated_initializer));
+		[Export("initWithDecimals:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(nint decimals);
+
+		// -(instancetype _Nonnull)initWithBlock:(NSString * _Nonnull (^ _Nonnull)(double, ChartDataEntry * _Nonnull, NSInteger, ChartViewPortHandler * _Nullable))block __attribute__((objc_designated_initializer));
+		[Export("initWithBlock:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(Func<double, ChartDataEntry, nint, ChartViewPortHandler, NSString> block);
+
+		// +(ChartDefaultValueFormatter * _Nullable)withBlock:(NSString * _Nonnull (^ _Nonnull)(double, ChartDataEntry * _Nonnull, NSInteger, ChartViewPortHandler * _Nullable))block;
+		[Static]
+		[Export("withBlock:")]
+		[return: NullAllowed]
+		ChartDefaultValueFormatter WithBlock(Func<double, ChartDataEntry, nint, ChartViewPortHandler, NSString> block);
+
+		// -(NSString * _Nonnull)stringForValue:(double)value entry:(ChartDataEntry * _Nonnull)entry dataSetIndex:(NSInteger)dataSetIndex viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler;
+		[Export("stringForValue:entry:dataSetIndex:viewPortHandler:")]
+		string StringForValue(double value, ChartDataEntry entry, nint dataSetIndex, [NullAllowed] ChartViewPortHandler viewPortHandler);
+	}
+
+	// @interface ChartDescription : ChartComponentBase
+	[BaseType(typeof(ChartComponentBase), Name = "Description")]
+	interface ChartDescription
+	{
+		// @property (copy, nonatomic) NSString * _Nullable text;
+		[NullAllowed, Export("text")]
+		string Text { get; set; }
+
+		//// @property (nonatomic) NSTextAlignment textAlign;
+		//[Export("textAlign", ArgumentSemantic.Assign)]
+		//NSTextAlignment TextAlign { get; set; }
+
+		// @property (nonatomic, strong) UIFont * _Nonnull font;
+		[Export("font", ArgumentSemantic.Strong)]
+		UIFont Font { get; set; }
+
+		// @property (nonatomic, strong) UIColor * _Nonnull textColor;
+		[Export("textColor", ArgumentSemantic.Strong)]
+		UIColor TextColor { get; set; }
 	}
 
 	// @interface ChartFill : NSObject
-	[BaseType(typeof(NSObject), Name = "_TtC6Charts9ChartFill")]
+	[BaseType(typeof(NSObject), Name = "Fill")]
 	interface ChartFill
 	{
 		// @property (readonly, nonatomic) enum ChartFillType type;
 		[Export("type")]
 		ChartFillType Type { get; }
 
-		//// @property (readonly, nonatomic) CGColorRef _Nullable color;
-		//[NullAllowed, Export("color")]
-		//unsafe CGColorRef* Color { get; }
+		//u-n-safe CGColorRef* Color { get; }
 
-		//// @property (readonly, nonatomic) CGGradientRef _Nullable gradient;
-		//[NullAllowed, Export("gradient")]
-		//unsafe CGGradientRef* Gradient { get; }
+		//u-n-safe CGGradientRef* Gradient { get; }
 
 		// @property (readonly, nonatomic) CGFloat gradientAngle;
 		[Export("gradientAngle")]
@@ -3319,154 +3665,122 @@ namespace iOSCharts
 		[Export("gradientEndRadiusPercent")]
 		nfloat GradientEndRadiusPercent { get; }
 
-		//// @property (readonly, nonatomic) CGImageRef _Nullable image;
-		//[NullAllowed, Export("image")]
-		//unsafe CGImageRef* Image { get; }
+		//u-n-safe CGImageRef* Image { get; }
 
-		//// @property (readonly, nonatomic) CGLayerRef _Nullable layer;
-		//[NullAllowed, Export("layer")]
-		//unsafe CGLayerRef* Layer { get; }
+		//u-n-safe CGLayerRef* Layer { get; }
 
-		//// -(instancetype _Nonnull)initWithCGColor:(CGColorRef _Nonnull)CGColor __attribute__((objc_designated_initializer));
-		//[Export("initWithCGColor:")]
-		//[DesignatedInitializer]
-		//unsafe IntPtr Constructor(CGColorRef* CGColor);
+		//u-n-safe IntPtr Constructor(CGColorRef* CGColor);
 
 		// -(instancetype _Nonnull)initWithColor:(UIColor * _Nonnull)color;
 		[Export("initWithColor:")]
 		IntPtr Constructor(UIColor color);
 
-		//// -(instancetype _Nonnull)initWithLinearGradient:(CGGradientRef _Nonnull)linearGradient angle:(CGFloat)angle __attribute__((objc_designated_initializer));
-		//[Export("initWithLinearGradient:angle:")]
-		//[DesignatedInitializer]
-		//unsafe IntPtr Constructor(CGGradientRef* linearGradient, nfloat angle);
+		//u-n-safe IntPtr Constructor(CGGradientRef* linearGradient, nfloat angle);
 
-		//// -(instancetype _Nonnull)initWithRadialGradient:(CGGradientRef _Nonnull)radialGradient startOffsetPercent:(CGPoint)startOffsetPercent startRadiusPercent:(CGFloat)startRadiusPercent endOffsetPercent:(CGPoint)endOffsetPercent endRadiusPercent:(CGFloat)endRadiusPercent __attribute__((objc_designated_initializer));
-		//[Export("initWithRadialGradient:startOffsetPercent:startRadiusPercent:endOffsetPercent:endRadiusPercent:")]
-		//[DesignatedInitializer]
-		//unsafe IntPtr Constructor(CGGradientRef* radialGradient, CGPoint startOffsetPercent, nfloat startRadiusPercent, CGPoint endOffsetPercent, nfloat endRadiusPercent);
+		//u-n-safe IntPtr Constructor(CGGradientRef* radialGradient, CGPoint startOffsetPercent, nfloat startRadiusPercent, CGPoint endOffsetPercent, nfloat endRadiusPercent);
 
-		//// -(instancetype _Nonnull)initWithRadialGradient:(CGGradientRef _Nonnull)radialGradient;
-		//[Export("initWithRadialGradient:")]
-		//unsafe IntPtr Constructor(CGGradientRef* radialGradient);
+		//u-n-safe IntPtr Constructor(CGGradientRef* radialGradient);
 
-		//// -(instancetype _Nonnull)initWithCGImage:(CGImageRef _Nonnull)CGImage tiled:(BOOL)tiled __attribute__((objc_designated_initializer));
-		//[Export("initWithCGImage:tiled:")]
-		//[DesignatedInitializer]
-		//unsafe IntPtr Constructor(CGImageRef* CGImage, bool tiled);
+		//u-n-safe IntPtr Constructor(CGImageRef* CGImage, bool tiled);
 
 		// -(instancetype _Nonnull)initWithImage:(UIImage * _Nonnull)image tiled:(BOOL)tiled;
 		[Export("initWithImage:tiled:")]
 		IntPtr Constructor(UIImage image, bool tiled);
 
-		//// -(instancetype _Nonnull)initWithCGImage:(CGImageRef _Nonnull)CGImage;
-		//[Export("initWithCGImage:")]
-		//unsafe IntPtr Constructor(CGImageRef* CGImage);
+		//u-n-safe IntPtr Constructor(CGImageRef* CGImage);
 
 		// -(instancetype _Nonnull)initWithImage:(UIImage * _Nonnull)image;
 		[Export("initWithImage:")]
 		IntPtr Constructor(UIImage image);
 
-		//// -(instancetype _Nonnull)initWithCGLayer:(CGLayerRef _Nonnull)CGLayer __attribute__((objc_designated_initializer));
-		//[Export("initWithCGLayer:")]
-		//[DesignatedInitializer]
-		//unsafe IntPtr Constructor(CGLayerRef* CGLayer);
+		//u-n-safe IntPtr Constructor(CGLayerRef* CGLayer);
 
-		//// +(ChartFill * _Nonnull)fillWithCGColor:(CGColorRef _Nonnull)CGColor;
-		//[Static]
-		//[Export("fillWithCGColor:")]
-		//unsafe ChartFill FillWithCGColor(CGColorRef* CGColor);
+		//u-n-safe ChartFill FillWithCGColor(CGColorRef* CGColor);
 
 		// +(ChartFill * _Nonnull)fillWithColor:(UIColor * _Nonnull)color;
 		[Static]
 		[Export("fillWithColor:")]
 		ChartFill FillWithColor(UIColor color);
 
-		//// +(ChartFill * _Nonnull)fillWithLinearGradient:(CGGradientRef _Nonnull)linearGradient angle:(CGFloat)angle;
-		//[Static]
-		//[Export("fillWithLinearGradient:angle:")]
-		//unsafe ChartFill FillWithLinearGradient(CGGradientRef* linearGradient, nfloat angle);
+		//u-n-safe ChartFill FillWithLinearGradient(CGGradientRef* linearGradient, nfloat angle);
 
-		//// +(ChartFill * _Nonnull)fillWithRadialGradient:(CGGradientRef _Nonnull)radialGradient startOffsetPercent:(CGPoint)startOffsetPercent startRadiusPercent:(CGFloat)startRadiusPercent endOffsetPercent:(CGPoint)endOffsetPercent endRadiusPercent:(CGFloat)endRadiusPercent;
-		//[Static]
-		//[Export("fillWithRadialGradient:startOffsetPercent:startRadiusPercent:endOffsetPercent:endRadiusPercent:")]
-		//unsafe ChartFill FillWithRadialGradient(CGGradientRef* radialGradient, CGPoint startOffsetPercent, nfloat startRadiusPercent, CGPoint endOffsetPercent, nfloat endRadiusPercent);
+		//u-n-safe ChartFill FillWithRadialGradient(CGGradientRef* radialGradient, CGPoint startOffsetPercent, nfloat startRadiusPercent, CGPoint endOffsetPercent, nfloat endRadiusPercent);
 
-		//// +(ChartFill * _Nonnull)fillWithRadialGradient:(CGGradientRef _Nonnull)radialGradient;
-		//[Static]
-		//[Export("fillWithRadialGradient:")]
-		//unsafe ChartFill FillWithRadialGradient(CGGradientRef* radialGradient);
+		//u-n-safe ChartFill FillWithRadialGradient(CGGradientRef* radialGradient);
 
-		//// +(ChartFill * _Nonnull)fillWithCGImage:(CGImageRef _Nonnull)CGImage tiled:(BOOL)tiled;
-		//[Static]
-		//[Export("fillWithCGImage:tiled:")]
-		//unsafe ChartFill FillWithCGImage(CGImageRef* CGImage, bool tiled);
+		//u-n-safe ChartFill FillWithCGImage(CGImageRef* CGImage, bool tiled);
 
 		// +(ChartFill * _Nonnull)fillWithImage:(UIImage * _Nonnull)image tiled:(BOOL)tiled;
 		[Static]
 		[Export("fillWithImage:tiled:")]
 		ChartFill FillWithImage(UIImage image, bool tiled);
 
-		//// +(ChartFill * _Nonnull)fillWithCGImage:(CGImageRef _Nonnull)CGImage;
-		//[Static]
-		//[Export("fillWithCGImage:")]
-		//unsafe ChartFill FillWithCGImage(CGImageRef* CGImage);
+		//u-n-safe ChartFill FillWithCGImage(CGImageRef* CGImage);
 
 		// +(ChartFill * _Nonnull)fillWithImage:(UIImage * _Nonnull)image;
 		[Static]
 		[Export("fillWithImage:")]
 		ChartFill FillWithImage(UIImage image);
 
-		//// +(ChartFill * _Nonnull)fillWithCGLayer:(CGLayerRef _Nonnull)CGLayer;
-		//[Static]
-		//[Export("fillWithCGLayer:")]
-		//unsafe ChartFill FillWithCGLayer(CGLayerRef* CGLayer);
+		//u-n-safe ChartFill FillWithCGLayer(CGLayerRef* CGLayer);
 
-		//// -(void)fillPathWithContext:(CGContextRef _Nonnull)context rect:(CGRect)rect;
-		//[Export("fillPathWithContext:rect:")]
-		//unsafe void FillPathWithContext(CGContextRef* context, CGRect rect);
+		//u-n-safe void FillPathWithContext(CGContextRef* context, CGRect rect);
 	}
 
 	// @interface ChartHighlight : NSObject
-	[BaseType(typeof(NSObject), Name = "_TtC6Charts14ChartHighlight")]
+	[BaseType(typeof(NSObject), Name = "Highlight")]
 	interface ChartHighlight
 	{
-		// -(instancetype _Nonnull)initWithXIndex:(NSInteger)x value:(double)value dataIndex:(NSInteger)dataIndex dataSetIndex:(NSInteger)dataSetIndex stackIndex:(NSInteger)stackIndex range:(ChartRange * _Nullable)range __attribute__((objc_designated_initializer));
-		[Export("initWithXIndex:value:dataIndex:dataSetIndex:stackIndex:range:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(nint x, double value, nint dataIndex, nint dataSetIndex, nint stackIndex, [NullAllowed] ChartRange range);
-
-		// -(instancetype _Nonnull)initWithXIndex:(NSInteger)x value:(double)value dataIndex:(NSInteger)dataIndex dataSetIndex:(NSInteger)dataSetIndex stackIndex:(NSInteger)stackIndex;
-		[Export("initWithXIndex:value:dataIndex:dataSetIndex:stackIndex:")]
-		IntPtr Constructor(nint x, double value, nint dataIndex, nint dataSetIndex, nint stackIndex);
-
-		// -(instancetype _Nonnull)initWithXIndex:(NSInteger)x value:(double)value dataSetIndex:(NSInteger)dataSetIndex stackIndex:(NSInteger)stackIndex range:(ChartRange * _Nullable)range;
-		[Export("initWithXIndex:value:dataSetIndex:stackIndex:range:")]
-		IntPtr Constructor(nint x, double value, nint dataSetIndex, nint stackIndex, [NullAllowed] ChartRange range);
-
-		// -(instancetype _Nonnull)initWithXIndex:(NSInteger)x value:(double)value dataSetIndex:(NSInteger)dataSetIndex stackIndex:(NSInteger)stackIndex;
-		[Export("initWithXIndex:value:dataSetIndex:stackIndex:")]
-		IntPtr Constructor(nint x, double value, nint dataSetIndex, nint stackIndex);
-
-		// -(instancetype _Nonnull)initWithXIndex:(NSInteger)x dataSetIndex:(NSInteger)dataSetIndex stackIndex:(NSInteger)stackIndex;
-		[Export("initWithXIndex:dataSetIndex:stackIndex:")]
-		IntPtr Constructor(nint x, nint dataSetIndex, nint stackIndex);
-
-		// -(instancetype _Nonnull)initWithXIndex:(NSInteger)x dataSetIndex:(NSInteger)dataSetIndex;
-		[Export("initWithXIndex:dataSetIndex:")]
-		IntPtr Constructor(nint x, nint dataSetIndex);
-
-		// @property (readonly, nonatomic) NSInteger xIndex;
-		[Export("xIndex")]
-		nint XIndex { get; }
-
-		// @property (readonly, nonatomic) double value;
-		[Export("value")]
-		double Value { get; }
-
-		// @property (readonly, nonatomic) NSInteger dataIndex;
+		// @property (nonatomic) NSInteger dataIndex;
 		[Export("dataIndex")]
-		nint DataIndex { get; }
+		nint DataIndex { get; set; }
+
+		// @property (nonatomic) CGFloat drawX;
+		[Export("drawX")]
+		nfloat DrawX { get; set; }
+
+		// @property (nonatomic) CGFloat drawY;
+		[Export("drawY")]
+		nfloat DrawY { get; set; }
+
+		// -(instancetype _Nonnull)initWithX:(double)x y:(double)y xPx:(CGFloat)xPx yPx:(CGFloat)yPx dataIndex:(NSInteger)dataIndex dataSetIndex:(NSInteger)dataSetIndex stackIndex:(NSInteger)stackIndex axis:(enum AxisDependency)axis __attribute__((objc_designated_initializer));
+		[Export("initWithX:y:xPx:yPx:dataIndex:dataSetIndex:stackIndex:axis:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(double x, double y, nfloat xPx, nfloat yPx, nint dataIndex, nint dataSetIndex, nint stackIndex, AxisDependency axis);
+
+		// -(instancetype _Nonnull)initWithX:(double)x y:(double)y xPx:(CGFloat)xPx yPx:(CGFloat)yPx dataSetIndex:(NSInteger)dataSetIndex stackIndex:(NSInteger)stackIndex axis:(enum AxisDependency)axis;
+		[Export("initWithX:y:xPx:yPx:dataSetIndex:stackIndex:axis:")]
+		IntPtr Constructor(double x, double y, nfloat xPx, nfloat yPx, nint dataSetIndex, nint stackIndex, AxisDependency axis);
+
+		// -(instancetype _Nonnull)initWithX:(double)x y:(double)y xPx:(CGFloat)xPx yPx:(CGFloat)yPx dataSetIndex:(NSInteger)dataSetIndex axis:(enum AxisDependency)axis __attribute__((objc_designated_initializer));
+		[Export("initWithX:y:xPx:yPx:dataSetIndex:axis:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(double x, double y, nfloat xPx, nfloat yPx, nint dataSetIndex, AxisDependency axis);
+
+		// -(instancetype _Nonnull)initWithX:(double)x y:(double)y dataSetIndex:(NSInteger)dataSetIndex __attribute__((objc_designated_initializer));
+		[Export("initWithX:y:dataSetIndex:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(double x, double y, nint dataSetIndex);
+
+		// -(instancetype _Nonnull)initWithX:(double)x dataSetIndex:(NSInteger)dataSetIndex stackIndex:(NSInteger)stackIndex;
+		[Export("initWithX:dataSetIndex:stackIndex:")]
+		IntPtr Constructor(double x, nint dataSetIndex, nint stackIndex);
+
+		// @property (readonly, nonatomic) double x;
+		[Export("x")]
+		double X { get; }
+
+		// @property (readonly, nonatomic) double y;
+		[Export("y")]
+		double Y { get; }
+
+		// @property (readonly, nonatomic) CGFloat xPx;
+		[Export("xPx")]
+		nfloat XPx { get; }
+
+		// @property (readonly, nonatomic) CGFloat yPx;
+		[Export("yPx")]
+		nfloat YPx { get; }
 
 		// @property (readonly, nonatomic) NSInteger dataSetIndex;
 		[Export("dataSetIndex")]
@@ -3476,9 +3790,21 @@ namespace iOSCharts
 		[Export("stackIndex")]
 		nint StackIndex { get; }
 
-		// @property (readonly, nonatomic, strong) ChartRange * _Nullable range;
-		[NullAllowed, Export("range", ArgumentSemantic.Strong)]
-		ChartRange Range { get; }
+		// @property (readonly, nonatomic) enum AxisDependency axis;
+		[Export("axis")]
+		AxisDependency Axis { get; }
+
+		// @property (readonly, nonatomic) BOOL isStacked;
+		[Export("isStacked")]
+		bool IsStacked { get; }
+
+		// -(void)setDrawWithX:(CGFloat)x y:(CGFloat)y;
+		[Export("setDrawWithX:y:")]
+		void SetDrawWithX(nfloat x, nfloat y);
+
+		// -(void)setDrawWithPt:(CGPoint)pt;
+		[Export("setDrawWithPt:")]
+		void SetDrawWithPt(CGPoint pt);
 
 		// @property (readonly, copy, nonatomic) NSString * _Nonnull description;
 		[Export("description")]
@@ -3489,10 +3815,435 @@ namespace iOSCharts
 		bool IsEqual([NullAllowed] NSObject @object);
 	}
 
+	// @interface HorizontalBarChartRenderer : BarChartRenderer
+	[BaseType(typeof(BarChartRenderer), Name = "_TtC6Charts26HorizontalBarChartRenderer")]
+	interface HorizontalBarChartRenderer
+	{
+		// -(instancetype _Nonnull)initWithDataProvider:(id<BarChartDataProvider> _Nullable)dataProvider animator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler __attribute__((objc_designated_initializer));
+		[Export("initWithDataProvider:animator:viewPortHandler:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] IBarChartDataProvider dataProvider, [NullAllowed] ChartAnimator animator, [NullAllowed] ChartViewPortHandler viewPortHandler);
+
+		// -(void)initBuffers __attribute__((objc_method_family("none")));
+		[Export("initBuffers")]
+		void InitBuffers();
+
+		//u-n-safe void DrawDataSetWithContext(CGContextRef* context, IInterfaceBarChartDataSet dataSet, nint index);
+
+		//u-n-safe void DrawValuesWithContext(CGContextRef* context);
+
+		// -(BOOL)isDrawingValuesAllowedWithDataProvider:(id<ChartDataProvider> _Nullable)dataProvider;
+		[Export("isDrawingValuesAllowedWithDataProvider:")]
+		bool IsDrawingValuesAllowedWithDataProvider([NullAllowed] IChartDataProvider dataProvider);
+	}
+
+	// @interface HorizontalBarChartView : BarChartView
+	[BaseType(typeof(BarChartView), Name = "_TtC6Charts22HorizontalBarChartView")]
+	interface HorizontalBarChartView
+	{
+		// -(CGPoint)getMarkerPositionWithHighlight:(ChartHighlight * _Nonnull)highlight;
+		[Export("getMarkerPositionWithHighlight:")]
+		CGPoint GetMarkerPositionWithHighlight(ChartHighlight highlight);
+
+		// -(CGRect)getBarBoundsWithEntry:(BarChartDataEntry * _Nonnull)e;
+		[Export("getBarBoundsWithEntry:")]
+		CGRect GetBarBoundsWithEntry(BarChartDataEntry e);
+
+		// -(CGPoint)getPositionWithEntry:(ChartDataEntry * _Nonnull)e axis:(enum AxisDependency)axis;
+		[Export("getPositionWithEntry:axis:")]
+		CGPoint GetPositionWithEntry(ChartDataEntry e, AxisDependency axis);
+
+		// -(ChartHighlight * _Nullable)getHighlightByTouchPoint:(CGPoint)pt;
+		[Export("getHighlightByTouchPoint:")]
+		[return: NullAllowed]
+		ChartHighlight GetHighlightByTouchPoint(CGPoint pt);
+
+		// @property (readonly, nonatomic) double lowestVisibleX;
+		[Export("lowestVisibleX")]
+		double LowestVisibleX { get; }
+
+		// @property (readonly, nonatomic) double highestVisibleX;
+		[Export("highestVisibleX")]
+		double HighestVisibleX { get; }
+
+		// -(void)setVisibleXRangeMaximum:(double)maxXRange;
+		[Export("setVisibleXRangeMaximum:")]
+		void SetVisibleXRangeMaximum(double maxXRange);
+
+		// -(void)setVisibleXRangeMinimum:(double)minXRange;
+		[Export("setVisibleXRangeMinimum:")]
+		void SetVisibleXRangeMinimum(double minXRange);
+
+		// -(void)setVisibleXRangeWithMinXRange:(double)minXRange maxXRange:(double)maxXRange;
+		[Export("setVisibleXRangeWithMinXRange:maxXRange:")]
+		void SetVisibleXRangeWithMinXRange(double minXRange, double maxXRange);
+
+		// -(void)setVisibleYRangeMaximum:(double)maxYRange axis:(enum AxisDependency)axis;
+		[Export("setVisibleYRangeMaximum:axis:")]
+		void SetVisibleYRangeMaximum(double maxYRange, AxisDependency axis);
+
+		// -(void)setVisibleYRangeMinimum:(double)minYRange axis:(enum AxisDependency)axis;
+		[Export("setVisibleYRangeMinimum:axis:")]
+		void SetVisibleYRangeMinimum(double minYRange, AxisDependency axis);
+
+		// -(void)setVisibleYRangeWithMinYRange:(double)minYRange maxYRange:(double)maxYRange axis:(enum AxisDependency)axis;
+		[Export("setVisibleYRangeWithMinYRange:maxYRange:axis:")]
+		void SetVisibleYRangeWithMinYRange(double minYRange, double maxYRange, AxisDependency axis);
+
+		// -(instancetype _Nonnull)initWithFrame:(CGRect)frame __attribute__((objc_designated_initializer));
+		[Export("initWithFrame:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(CGRect frame);
+
+		//// -(instancetype _Nullable)initWithCoder:(NSCoder * _Nonnull)aDecoder __attribute__((objc_designated_initializer));
+		//[Export("initWithCoder:")]
+		//[DesignatedInitializer]
+		//IntPtr Constructor(NSCoder aDecoder);
+	}
+
+	// @interface HorizontalBarChartHighlighter : BarChartHighlighter
+	[BaseType(typeof(BarChartHighlighter), Name = "HorizontalBarHighlighter")]
+	interface HorizontalBarChartHighlighter
+	{
+		// -(ChartHighlight * _Nullable)getHighlightWithX:(CGFloat)x y:(CGFloat)y;
+		[Export("getHighlightWithX:y:")]
+		[return: NullAllowed]
+		ChartHighlight GetHighlightWithX(nfloat x, nfloat y);
+
+		// -(instancetype _Nonnull)initWithChart:(id<ChartDataProvider> _Nonnull)chart __attribute__((objc_designated_initializer));
+		[Export("initWithChart:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(IChartDataProvider chart);
+	}
+
+	interface IInterfaceLineRadarChartDataSet { }
+
+	// @protocol IInterfaceLineRadarChartDataSet <IInterfaceLineScatterCandleRadarChartDataSet>
+	[Protocol(Name = "_TtP6Charts22IInterfaceLineRadarChartDataSet_"), Model]
+	interface InterfaceLineRadarChartDataSet : InterfaceLineScatterCandleRadarChartDataSet
+	{
+		// @required @property (nonatomic, strong) UIColor * _Nonnull fillColor;
+		[Abstract]
+		[Export("fillColor", ArgumentSemantic.Strong)]
+		UIColor FillColor { get; set; }
+
+		// @required @property (nonatomic, strong) ChartFill * _Nullable fill;
+		[Abstract]
+		[NullAllowed, Export("fill", ArgumentSemantic.Strong)]
+		ChartFill Fill { get; set; }
+
+		// @required @property (nonatomic) CGFloat fillAlpha;
+		[Abstract]
+		[Export("fillAlpha")]
+		nfloat FillAlpha { get; set; }
+
+		// @required @property (nonatomic) CGFloat lineWidth;
+		[Abstract]
+		[Export("lineWidth")]
+		nfloat LineWidth { get; set; }
+
+		// @required @property (nonatomic) BOOL drawFilledEnabled;
+		[Abstract]
+		[Export("drawFilledEnabled")]
+		bool DrawFilledEnabled { get; set; }
+
+		// @required @property (readonly, nonatomic) BOOL isDrawFilledEnabled;
+		[Abstract]
+		[Export("isDrawFilledEnabled")]
+		bool IsDrawFilledEnabled { get; }
+	}
+
+	interface IInterfaceLineChartDataSet { }
+
+	// @protocol IInterfaceLineChartDataSet <IInterfaceLineRadarChartDataSet>
+	[Protocol(Name = "_TtP6Charts17IInterfaceLineChartDataSet_"), Model]
+	interface InterfaceLineChartDataSet : InterfaceLineRadarChartDataSet
+	{
+		// @required @property (nonatomic) enum LineChartMode mode;
+		[Abstract]
+		[Export("mode", ArgumentSemantic.Assign)]
+		LineChartMode Mode { get; set; }
+
+		// @required @property (nonatomic) CGFloat cubicIntensity;
+		[Abstract]
+		[Export("cubicIntensity")]
+		nfloat CubicIntensity { get; set; }
+
+		// @required @property (nonatomic) BOOL drawCubicEnabled;
+		[Abstract]
+		[Export("drawCubicEnabled")]
+		bool DrawCubicEnabled { get; set; }
+
+		// @required @property (readonly, nonatomic) BOOL isDrawCubicEnabled;
+		[Abstract]
+		[Export("isDrawCubicEnabled")]
+		bool IsDrawCubicEnabled { get; }
+
+		// @required @property (nonatomic) BOOL drawSteppedEnabled;
+		[Abstract]
+		[Export("drawSteppedEnabled")]
+		bool DrawSteppedEnabled { get; set; }
+
+		// @required @property (readonly, nonatomic) BOOL isDrawSteppedEnabled;
+		[Abstract]
+		[Export("isDrawSteppedEnabled")]
+		bool IsDrawSteppedEnabled { get; }
+
+		// @required @property (nonatomic) CGFloat circleRadius;
+		[Abstract]
+		[Export("circleRadius")]
+		nfloat CircleRadius { get; set; }
+
+		// @required @property (nonatomic) CGFloat circleHoleRadius;
+		[Abstract]
+		[Export("circleHoleRadius")]
+		nfloat CircleHoleRadius { get; set; }
+
+		// @required @property (copy, nonatomic) NSArray<UIColor *> * _Nonnull circleColors;
+		[Abstract]
+		[Export("circleColors", ArgumentSemantic.Copy)]
+		UIColor[] CircleColors { get; set; }
+
+		// @required -(UIColor * _Nullable)getCircleColorAtIndex:(NSInteger)atIndex;
+		[Abstract]
+		[Export("getCircleColorAtIndex:")]
+		[return: NullAllowed]
+		UIColor GetCircleColorAtIndex(nint atIndex);
+
+		// @required -(void)setCircleColor:(UIColor * _Nonnull)color;
+		[Abstract]
+		[Export("setCircleColor:")]
+		void SetCircleColor(UIColor color);
+
+		// @required -(void)resetCircleColors:(NSInteger)index;
+		[Abstract]
+		[Export("resetCircleColors:")]
+		void ResetCircleColors(nint index);
+
+		// @required @property (nonatomic) BOOL drawCirclesEnabled;
+		[Abstract]
+		[Export("drawCirclesEnabled")]
+		bool DrawCirclesEnabled { get; set; }
+
+		// @required @property (readonly, nonatomic) BOOL isDrawCirclesEnabled;
+		[Abstract]
+		[Export("isDrawCirclesEnabled")]
+		bool IsDrawCirclesEnabled { get; }
+
+		// @required @property (nonatomic, strong) UIColor * _Nullable circleHoleColor;
+		[Abstract]
+		[NullAllowed, Export("circleHoleColor", ArgumentSemantic.Strong)]
+		UIColor CircleHoleColor { get; set; }
+
+		// @required @property (nonatomic) BOOL drawCircleHoleEnabled;
+		[Abstract]
+		[Export("drawCircleHoleEnabled")]
+		bool DrawCircleHoleEnabled { get; set; }
+
+		// @required @property (readonly, nonatomic) BOOL isDrawCircleHoleEnabled;
+		[Abstract]
+		[Export("isDrawCircleHoleEnabled")]
+		bool IsDrawCircleHoleEnabled { get; }
+
+		// @required @property (readonly, nonatomic) CGFloat lineDashPhase;
+		[Abstract]
+		[Export("lineDashPhase")]
+		nfloat LineDashPhase { get; }
+
+		// @required @property (copy, nonatomic) NSArray<NSNumber *> * _Nullable lineDashLengths;
+		[Abstract]
+		[NullAllowed, Export("lineDashLengths", ArgumentSemantic.Copy)]
+		NSNumber[] LineDashLengths { get; set; }
+
+		// @required @property (nonatomic) CGLineCap lineCapType;
+		[Abstract]
+		[Export("lineCapType", ArgumentSemantic.Assign)]
+		CGLineCap LineCapType { get; set; }
+
+		// @required @property (nonatomic, strong) id<InterfaceChartFillFormatter> _Nullable fillFormatter;
+		[Abstract]
+		[NullAllowed, Export("fillFormatter", ArgumentSemantic.Strong)]
+		IInterfaceChartFillFormatter FillFormatter { get; set; }
+	}
+
+	interface IInterfaceChartMarker { }
+
+	// @protocol InterfaceChartMarker <NSObject>
+	[Protocol, Model]
+	[BaseType(typeof(NSObject), Name = "IMarker")]
+	interface InterfaceChartMarker
+	{
+		// @required @property (readonly, nonatomic) CGPoint offset;
+		[Abstract]
+		[Export("offset")]
+		CGPoint Offset { get; }
+
+		// @required -(CGPoint)offsetForDrawingAtPoint:(CGPoint)atPoint;
+		[Abstract]
+		[Export("offsetForDrawingAtPoint:")]
+		CGPoint OffsetForDrawingAtPoint(CGPoint atPoint);
+
+		// @required -(void)refreshContentWithEntry:(ChartDataEntry * _Nonnull)entry highlight:(ChartHighlight * _Nonnull)highlight;
+		[Abstract]
+		[Export("refreshContentWithEntry:highlight:")]
+		void RefreshContentWithEntry(ChartDataEntry entry, ChartHighlight highlight);
+
+		//u-n-safe void DrawWithContext(CGContextRef* context, CGPoint point);
+	}
+
+	interface IInterfacePieChartDataSet { }
+
+	// @protocol IInterfacePieChartDataSet <IInterfaceChartDataSet>
+	[Protocol(Name = "_TtP6Charts16IInterfacePieChartDataSet_"), Model]
+	interface InterfacePieChartDataSet : InterfaceChartDataSet
+	{
+		// @required @property (nonatomic) CGFloat sliceSpace;
+		[Abstract]
+		[Export("sliceSpace")]
+		nfloat SliceSpace { get; set; }
+
+		// @required @property (nonatomic) CGFloat selectionShift;
+		[Abstract]
+		[Export("selectionShift")]
+		nfloat SelectionShift { get; set; }
+
+		// @required @property (nonatomic) enum PieChartValuePosition xValuePosition;
+		[Abstract]
+		[Export("xValuePosition", ArgumentSemantic.Assign)]
+		PieChartValuePosition XValuePosition { get; set; }
+
+		// @required @property (nonatomic) enum PieChartValuePosition yValuePosition;
+		[Abstract]
+		[Export("yValuePosition", ArgumentSemantic.Assign)]
+		PieChartValuePosition YValuePosition { get; set; }
+
+		// @required @property (nonatomic, strong) UIColor * _Nullable valueLineColor;
+		[Abstract]
+		[NullAllowed, Export("valueLineColor", ArgumentSemantic.Strong)]
+		UIColor ValueLineColor { get; set; }
+
+		// @required @property (nonatomic) CGFloat valueLineWidth;
+		[Abstract]
+		[Export("valueLineWidth")]
+		nfloat ValueLineWidth { get; set; }
+
+		// @required @property (nonatomic) CGFloat valueLinePart1OffsetPercentage;
+		[Abstract]
+		[Export("valueLinePart1OffsetPercentage")]
+		nfloat ValueLinePart1OffsetPercentage { get; set; }
+
+		// @required @property (nonatomic) CGFloat valueLinePart1Length;
+		[Abstract]
+		[Export("valueLinePart1Length")]
+		nfloat ValueLinePart1Length { get; set; }
+
+		// @required @property (nonatomic) CGFloat valueLinePart2Length;
+		[Abstract]
+		[Export("valueLinePart2Length")]
+		nfloat ValueLinePart2Length { get; set; }
+
+		// @required @property (nonatomic) BOOL valueLineVariableLength;
+		[Abstract]
+		[Export("valueLineVariableLength")]
+		bool ValueLineVariableLength { get; set; }
+
+		// @required @property (nonatomic, strong) UIFont * _Nullable entryLabelFont;
+		[Abstract]
+		[NullAllowed, Export("entryLabelFont", ArgumentSemantic.Strong)]
+		UIFont EntryLabelFont { get; set; }
+
+		// @required @property (nonatomic, strong) UIColor * _Nullable entryLabelColor;
+		[Abstract]
+		[NullAllowed, Export("entryLabelColor", ArgumentSemantic.Strong)]
+		UIColor EntryLabelColor { get; set; }
+	}
+
+	interface IInterfaceRadarChartDataSet { }
+
+	// @protocol IInterfaceRadarChartDataSet <IInterfaceLineRadarChartDataSet>
+	[Protocol(Name = "_TtP6Charts18IInterfaceRadarChartDataSet_"), Model]
+	interface InterfaceRadarChartDataSet : InterfaceLineRadarChartDataSet
+	{
+		// @required @property (nonatomic) BOOL drawHighlightCircleEnabled;
+		[Abstract]
+		[Export("drawHighlightCircleEnabled")]
+		bool DrawHighlightCircleEnabled { get; set; }
+
+		// @required @property (readonly, nonatomic) BOOL isDrawHighlightCircleEnabled;
+		[Abstract]
+		[Export("isDrawHighlightCircleEnabled")]
+		bool IsDrawHighlightCircleEnabled { get; }
+
+		// @required @property (nonatomic, strong) UIColor * _Nullable highlightCircleFillColor;
+		[Abstract]
+		[NullAllowed, Export("highlightCircleFillColor", ArgumentSemantic.Strong)]
+		UIColor HighlightCircleFillColor { get; set; }
+
+		// @required @property (nonatomic, strong) UIColor * _Nullable highlightCircleStrokeColor;
+		[Abstract]
+		[NullAllowed, Export("highlightCircleStrokeColor", ArgumentSemantic.Strong)]
+		UIColor HighlightCircleStrokeColor { get; set; }
+
+		// @required @property (nonatomic) CGFloat highlightCircleStrokeAlpha;
+		[Abstract]
+		[Export("highlightCircleStrokeAlpha")]
+		nfloat HighlightCircleStrokeAlpha { get; set; }
+
+		// @required @property (nonatomic) CGFloat highlightCircleInnerRadius;
+		[Abstract]
+		[Export("highlightCircleInnerRadius")]
+		nfloat HighlightCircleInnerRadius { get; set; }
+
+		// @required @property (nonatomic) CGFloat highlightCircleOuterRadius;
+		[Abstract]
+		[Export("highlightCircleOuterRadius")]
+		nfloat HighlightCircleOuterRadius { get; set; }
+
+		// @required @property (nonatomic) CGFloat highlightCircleStrokeWidth;
+		[Abstract]
+		[Export("highlightCircleStrokeWidth")]
+		nfloat HighlightCircleStrokeWidth { get; set; }
+	}
+
+	interface IInterfaceScatterChartDataSet { }
+
+	// @protocol IInterfaceScatterChartDataSet <IInterfaceLineScatterCandleRadarChartDataSet>
+	[Protocol(Name = "_TtP6Charts20IInterfaceScatterChartDataSet_"), Model]
+	interface InterfaceScatterChartDataSet : InterfaceLineScatterCandleRadarChartDataSet
+	{
+		// @required @property (readonly, nonatomic) CGFloat scatterShapeSize;
+		[Abstract]
+		[Export("scatterShapeSize")]
+		nfloat ScatterShapeSize { get; }
+
+		// @required @property (readonly, nonatomic) CGFloat scatterShapeHoleRadius;
+		[Abstract]
+		[Export("scatterShapeHoleRadius")]
+		nfloat ScatterShapeHoleRadius { get; }
+
+		// @required @property (readonly, nonatomic, strong) UIColor * _Nullable scatterShapeHoleColor;
+		[Abstract]
+		[NullAllowed, Export("scatterShapeHoleColor", ArgumentSemantic.Strong)]
+		UIColor ScatterShapeHoleColor { get; }
+
+		// @required @property (readonly, nonatomic, strong) id<InterfaceShapeRenderer> _Nullable shapeRenderer;
+		[Abstract]
+		[NullAllowed, Export("shapeRenderer", ArgumentSemantic.Strong)]
+		InterfaceShapeRenderer ShapeRenderer { get; }
+	}
+
 	// @interface ChartLegend : ChartComponentBase
-	[BaseType(typeof(ChartComponentBase), Name = "_TtC6Charts11ChartLegend")]
+	[BaseType(typeof(ChartComponentBase), Name = "Legend")]
 	interface ChartLegend
 	{
+		// @property (copy, nonatomic) NSArray<ChartLegendEntry *> * _Nonnull entries;
+		[Export("entries", ArgumentSemantic.Copy)]
+		ChartLegendEntry[] Entries { get; set; }
+
+		// @property (copy, nonatomic) NSArray<ChartLegendEntry *> * _Nonnull extraEntries;
+		[Export("extraEntries", ArgumentSemantic.Copy)]
+		ChartLegendEntry[] ExtraEntries { get; set; }
+
 		// @property (nonatomic) enum ChartLegendPosition position;
 		[Export("position", ArgumentSemantic.Assign)]
 		ChartLegendPosition Position { get; set; }
@@ -3541,6 +4292,14 @@ namespace iOSCharts
 		[Export("formLineWidth")]
 		nfloat FormLineWidth { get; set; }
 
+		// @property (nonatomic) CGFloat formLineDashPhase;
+		[Export("formLineDashPhase")]
+		nfloat FormLineDashPhase { get; set; }
+
+		// @property (copy, nonatomic) NSArray<NSNumber *> * _Nullable formLineDashLengths;
+		[NullAllowed, Export("formLineDashLengths", ArgumentSemantic.Copy)]
+		NSNumber[] FormLineDashLengths { get; set; }
+
 		// @property (nonatomic) CGFloat xEntrySpace;
 		[Export("xEntrySpace")]
 		nfloat XEntrySpace { get; set; }
@@ -3561,23 +4320,14 @@ namespace iOSCharts
 		[Export("calculatedLabelBreakPoints", ArgumentSemantic.Copy)]
 		NSNumber[] CalculatedLabelBreakPoints { get; set; }
 
-		// -(instancetype _Nonnull)initWithColors:(NSArray<NSObject *> * _Nonnull)colors labels:(NSArray<NSObject *> * _Nonnull)labels __attribute__((objc_designated_initializer));
-		[Export("initWithColors:labels:")]
+		// -(instancetype _Nonnull)initWithEntries:(NSArray<ChartLegendEntry *> * _Nonnull)entries __attribute__((objc_designated_initializer));
+		[Export("initWithEntries:")]
 		[DesignatedInitializer]
-		IntPtr Constructor(NSObject[] colors, NSObject[] labels);
+		IntPtr Constructor(ChartLegendEntry[] entries);
 
-		// -(CGSize)getMaximumEntrySize:(UIFont * _Nonnull)font;
-		[Export("getMaximumEntrySize:")]
-		CGSize GetMaximumEntrySize(UIFont font);
-
-		// -(NSString * _Nullable)getLabel:(NSInteger)index;
-		[Export("getLabel:")]
-		[return: NullAllowed]
-		string GetLabel(nint index);
-
-		// -(CGSize)getFullSize:(UIFont * _Nonnull)labelFont;
-		[Export("getFullSize:")]
-		CGSize GetFullSize(UIFont labelFont);
+		// -(CGSize)getMaximumEntrySizeWithFont:(UIFont * _Nonnull)font;
+		[Export("getMaximumEntrySizeWithFont:")]
+		CGSize GetMaximumEntrySizeWithFont(UIFont font);
 
 		// @property (nonatomic) CGFloat neededWidth;
 		[Export("neededWidth")]
@@ -3611,6 +4361,10 @@ namespace iOSCharts
 		[Export("calculateDimensionsWithLabelFont:viewPortHandler:")]
 		void CalculateDimensionsWithLabelFont(UIFont labelFont, ChartViewPortHandler viewPortHandler);
 
+		// -(void)setCustomWithEntries:(NSArray<ChartLegendEntry *> * _Nonnull)entries;
+		[Export("setCustomWithEntries:")]
+		void SetCustomWithEntries(ChartLegendEntry[] entries);
+
 		// -(void)resetCustom;
 		[Export("resetCustom")]
 		void ResetCustom();
@@ -3618,6 +4372,11 @@ namespace iOSCharts
 		// @property (readonly, nonatomic) BOOL isLegendCustom;
 		[Export("isLegendCustom")]
 		bool IsLegendCustom { get; }
+
+		// -(instancetype _Nonnull)initWithColors:(NSArray<NSObject *> * _Nonnull)colors labels:(NSArray<NSObject *> * _Nonnull)labels __attribute__((objc_designated_initializer));
+		[Export("initWithColors:labels:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(NSObject[] colors, NSObject[] labels);
 
 		// @property (readonly, copy, nonatomic) NSArray<NSObject *> * _Nonnull extraColorsObjc;
 		[Export("extraColorsObjc", ArgumentSemantic.Copy)]
@@ -3635,6 +4394,11 @@ namespace iOSCharts
 		[Export("labelsObjc", ArgumentSemantic.Copy)]
 		NSObject[] LabelsObjc { get; set; }
 
+		// -(NSString * _Nullable)getLabel:(NSInteger)index;
+		[Export("getLabel:")]
+		[return: NullAllowed]
+		string GetLabel(nint index);
+
 		// -(void)setExtraWithColors:(NSArray<NSObject *> * _Nonnull)colors labels:(NSArray<NSObject *> * _Nonnull)labels;
 		[Export("setExtraWithColors:labels:")]
 		void SetExtraWithColors(NSObject[] colors, NSObject[] labels);
@@ -3644,47 +4408,197 @@ namespace iOSCharts
 		void SetCustomWithColors(NSObject[] colors, NSObject[] labels);
 	}
 
-	// @interface ChartLegendRenderer : ChartRendererBase
-	[BaseType(typeof(ChartRendererBase), Name = "_TtC6Charts19ChartLegendRenderer")]
+	// @interface ChartLegendEntry : NSObject
+	[BaseType(typeof(NSObject), Name = "LegendEntry")]
+	interface ChartLegendEntry
+	{
+		// -(instancetype _Nonnull)initWithLabel:(NSString * _Nullable)label form:(enum ChartLegendForm)form formSize:(CGFloat)formSize formLineWidth:(CGFloat)formLineWidth formLineDashPhase:(CGFloat)formLineDashPhase formLineDashLengths:(NSArray<NSNumber *> * _Nullable)formLineDashLengths formColor:(UIColor * _Nullable)formColor __attribute__((objc_designated_initializer));
+		[Export("initWithLabel:form:formSize:formLineWidth:formLineDashPhase:formLineDashLengths:formColor:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] string label, ChartLegendForm form, nfloat formSize, nfloat formLineWidth, nfloat formLineDashPhase, [NullAllowed] NSNumber[] formLineDashLengths, [NullAllowed] UIColor formColor);
+
+		// @property (copy, nonatomic) NSString * _Nullable label;
+		[NullAllowed, Export("label")]
+		string Label { get; set; }
+
+		// @property (nonatomic) enum ChartLegendForm form;
+		[Export("form", ArgumentSemantic.Assign)]
+		ChartLegendForm Form { get; set; }
+
+		// @property (nonatomic) CGFloat formSize;
+		[Export("formSize")]
+		nfloat FormSize { get; set; }
+
+		// @property (nonatomic) CGFloat formLineWidth;
+		[Export("formLineWidth")]
+		nfloat FormLineWidth { get; set; }
+
+		// @property (nonatomic) CGFloat formLineDashPhase;
+		[Export("formLineDashPhase")]
+		nfloat FormLineDashPhase { get; set; }
+
+		// @property (copy, nonatomic) NSArray<NSNumber *> * _Nullable formLineDashLengths;
+		[NullAllowed, Export("formLineDashLengths", ArgumentSemantic.Copy)]
+		NSNumber[] FormLineDashLengths { get; set; }
+
+		// @property (nonatomic, strong) UIColor * _Nullable formColor;
+		[NullAllowed, Export("formColor", ArgumentSemantic.Strong)]
+		UIColor FormColor { get; set; }
+	}
+
+	// @interface ChartLegendRenderer : ChartRenderer
+	[BaseType(typeof(ChartRenderer), Name = "LegendRenderer")]
+	[DisableDefaultCtor]
 	interface ChartLegendRenderer
 	{
 		// @property (nonatomic, strong) ChartLegend * _Nullable legend;
 		[NullAllowed, Export("legend", ArgumentSemantic.Strong)]
 		ChartLegend Legend { get; set; }
 
-		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler legend:(ChartLegend * _Nullable)legend __attribute__((objc_designated_initializer));
+		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler legend:(ChartLegend * _Nullable)legend __attribute__((objc_designated_initializer));
 		[Export("initWithViewPortHandler:legend:")]
 		[DesignatedInitializer]
-		IntPtr Constructor(ChartViewPortHandler viewPortHandler, [NullAllowed] ChartLegend legend);
+		IntPtr Constructor([NullAllowed] ChartViewPortHandler viewPortHandler, [NullAllowed] ChartLegend legend);
 
-		// -(void)computeLegend:(ChartData * _Nonnull)data;
-		[Export("computeLegend:")]
-		void ComputeLegend(ChartData data);
+		// -(void)computeLegendWithData:(ChartData * _Nonnull)data;
+		[Export("computeLegendWithData:")]
+		void ComputeLegendWithData(ChartData data);
 
-		//// -(void)renderLegendWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderLegendWithContext:")]
-		//unsafe void RenderLegendWithContext(CGContextRef* context);
+		//u-n-safe void RenderLegendWithContext(CGContextRef* context);
 
-		//// -(void)drawFormWithContext:(CGContextRef _Nonnull)context x:(CGFloat)x y:(CGFloat)y colorIndex:(NSInteger)colorIndex legend:(ChartLegend * _Nonnull)legend;
-		//[Export("drawFormWithContext:x:y:colorIndex:legend:")]
-		//unsafe void DrawFormWithContext(CGContextRef* context, nfloat x, nfloat y, nint colorIndex, ChartLegend legend);
+		//u-n-safe void DrawFormWithContext(CGContextRef* context, nfloat x, nfloat y, ChartLegendEntry entry, ChartLegend legend);
 
-		//// -(void)drawLabelWithContext:(CGContextRef _Nonnull)context x:(CGFloat)x y:(CGFloat)y label:(NSString * _Nonnull)label font:(UIFont * _Nonnull)font textColor:(UIColor * _Nonnull)textColor;
-		//[Export("drawLabelWithContext:x:y:label:font:textColor:")]
-		//unsafe void DrawLabelWithContext(CGContextRef* context, nfloat x, nfloat y, string label, UIFont font, UIColor textColor);
+		//u-n-safe void DrawLabelWithContext(CGContextRef* context, nfloat x, nfloat y, string label, UIFont font, UIColor textColor);
 	}
 
-	// @interface ChartLimitLine : ChartComponentBase
-	[BaseType(typeof(ChartComponentBase), Name = "_TtC6Charts14ChartLimitLine")]
-	interface ChartLimitLine
+	// @interface LineChartData : ChartData
+	[BaseType(typeof(ChartData), Name = "_TtC6Charts13LineChartData")]
+	interface LineChartData
 	{
-		// @property (nonatomic) double limit;
-		[Export("limit")]
-		double Limit { get; set; }
+		// -(instancetype _Nonnull)initWithDataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nullable)dataSets __attribute__((objc_designated_initializer));
+		[Export("initWithDataSets:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] IInterfaceChartDataSet[] dataSets);
+	}
 
-		// @property (nonatomic, strong) UIColor * _Nonnull lineColor;
-		[Export("lineColor", ArgumentSemantic.Strong)]
-		UIColor LineColor { get; set; }
+	// @interface LineRadarChartDataSet : LineScatterCandleRadarChartDataSet <IInterfaceLineRadarChartDataSet>
+	[BaseType(typeof(LineScatterCandleRadarChartDataSet), Name = "_TtC6Charts21LineRadarChartDataSet")]
+	interface LineRadarChartDataSet : InterfaceLineRadarChartDataSet
+	{
+		// @property (nonatomic, strong) UIColor * _Nonnull fillColor;
+		[Export("fillColor", ArgumentSemantic.Strong)]
+		UIColor FillColor { get; set; }
+
+		// @property (nonatomic, strong) ChartFill * _Nullable fill;
+		[NullAllowed, Export("fill", ArgumentSemantic.Strong)]
+		ChartFill Fill { get; set; }
+
+		// @property (nonatomic) CGFloat fillAlpha;
+		[Export("fillAlpha")]
+		nfloat FillAlpha { get; set; }
+
+		// @property (nonatomic) CGFloat lineWidth;
+		[Export("lineWidth")]
+		nfloat LineWidth { get; set; }
+
+		// @property (nonatomic) BOOL drawFilledEnabled;
+		[Export("drawFilledEnabled")]
+		bool DrawFilledEnabled { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isDrawFilledEnabled;
+		[Export("isDrawFilledEnabled")]
+		bool IsDrawFilledEnabled { get; }
+
+		//u-n-safe NSObject CopyWithZone([NullAllowed] _NSZone* zone);
+
+		// -(instancetype _Nonnull)initWithLabel:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
+		[Export("initWithLabel:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] string label);
+
+		// -(instancetype _Nonnull)initWithValues:(NSArray<ChartDataEntry *> * _Nullable)values label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
+		[Export("initWithValues:label:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] ChartDataEntry[] values, [NullAllowed] string label);
+	}
+
+	// @interface LineChartDataSet : LineRadarChartDataSet <IInterfaceLineChartDataSet>
+	[BaseType(typeof(LineRadarChartDataSet), Name = "_TtC6Charts16LineChartDataSet")]
+	interface LineChartDataSet : InterfaceLineChartDataSet
+	{
+		// -(instancetype _Nonnull)initWithValues:(NSArray<ChartDataEntry *> * _Nullable)values label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
+		[Export("initWithValues:label:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] ChartDataEntry[] values, [NullAllowed] string label);
+
+		// @property (nonatomic) enum LineChartMode mode;
+		[Export("mode", ArgumentSemantic.Assign)]
+		LineChartMode Mode { get; set; }
+
+		// @property (nonatomic) CGFloat cubicIntensity;
+		[Export("cubicIntensity")]
+		nfloat CubicIntensity { get; set; }
+
+		// @property (nonatomic) BOOL drawCubicEnabled;
+		[Export("drawCubicEnabled")]
+		bool DrawCubicEnabled { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isDrawCubicEnabled;
+		[Export("isDrawCubicEnabled")]
+		bool IsDrawCubicEnabled { get; }
+
+		// @property (nonatomic) BOOL drawSteppedEnabled;
+		[Export("drawSteppedEnabled")]
+		bool DrawSteppedEnabled { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isDrawSteppedEnabled;
+		[Export("isDrawSteppedEnabled")]
+		bool IsDrawSteppedEnabled { get; }
+
+		// @property (nonatomic) CGFloat circleRadius;
+		[Export("circleRadius")]
+		nfloat CircleRadius { get; set; }
+
+		// @property (nonatomic) CGFloat circleHoleRadius;
+		[Export("circleHoleRadius")]
+		nfloat CircleHoleRadius { get; set; }
+
+		// @property (copy, nonatomic) NSArray<UIColor *> * _Nonnull circleColors;
+		[Export("circleColors", ArgumentSemantic.Copy)]
+		UIColor[] CircleColors { get; set; }
+
+		// -(UIColor * _Nullable)getCircleColorAtIndex:(NSInteger)index;
+		[Export("getCircleColorAtIndex:")]
+		[return: NullAllowed]
+		UIColor GetCircleColorAtIndex(nint index);
+
+		// -(void)setCircleColor:(UIColor * _Nonnull)color;
+		[Export("setCircleColor:")]
+		void SetCircleColor(UIColor color);
+
+		// -(void)resetCircleColors:(NSInteger)index;
+		[Export("resetCircleColors:")]
+		void ResetCircleColors(nint index);
+
+		// @property (nonatomic) BOOL drawCirclesEnabled;
+		[Export("drawCirclesEnabled")]
+		bool DrawCirclesEnabled { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isDrawCirclesEnabled;
+		[Export("isDrawCirclesEnabled")]
+		bool IsDrawCirclesEnabled { get; }
+
+		// @property (nonatomic, strong) UIColor * _Nullable circleHoleColor;
+		[NullAllowed, Export("circleHoleColor", ArgumentSemantic.Strong)]
+		UIColor CircleHoleColor { get; set; }
+
+		// @property (nonatomic) BOOL drawCircleHoleEnabled;
+		[Export("drawCircleHoleEnabled")]
+		bool DrawCircleHoleEnabled { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isDrawCircleHoleEnabled;
+		[Export("isDrawCircleHoleEnabled")]
+		bool IsDrawCircleHoleEnabled { get; }
 
 		// @property (nonatomic) CGFloat lineDashPhase;
 		[Export("lineDashPhase")]
@@ -3694,44 +4608,83 @@ namespace iOSCharts
 		[NullAllowed, Export("lineDashLengths", ArgumentSemantic.Copy)]
 		NSNumber[] LineDashLengths { get; set; }
 
-		// @property (nonatomic, strong) UIColor * _Nonnull valueTextColor;
-		[Export("valueTextColor", ArgumentSemantic.Strong)]
-		UIColor ValueTextColor { get; set; }
+		// @property (nonatomic) CGLineCap lineCapType;
+		[Export("lineCapType", ArgumentSemantic.Assign)]
+		CGLineCap LineCapType { get; set; }
 
-		// @property (nonatomic, strong) UIFont * _Nonnull valueFont;
-		[Export("valueFont", ArgumentSemantic.Strong)]
-		UIFont ValueFont { get; set; }
+		// @property (nonatomic, strong) id<InterfaceChartFillFormatter> _Nullable fillFormatter;
+		[NullAllowed, Export("fillFormatter", ArgumentSemantic.Strong)]
+		IInterfaceChartFillFormatter FillFormatter { get; set; }
 
-		// @property (copy, nonatomic) NSString * _Nonnull label;
-		[Export("label")]
-		string Label { get; set; }
-
-		// @property (nonatomic) BOOL drawLabelEnabled;
-		[Export("drawLabelEnabled")]
-		bool DrawLabelEnabled { get; set; }
-
-		// @property (nonatomic) enum ChartLimitLabelPosition labelPosition;
-		[Export("labelPosition", ArgumentSemantic.Assign)]
-		ChartLimitLabelPosition LabelPosition { get; set; }
-
-		// -(instancetype _Nonnull)initWithLimit:(double)limit __attribute__((objc_designated_initializer));
-		[Export("initWithLimit:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(double limit);
-
-		// -(instancetype _Nonnull)initWithLimit:(double)limit label:(NSString * _Nonnull)label __attribute__((objc_designated_initializer));
-		[Export("initWithLimit:label:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(double limit, string label);
-
-		// @property (nonatomic) CGFloat lineWidth;
-		[Export("lineWidth")]
-		nfloat LineWidth { get; set; }
+		//u-n-safe NSObject CopyWithZone([NullAllowed] _NSZone* zone);
 	}
 
-	// @interface ChartMarker : NSObject
-	[BaseType(typeof(NSObject), Name = "_TtC6Charts11ChartMarker")]
-	interface ChartMarker
+	// @interface LineRadarChartRenderer : LineScatterCandleRadarChartRenderer
+	[BaseType(typeof(LineScatterCandleRadarChartRenderer), Name = "LineRadarRenderer")]
+	interface LineRadarChartRenderer
+	{
+		// -(instancetype _Nonnull)initWithAnimator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler __attribute__((objc_designated_initializer));
+		[Export("initWithAnimator:viewPortHandler:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] ChartAnimator animator, [NullAllowed] ChartViewPortHandler viewPortHandler);
+
+		//u-n-safe void DrawFilledPathWithContext(CGContextRef* context, CGPathRef* path, ChartFill fill, nfloat fillAlpha);
+
+		//u-n-safe void DrawFilledPathWithContext(CGContextRef* context, CGPathRef* path, UIColor fillColor, nfloat fillAlpha);
+	}
+
+	// @interface LineChartRenderer : LineRadarChartRenderer
+	[BaseType(typeof(LineRadarChartRenderer), Name = "_TtC6Charts17LineChartRenderer")]
+	interface LineChartRenderer
+	{
+		// @property (nonatomic, weak) id<LineChartDataProvider> _Nullable dataProvider;
+		[NullAllowed, Export("dataProvider", ArgumentSemantic.Weak)]
+		ILineChartDataProvider DataProvider { get; set; }
+
+		// -(instancetype _Nonnull)initWithDataProvider:(id<LineChartDataProvider> _Nullable)dataProvider animator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler __attribute__((objc_designated_initializer));
+		[Export("initWithDataProvider:animator:viewPortHandler:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] ILineChartDataProvider dataProvider, [NullAllowed] ChartAnimator animator, [NullAllowed] ChartViewPortHandler viewPortHandler);
+
+		//u-n-safe void DrawDataWithContext(CGContextRef* context);
+
+		//u-n-safe void DrawDataSetWithContext(CGContextRef* context, IInterfaceLineChartDataSet dataSet);
+
+		//u-n-safe void DrawCubicBezierWithContext(CGContextRef* context, IInterfaceLineChartDataSet dataSet);
+
+		//u-n-safe void DrawHorizontalBezierWithContext(CGContextRef* context, IInterfaceLineChartDataSet dataSet);
+
+		//u-n-safe void DrawLinearWithContext(CGContextRef* context, IInterfaceLineChartDataSet dataSet);
+
+		//u-n-safe void DrawValuesWithContext(CGContextRef* context);
+
+		//u-n-safe void DrawExtrasWithContext(CGContextRef* context);
+
+		//u-n-safe void DrawHighlightedWithContext(CGContextRef* context, ChartHighlight[] indices);
+	}
+
+	// @interface LineChartView : BarLineChartViewBase <LineChartDataProvider>
+	[BaseType(typeof(BarLineChartViewBase), Name = "_TtC6Charts13LineChartView")]
+	interface LineChartView : ILineChartDataProvider
+	{
+		// @property (readonly, nonatomic, strong) LineChartData * _Nullable lineData;
+		[NullAllowed, Export("lineData", ArgumentSemantic.Strong)]
+		LineChartData LineData { get; }
+
+		// -(instancetype _Nonnull)initWithFrame:(CGRect)frame __attribute__((objc_designated_initializer));
+		[Export("initWithFrame:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(CGRect frame);
+
+		//// -(instancetype _Nullable)initWithCoder:(NSCoder * _Nonnull)aDecoder __attribute__((objc_designated_initializer));
+		//[Export("initWithCoder:")]
+		//[DesignatedInitializer]
+		//IntPtr Constructor(NSCoder aDecoder);
+	}
+
+	// @interface ChartMarkerImage : NSObject <InterfaceChartMarker>
+	[BaseType(typeof(NSObject), Name = "MarkerImage")]
+	interface ChartMarkerImage : IInterfaceChartMarker
 	{
 		// @property (nonatomic, strong) UIImage * _Nullable image;
 		[NullAllowed, Export("image", ArgumentSemantic.Strong)]
@@ -3741,25 +4694,769 @@ namespace iOSCharts
 		[Export("offset", ArgumentSemantic.Assign)]
 		CGPoint Offset { get; set; }
 
-		// @property (readonly, nonatomic) CGSize size;
-		[Export("size")]
-		CGSize Size { get; }
+		// @property (nonatomic, weak) ChartViewBase * _Nullable chartView;
+		[NullAllowed, Export("chartView", ArgumentSemantic.Weak)]
+		ChartViewBase ChartView { get; set; }
 
-		// -(CGPoint)offsetForDrawingAtPos:(CGPoint)point;
-		[Export("offsetForDrawingAtPos:")]
-		CGPoint OffsetForDrawingAtPos(CGPoint point);
+		// @property (nonatomic) CGSize size;
+		[Export("size", ArgumentSemantic.Assign)]
+		CGSize Size { get; set; }
 
-		//// -(void)drawWithContext:(CGContextRef _Nonnull)context point:(CGPoint)point;
-		//[Export("drawWithContext:point:")]
-		//unsafe void DrawWithContext(CGContextRef* context, CGPoint point);
+		// -(CGPoint)offsetForDrawingAtPoint:(CGPoint)point;
+		[Export("offsetForDrawingAtPoint:")]
+		CGPoint OffsetForDrawingAtPoint(CGPoint point);
 
 		// -(void)refreshContentWithEntry:(ChartDataEntry * _Nonnull)entry highlight:(ChartHighlight * _Nonnull)highlight;
 		[Export("refreshContentWithEntry:highlight:")]
 		void RefreshContentWithEntry(ChartDataEntry entry, ChartHighlight highlight);
+
+		//u-n-safe void DrawWithContext(CGContextRef* context, CGPoint point);
+	}
+
+	// @interface ChartMarkerView : NSUIView <InterfaceChartMarker>
+	[BaseType(typeof(NSUIView), Name = "MarkerView")]
+	interface ChartMarkerView : IInterfaceChartMarker
+	{
+		// @property (nonatomic) CGPoint offset;
+		[Export("offset", ArgumentSemantic.Assign)]
+		CGPoint Offset { get; set; }
+
+		// @property (nonatomic, weak) ChartViewBase * _Nullable chartView;
+		[NullAllowed, Export("chartView", ArgumentSemantic.Weak)]
+		ChartViewBase ChartView { get; set; }
+
+		// -(CGPoint)offsetForDrawingAtPoint:(CGPoint)point;
+		[Export("offsetForDrawingAtPoint:")]
+		CGPoint OffsetForDrawingAtPoint(CGPoint point);
+
+		// -(void)refreshContentWithEntry:(ChartDataEntry * _Nonnull)entry highlight:(ChartHighlight * _Nonnull)highlight;
+		[Export("refreshContentWithEntry:highlight:")]
+		void RefreshContentWithEntry(ChartDataEntry entry, ChartHighlight highlight);
+
+		//u-n-safe void DrawWithContext(CGContextRef* context, CGPoint point);
+
+		// +(ChartMarkerView * _Nullable)viewFromXib;
+		[Static]
+		[NullAllowed, Export("viewFromXib")]
+		ChartMarkerView ViewFromXib { get; }
+
+		// -(instancetype _Nonnull)initWithFrame:(CGRect)frame __attribute__((objc_designated_initializer));
+		[Export("initWithFrame:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(CGRect frame);
+
+		//// -(instancetype _Nullable)initWithCoder:(NSCoder * _Nonnull)aDecoder __attribute__((objc_designated_initializer));
+		//[Export("initWithCoder:")]
+		//[DesignatedInitializer]
+		//IntPtr Constructor(NSCoder aDecoder);
+	}
+
+	// @interface MoveChartViewJob : ChartViewPortJob
+	[BaseType(typeof(ChartViewPortJob), Name = "MoveViewJob")]
+	interface MoveChartViewJob
+	{
+		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler xValue:(double)xValue yValue:(double)yValue transformer:(ChartTransformer * _Nonnull)transformer view:(ChartViewBase * _Nonnull)view __attribute__((objc_designated_initializer));
+		[Export("initWithViewPortHandler:xValue:yValue:transformer:view:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(ChartViewPortHandler viewPortHandler, double xValue, double yValue, ChartTransformer transformer, ChartViewBase view);
+
+		// -(void)doJob;
+		[Export("doJob")]
+		void DoJob();
+	}
+
+	// @interface PieChartData : ChartData
+	[BaseType(typeof(ChartData), Name = "_TtC6Charts12PieChartData")]
+	interface PieChartData
+	{
+		// -(instancetype _Nonnull)initWithDataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nullable)dataSets __attribute__((objc_designated_initializer));
+		[Export("initWithDataSets:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] IInterfaceChartDataSet[] dataSets);
+
+		// -(id<IInterfaceChartDataSet> _Nullable)getDataSetByIndex:(NSInteger)index;
+		[Export("getDataSetByIndex:")]
+		[return: NullAllowed]
+		IInterfaceChartDataSet GetDataSetByIndex(nint index);
+
+		// -(id<IInterfaceChartDataSet> _Nullable)getDataSetByLabel:(NSString * _Nonnull)label ignorecase:(BOOL)ignorecase;
+		[Export("getDataSetByLabel:ignorecase:")]
+		[return: NullAllowed]
+		IInterfaceChartDataSet GetDataSetByLabel(string label, bool ignorecase);
+
+		// -(ChartDataEntry * _Nullable)entryForHighlight:(ChartHighlight * _Nonnull)highlight;
+		[Export("entryForHighlight:")]
+		[return: NullAllowed]
+		ChartDataEntry EntryForHighlight(ChartHighlight highlight);
+
+		// -(void)addDataSet:(id<IInterfaceChartDataSet> _Null_unspecified)d;
+		[Export("addDataSet:")]
+		void AddDataSet(IInterfaceChartDataSet d);
+
+		// -(BOOL)removeDataSetByIndex:(NSInteger)index;
+		[Export("removeDataSetByIndex:")]
+		bool RemoveDataSetByIndex(nint index);
+
+		// @property (readonly, nonatomic) double yValueSum;
+		[Export("yValueSum")]
+		double YValueSum { get; }
+	}
+
+	// @interface PieChartDataEntry : ChartDataEntry
+	[BaseType(typeof(ChartDataEntry), Name = "_TtC6Charts17PieChartDataEntry")]
+	interface PieChartDataEntry
+	{
+		// -(instancetype _Nonnull)initWithValue:(double)value label:(NSString * _Nullable)label data:(id _Nullable)data __attribute__((objc_designated_initializer));
+		[Export("initWithValue:label:data:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(double value, [NullAllowed] string label, [NullAllowed] NSObject data);
+
+		// -(instancetype _Nonnull)initWithValue:(double)value label:(NSString * _Nullable)label;
+		[Export("initWithValue:label:")]
+		IntPtr Constructor(double value, [NullAllowed] string label);
+
+		// -(instancetype _Nonnull)initWithValue:(double)value data:(id _Nullable)data;
+		[Export("initWithValue:data:")]
+		IntPtr Constructor(double value, [NullAllowed] NSObject data);
+
+		// -(instancetype _Nonnull)initWithValue:(double)value;
+		[Export("initWithValue:")]
+		IntPtr Constructor(double value);
+
+		// @property (copy, nonatomic) NSString * _Nullable label;
+		[NullAllowed, Export("label")]
+		string Label { get; set; }
+
+		// @property (nonatomic) double value;
+		[Export("value")]
+		double Value { get; set; }
+
+		// @property (nonatomic) double x;
+		[Export("x")]
+		double X { get; set; }
+
+		//u-n-safe NSObject CopyWithZone([NullAllowed] _NSZone* zone);
+	}
+
+	// @interface PieChartDataSet : ChartDataSet <IInterfacePieChartDataSet>
+	[BaseType(typeof(ChartDataSet), Name = "_TtC6Charts15PieChartDataSet")]
+	interface PieChartDataSet : InterfacePieChartDataSet
+	{
+		// -(instancetype _Nonnull)initWithValues:(NSArray<ChartDataEntry *> * _Nullable)values label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
+		[Export("initWithValues:label:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] ChartDataEntry[] values, [NullAllowed] string label);
+
+		// @property (nonatomic) CGFloat sliceSpace;
+		[Export("sliceSpace")]
+		nfloat SliceSpace { get; set; }
+
+		// @property (nonatomic) CGFloat selectionShift;
+		[Export("selectionShift")]
+		nfloat SelectionShift { get; set; }
+
+		// @property (nonatomic) enum PieChartValuePosition xValuePosition;
+		[Export("xValuePosition", ArgumentSemantic.Assign)]
+		PieChartValuePosition XValuePosition { get; set; }
+
+		// @property (nonatomic) enum PieChartValuePosition yValuePosition;
+		[Export("yValuePosition", ArgumentSemantic.Assign)]
+		PieChartValuePosition YValuePosition { get; set; }
+
+		// @property (nonatomic, strong) UIColor * _Nullable valueLineColor;
+		[NullAllowed, Export("valueLineColor", ArgumentSemantic.Strong)]
+		UIColor ValueLineColor { get; set; }
+
+		// @property (nonatomic) CGFloat valueLineWidth;
+		[Export("valueLineWidth")]
+		nfloat ValueLineWidth { get; set; }
+
+		// @property (nonatomic) CGFloat valueLinePart1OffsetPercentage;
+		[Export("valueLinePart1OffsetPercentage")]
+		nfloat ValueLinePart1OffsetPercentage { get; set; }
+
+		// @property (nonatomic) CGFloat valueLinePart1Length;
+		[Export("valueLinePart1Length")]
+		nfloat ValueLinePart1Length { get; set; }
+
+		// @property (nonatomic) CGFloat valueLinePart2Length;
+		[Export("valueLinePart2Length")]
+		nfloat ValueLinePart2Length { get; set; }
+
+		// @property (nonatomic) BOOL valueLineVariableLength;
+		[Export("valueLineVariableLength")]
+		bool ValueLineVariableLength { get; set; }
+
+		// @property (nonatomic, strong) UIFont * _Nullable entryLabelFont;
+		[NullAllowed, Export("entryLabelFont", ArgumentSemantic.Strong)]
+		UIFont EntryLabelFont { get; set; }
+
+		// @property (nonatomic, strong) UIColor * _Nullable entryLabelColor;
+		[NullAllowed, Export("entryLabelColor", ArgumentSemantic.Strong)]
+		UIColor EntryLabelColor { get; set; }
+
+		//u-n-safe NSObject CopyWithZone([NullAllowed] _NSZone* zone);
+	}
+
+	// @interface PieChartRenderer : ChartDataRendererBase
+	[BaseType(typeof(ChartDataRendererBase), Name = "_TtC6Charts16PieChartRenderer")]
+	interface PieChartRenderer
+	{
+		// @property (nonatomic, weak) PieChartView * _Nullable chart;
+		[NullAllowed, Export("chart", ArgumentSemantic.Weak)]
+		PieChartView Chart { get; set; }
+
+		// -(instancetype _Nonnull)initWithChart:(PieChartView * _Nullable)chart animator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler __attribute__((objc_designated_initializer));
+		[Export("initWithChart:animator:viewPortHandler:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] PieChartView chart, [NullAllowed] ChartAnimator animator, [NullAllowed] ChartViewPortHandler viewPortHandler);
+
+		//u-n-safe void DrawDataWithContext(CGContextRef* context);
+
+		// -(CGFloat)calculateMinimumRadiusForSpacedSliceWithCenter:(CGPoint)center radius:(CGFloat)radius angle:(CGFloat)angle arcStartPointX:(CGFloat)arcStartPointX arcStartPointY:(CGFloat)arcStartPointY startAngle:(CGFloat)startAngle sweepAngle:(CGFloat)sweepAngle;
+		[Export("calculateMinimumRadiusForSpacedSliceWithCenter:radius:angle:arcStartPointX:arcStartPointY:startAngle:sweepAngle:")]
+		nfloat CalculateMinimumRadiusForSpacedSliceWithCenter(CGPoint center, nfloat radius, nfloat angle, nfloat arcStartPointX, nfloat arcStartPointY, nfloat startAngle, nfloat sweepAngle);
+
+		// -(CGFloat)getSliceSpaceWithDataSet:(id<IInterfacePieChartDataSet> _Nonnull)dataSet;
+		[Export("getSliceSpaceWithDataSet:")]
+		nfloat GetSliceSpaceWithDataSet(IInterfacePieChartDataSet dataSet);
+
+		//u-n-safe void DrawDataSetWithContext(CGContextRef* context, IInterfacePieChartDataSet dataSet);
+
+		//u-n-safe void DrawValuesWithContext(CGContextRef* context);
+
+		//u-n-safe void DrawExtrasWithContext(CGContextRef* context);
+
+		//u-n-safe void DrawHighlightedWithContext(CGContextRef* context, ChartHighlight[] indices);
+	}
+
+	// @interface PieRadarChartViewBase : ChartViewBase
+	[BaseType(typeof(ChartViewBase), Name = "_TtC6Charts21PieRadarChartViewBase")]
+	interface PieRadarChartViewBase
+	{
+		// @property (nonatomic) BOOL rotationEnabled;
+		[Export("rotationEnabled")]
+		bool RotationEnabled { get; set; }
+
+		// @property (nonatomic) CGFloat minOffset;
+		[Export("minOffset")]
+		nfloat MinOffset { get; set; }
+
+		// -(instancetype _Nonnull)initWithFrame:(CGRect)frame __attribute__((objc_designated_initializer));
+		[Export("initWithFrame:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(CGRect frame);
+
+		//// -(instancetype _Nullable)initWithCoder:(NSCoder * _Nonnull)aDecoder __attribute__((objc_designated_initializer));
+		//[Export("initWithCoder:")]
+		//[DesignatedInitializer]
+		//IntPtr Constructor(NSCoder aDecoder);
+
+		// @property (readonly, nonatomic) NSInteger maxVisibleCount;
+		[Export("maxVisibleCount")]
+		nint MaxVisibleCount { get; }
+
+		// -(void)notifyDataSetChanged;
+		[Export("notifyDataSetChanged")]
+		void NotifyDataSetChanged();
+
+		// -(CGFloat)angleForPointWithX:(CGFloat)x y:(CGFloat)y;
+		[Export("angleForPointWithX:y:")]
+		nfloat AngleForPointWithX(nfloat x, nfloat y);
+
+		// -(CGPoint)getPositionWithCenter:(CGPoint)center dist:(CGFloat)dist angle:(CGFloat)angle;
+		[Export("getPositionWithCenter:dist:angle:")]
+		CGPoint GetPositionWithCenter(CGPoint center, nfloat dist, nfloat angle);
+
+		// -(CGFloat)distanceToCenterWithX:(CGFloat)x y:(CGFloat)y;
+		[Export("distanceToCenterWithX:y:")]
+		nfloat DistanceToCenterWithX(nfloat x, nfloat y);
+
+		// -(NSInteger)indexForAngle:(CGFloat)angle;
+		[Export("indexForAngle:")]
+		nint IndexForAngle(nfloat angle);
+
+		// @property (nonatomic) CGFloat rotationAngle;
+		[Export("rotationAngle")]
+		nfloat RotationAngle { get; set; }
+
+		// @property (readonly, nonatomic) CGFloat rawRotationAngle;
+		[Export("rawRotationAngle")]
+		nfloat RawRotationAngle { get; }
+
+		// @property (readonly, nonatomic) CGFloat diameter;
+		[Export("diameter")]
+		nfloat Diameter { get; }
+
+		// @property (readonly, nonatomic) CGFloat radius;
+		[Export("radius")]
+		nfloat Radius { get; }
+
+		// @property (readonly, nonatomic) double chartYMax;
+		[Export("chartYMax")]
+		double ChartYMax { get; }
+
+		// @property (readonly, nonatomic) double chartYMin;
+		[Export("chartYMin")]
+		double ChartYMin { get; }
+
+		// @property (readonly, nonatomic) BOOL isRotationEnabled;
+		[Export("isRotationEnabled")]
+		bool IsRotationEnabled { get; }
+
+		// @property (nonatomic) BOOL rotationWithTwoFingers;
+		[Export("rotationWithTwoFingers")]
+		bool RotationWithTwoFingers { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isRotationWithTwoFingers;
+		[Export("isRotationWithTwoFingers")]
+		bool IsRotationWithTwoFingers { get; }
+
+		// -(void)spinWithDuration:(NSTimeInterval)duration fromAngle:(CGFloat)fromAngle toAngle:(CGFloat)toAngle easing:(double (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing;
+		[Export("spinWithDuration:fromAngle:toAngle:easing:")]
+		void SpinWithDuration(double duration, nfloat fromAngle, nfloat toAngle, [NullAllowed] Func<double, double, double> easing);
+
+		// -(void)spinWithDuration:(NSTimeInterval)duration fromAngle:(CGFloat)fromAngle toAngle:(CGFloat)toAngle easingOption:(enum ChartEasingOption)easingOption;
+		[Export("spinWithDuration:fromAngle:toAngle:easingOption:")]
+		void SpinWithDuration(double duration, nfloat fromAngle, nfloat toAngle, ChartEasingOption easingOption);
+
+		// -(void)spinWithDuration:(NSTimeInterval)duration fromAngle:(CGFloat)fromAngle toAngle:(CGFloat)toAngle;
+		[Export("spinWithDuration:fromAngle:toAngle:")]
+		void SpinWithDuration(double duration, nfloat fromAngle, nfloat toAngle);
+
+		// -(void)stopSpinAnimation;
+		[Export("stopSpinAnimation")]
+		void StopSpinAnimation();
+
+		// -(void)nsuiTouchesBegan:(NSSet<UITouch *> * _Nonnull)touches withEvent:(UIEvent * _Nullable)event;
+		[Export("nsuiTouchesBegan:withEvent:")]
+		void NsuiTouchesBegan(NSSet<UITouch> touches, [NullAllowed] UIEvent @event);
+
+		// -(void)nsuiTouchesMoved:(NSSet<UITouch *> * _Nonnull)touches withEvent:(UIEvent * _Nullable)event;
+		[Export("nsuiTouchesMoved:withEvent:")]
+		void NsuiTouchesMoved(NSSet<UITouch> touches, [NullAllowed] UIEvent @event);
+
+		// -(void)nsuiTouchesEnded:(NSSet<UITouch *> * _Nonnull)touches withEvent:(UIEvent * _Nullable)event;
+		[Export("nsuiTouchesEnded:withEvent:")]
+		void NsuiTouchesEnded(NSSet<UITouch> touches, [NullAllowed] UIEvent @event);
+
+		// -(void)nsuiTouchesCancelled:(NSSet<UITouch *> * _Nullable)touches withEvent:(UIEvent * _Nullable)event;
+		[Export("nsuiTouchesCancelled:withEvent:")]
+		void NsuiTouchesCancelled([NullAllowed] NSSet<UITouch> touches, [NullAllowed] UIEvent @event);
+
+		// -(void)stopDeceleration;
+		[Export("stopDeceleration")]
+		void StopDeceleration();
+	}
+
+	// @interface PieChartView : PieRadarChartViewBase
+	[BaseType(typeof(PieRadarChartViewBase), Name = "_TtC6Charts12PieChartView")]
+	interface PieChartView
+	{
+		// -(instancetype _Nonnull)initWithFrame:(CGRect)frame __attribute__((objc_designated_initializer));
+		[Export("initWithFrame:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(CGRect frame);
+
+		//// -(instancetype _Nullable)initWithCoder:(NSCoder * _Nonnull)aDecoder __attribute__((objc_designated_initializer));
+		//[Export("initWithCoder:")]
+		//[DesignatedInitializer]
+		//IntPtr Constructor(NSCoder aDecoder);
+
+		// -(void)drawRect:(CGRect)rect;
+		[Export("drawRect:")]
+		void DrawRect(CGRect rect);
+
+		// -(CGPoint)getMarkerPositionWithHighlight:(ChartHighlight * _Nonnull)highlight;
+		[Export("getMarkerPositionWithHighlight:")]
+		CGPoint GetMarkerPositionWithHighlight(ChartHighlight highlight);
+
+		// -(BOOL)needsHighlightWithIndex:(NSInteger)index;
+		[Export("needsHighlightWithIndex:")]
+		bool NeedsHighlightWithIndex(nint index);
+
+		// @property (readonly, nonatomic, strong) ChartXAxis * _Nonnull xAxis;
+		[Export("xAxis", ArgumentSemantic.Strong)]
+		ChartXAxis XAxis { get; }
+
+		// -(NSInteger)indexForAngle:(CGFloat)angle;
+		[Export("indexForAngle:")]
+		nint IndexForAngle(nfloat angle);
+
+		// -(NSInteger)dataSetIndexForIndex:(double)xValue;
+		[Export("dataSetIndexForIndex:")]
+		nint DataSetIndexForIndex(double xValue);
+
+		// @property (readonly, copy, nonatomic) NSArray<NSNumber *> * _Nonnull drawAngles;
+		[Export("drawAngles", ArgumentSemantic.Copy)]
+		NSNumber[] DrawAngles { get; }
+
+		// @property (readonly, copy, nonatomic) NSArray<NSNumber *> * _Nonnull absoluteAngles;
+		[Export("absoluteAngles", ArgumentSemantic.Copy)]
+		NSNumber[] AbsoluteAngles { get; }
+
+		// @property (nonatomic, strong) UIColor * _Nullable holeColor;
+		[NullAllowed, Export("holeColor", ArgumentSemantic.Strong)]
+		UIColor HoleColor { get; set; }
+
+		// @property (nonatomic) BOOL drawSlicesUnderHoleEnabled;
+		[Export("drawSlicesUnderHoleEnabled")]
+		bool DrawSlicesUnderHoleEnabled { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isDrawSlicesUnderHoleEnabled;
+		[Export("isDrawSlicesUnderHoleEnabled")]
+		bool IsDrawSlicesUnderHoleEnabled { get; }
+
+		// @property (nonatomic) BOOL drawHoleEnabled;
+		[Export("drawHoleEnabled")]
+		bool DrawHoleEnabled { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isDrawHoleEnabled;
+		[Export("isDrawHoleEnabled")]
+		bool IsDrawHoleEnabled { get; }
+
+		// @property (copy, nonatomic) NSString * _Nullable centerText;
+		[NullAllowed, Export("centerText")]
+		string CenterText { get; set; }
+
+		// @property (nonatomic, strong) NSAttributedString * _Nullable centerAttributedText;
+		[NullAllowed, Export("centerAttributedText", ArgumentSemantic.Strong)]
+		NSAttributedString CenterAttributedText { get; set; }
+
+		// @property (nonatomic) CGPoint centerTextOffset;
+		[Export("centerTextOffset", ArgumentSemantic.Assign)]
+		CGPoint CenterTextOffset { get; set; }
+
+		// @property (nonatomic) BOOL drawCenterTextEnabled;
+		[Export("drawCenterTextEnabled")]
+		bool DrawCenterTextEnabled { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isDrawCenterTextEnabled;
+		[Export("isDrawCenterTextEnabled")]
+		bool IsDrawCenterTextEnabled { get; }
+
+		// @property (readonly, nonatomic) CGFloat radius;
+		[Export("radius")]
+		nfloat Radius { get; }
+
+		// @property (readonly, nonatomic) CGRect circleBox;
+		[Export("circleBox")]
+		CGRect CircleBox { get; }
+
+		// @property (readonly, nonatomic) CGPoint centerCircleBox;
+		[Export("centerCircleBox")]
+		CGPoint CenterCircleBox { get; }
+
+		// @property (nonatomic) CGFloat holeRadiusPercent;
+		[Export("holeRadiusPercent")]
+		nfloat HoleRadiusPercent { get; set; }
+
+		// @property (nonatomic, strong) UIColor * _Nullable transparentCircleColor;
+		[NullAllowed, Export("transparentCircleColor", ArgumentSemantic.Strong)]
+		UIColor TransparentCircleColor { get; set; }
+
+		// @property (nonatomic) CGFloat transparentCircleRadiusPercent;
+		[Export("transparentCircleRadiusPercent")]
+		nfloat TransparentCircleRadiusPercent { get; set; }
+
+		// @property (nonatomic) BOOL drawSliceTextEnabled;
+		[Export("drawSliceTextEnabled")]
+		bool DrawSliceTextEnabled { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isDrawSliceTextEnabled;
+		[Export("isDrawSliceTextEnabled")]
+		bool IsDrawSliceTextEnabled { get; }
+
+		// @property (nonatomic, strong) UIColor * _Nullable entryLabelColor;
+		[NullAllowed, Export("entryLabelColor", ArgumentSemantic.Strong)]
+		UIColor EntryLabelColor { get; set; }
+
+		// @property (nonatomic, strong) UIFont * _Nullable entryLabelFont;
+		[NullAllowed, Export("entryLabelFont", ArgumentSemantic.Strong)]
+		UIFont EntryLabelFont { get; set; }
+
+		// @property (nonatomic) BOOL drawEntryLabelsEnabled;
+		[Export("drawEntryLabelsEnabled")]
+		bool DrawEntryLabelsEnabled { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isDrawEntryLabelsEnabled;
+		[Export("isDrawEntryLabelsEnabled")]
+		bool IsDrawEntryLabelsEnabled { get; }
+
+		// @property (nonatomic) BOOL usePercentValuesEnabled;
+		[Export("usePercentValuesEnabled")]
+		bool UsePercentValuesEnabled { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isUsePercentValuesEnabled;
+		[Export("isUsePercentValuesEnabled")]
+		bool IsUsePercentValuesEnabled { get; }
+
+		// @property (nonatomic) CGFloat centerTextRadiusPercent;
+		[Export("centerTextRadiusPercent")]
+		nfloat CenterTextRadiusPercent { get; set; }
+
+		// @property (nonatomic) CGFloat maxAngle;
+		[Export("maxAngle")]
+		nfloat MaxAngle { get; set; }
+	}
+
+	// @interface PieRadarChartHighlighter : ChartHighlighter
+	[BaseType(typeof(ChartHighlighter), Name = "PieRadarHighlighter")]
+	interface PieRadarChartHighlighter
+	{
+		// -(ChartHighlight * _Nullable)getHighlightWithX:(CGFloat)x y:(CGFloat)y;
+		[Export("getHighlightWithX:y:")]
+		[return: NullAllowed]
+		ChartHighlight GetHighlightWithX(nfloat x, nfloat y);
+
+		// -(ChartHighlight * _Nullable)closestHighlightWithIndex:(NSInteger)index x:(CGFloat)x y:(CGFloat)y;
+		[Export("closestHighlightWithIndex:x:y:")]
+		[return: NullAllowed]
+		ChartHighlight ClosestHighlightWithIndex(nint index, nfloat x, nfloat y);
+
+		// -(instancetype _Nonnull)initWithChart:(id<ChartDataProvider> _Nonnull)chart __attribute__((objc_designated_initializer));
+		[Export("initWithChart:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(IChartDataProvider chart);
+	}
+
+	// @interface PieChartHighlighter : PieRadarChartHighlighter
+	[BaseType(typeof(PieRadarChartHighlighter), Name = "PieHighlighter")]
+	interface PieChartHighlighter
+	{
+		// -(ChartHighlight * _Nullable)closestHighlightWithIndex:(NSInteger)index x:(CGFloat)x y:(CGFloat)y;
+		[Export("closestHighlightWithIndex:x:y:")]
+		[return: NullAllowed]
+		ChartHighlight ClosestHighlightWithIndex(nint index, nfloat x, nfloat y);
+
+		// -(instancetype _Nonnull)initWithChart:(id<ChartDataProvider> _Nonnull)chart __attribute__((objc_designated_initializer));
+		[Export("initWithChart:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(IChartDataProvider chart);
+	}
+
+	// @interface RadarChartData : ChartData
+	[BaseType(typeof(ChartData), Name = "_TtC6Charts14RadarChartData")]
+	interface RadarChartData
+	{
+		// @property (nonatomic, strong) UIColor * _Nonnull highlightColor;
+		[Export("highlightColor", ArgumentSemantic.Strong)]
+		UIColor HighlightColor { get; set; }
+
+		// @property (nonatomic) CGFloat highlightLineWidth;
+		[Export("highlightLineWidth")]
+		nfloat HighlightLineWidth { get; set; }
+
+		// @property (nonatomic) CGFloat highlightLineDashPhase;
+		[Export("highlightLineDashPhase")]
+		nfloat HighlightLineDashPhase { get; set; }
+
+		// @property (copy, nonatomic) NSArray<NSNumber *> * _Nullable highlightLineDashLengths;
+		[NullAllowed, Export("highlightLineDashLengths", ArgumentSemantic.Copy)]
+		NSNumber[] HighlightLineDashLengths { get; set; }
+
+		// @property (copy, nonatomic) NSArray<NSString *> * _Nonnull labels;
+		[Export("labels", ArgumentSemantic.Copy)]
+		string[] Labels { get; set; }
+
+		// -(instancetype _Nonnull)initWithDataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nullable)dataSets __attribute__((objc_designated_initializer));
+		[Export("initWithDataSets:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] IInterfaceChartDataSet[] dataSets);
+
+		// -(ChartDataEntry * _Nullable)entryForHighlight:(ChartHighlight * _Nonnull)highlight;
+		[Export("entryForHighlight:")]
+		[return: NullAllowed]
+		ChartDataEntry EntryForHighlight(ChartHighlight highlight);
+	}
+
+	// @interface RadarChartDataEntry : ChartDataEntry
+	[BaseType(typeof(ChartDataEntry), Name = "_TtC6Charts19RadarChartDataEntry")]
+	interface RadarChartDataEntry
+	{
+		// -(instancetype _Nonnull)initWithValue:(double)value data:(id _Nullable)data __attribute__((objc_designated_initializer));
+		[Export("initWithValue:data:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(double value, [NullAllowed] NSObject data);
+
+		// -(instancetype _Nonnull)initWithValue:(double)value;
+		[Export("initWithValue:")]
+		IntPtr Constructor(double value);
+
+		// @property (nonatomic) double value;
+		[Export("value")]
+		double Value { get; set; }
+
+		//u-n-safe NSObject CopyWithZone([NullAllowed] _NSZone* zone);
+	}
+
+	// @interface RadarChartDataSet : LineRadarChartDataSet <IInterfaceRadarChartDataSet>
+	[BaseType(typeof(LineRadarChartDataSet), Name = "_TtC6Charts17RadarChartDataSet")]
+	interface RadarChartDataSet : InterfaceRadarChartDataSet
+	{
+		// -(instancetype _Nonnull)initWithValues:(NSArray<ChartDataEntry *> * _Nullable)values label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
+		[Export("initWithValues:label:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] ChartDataEntry[] values, [NullAllowed] string label);
+
+		// @property (nonatomic) BOOL drawHighlightCircleEnabled;
+		[Export("drawHighlightCircleEnabled")]
+		bool DrawHighlightCircleEnabled { get; set; }
+
+		// @property (readonly, nonatomic) BOOL isDrawHighlightCircleEnabled;
+		[Export("isDrawHighlightCircleEnabled")]
+		bool IsDrawHighlightCircleEnabled { get; }
+
+		// @property (nonatomic, strong) UIColor * _Nullable highlightCircleFillColor;
+		[NullAllowed, Export("highlightCircleFillColor", ArgumentSemantic.Strong)]
+		UIColor HighlightCircleFillColor { get; set; }
+
+		// @property (nonatomic, strong) UIColor * _Nullable highlightCircleStrokeColor;
+		[NullAllowed, Export("highlightCircleStrokeColor", ArgumentSemantic.Strong)]
+		UIColor HighlightCircleStrokeColor { get; set; }
+
+		// @property (nonatomic) CGFloat highlightCircleStrokeAlpha;
+		[Export("highlightCircleStrokeAlpha")]
+		nfloat HighlightCircleStrokeAlpha { get; set; }
+
+		// @property (nonatomic) CGFloat highlightCircleInnerRadius;
+		[Export("highlightCircleInnerRadius")]
+		nfloat HighlightCircleInnerRadius { get; set; }
+
+		// @property (nonatomic) CGFloat highlightCircleOuterRadius;
+		[Export("highlightCircleOuterRadius")]
+		nfloat HighlightCircleOuterRadius { get; set; }
+
+		// @property (nonatomic) CGFloat highlightCircleStrokeWidth;
+		[Export("highlightCircleStrokeWidth")]
+		nfloat HighlightCircleStrokeWidth { get; set; }
+	}
+
+	// @interface RadarChartRenderer : LineRadarChartRenderer
+	[BaseType(typeof(LineRadarChartRenderer), Name = "_TtC6Charts18RadarChartRenderer")]
+	interface RadarChartRenderer
+	{
+		// @property (nonatomic, weak) RadarChartView * _Nullable chart;
+		[NullAllowed, Export("chart", ArgumentSemantic.Weak)]
+		RadarChartView Chart { get; set; }
+
+		// -(instancetype _Nonnull)initWithChart:(RadarChartView * _Nullable)chart animator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler __attribute__((objc_designated_initializer));
+		[Export("initWithChart:animator:viewPortHandler:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] RadarChartView chart, [NullAllowed] ChartAnimator animator, [NullAllowed] ChartViewPortHandler viewPortHandler);
+
+		//u-n-safe void DrawDataWithContext(CGContextRef* context);
+
+		//u-n-safe void DrawValuesWithContext(CGContextRef* context);
+
+		//u-n-safe void DrawExtrasWithContext(CGContextRef* context);
+
+		//u-n-safe void DrawWebWithContext(CGContextRef* context);
+
+		//u-n-safe void DrawHighlightedWithContext(CGContextRef* context, ChartHighlight[] indices);
+	}
+
+	// @interface RadarChartView : PieRadarChartViewBase
+	[BaseType(typeof(PieRadarChartViewBase), Name = "_TtC6Charts14RadarChartView")]
+	interface RadarChartView
+	{
+		// @property (nonatomic) CGFloat webLineWidth;
+		[Export("webLineWidth")]
+		nfloat WebLineWidth { get; set; }
+
+		// @property (nonatomic) CGFloat innerWebLineWidth;
+		[Export("innerWebLineWidth")]
+		nfloat InnerWebLineWidth { get; set; }
+
+		// @property (nonatomic, strong) UIColor * _Nonnull webColor;
+		[Export("webColor", ArgumentSemantic.Strong)]
+		UIColor WebColor { get; set; }
+
+		// @property (nonatomic, strong) UIColor * _Nonnull innerWebColor;
+		[Export("innerWebColor", ArgumentSemantic.Strong)]
+		UIColor InnerWebColor { get; set; }
+
+		// @property (nonatomic) CGFloat webAlpha;
+		[Export("webAlpha")]
+		nfloat WebAlpha { get; set; }
+
+		// @property (nonatomic) BOOL drawWeb;
+		[Export("drawWeb")]
+		bool DrawWeb { get; set; }
+
+		// -(instancetype _Nonnull)initWithFrame:(CGRect)frame __attribute__((objc_designated_initializer));
+		[Export("initWithFrame:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(CGRect frame);
+
+		//// -(instancetype _Nullable)initWithCoder:(NSCoder * _Nonnull)aDecoder __attribute__((objc_designated_initializer));
+		//[Export("initWithCoder:")]
+		//[DesignatedInitializer]
+		//IntPtr Constructor(NSCoder aDecoder);
+
+		// -(void)notifyDataSetChanged;
+		[Export("notifyDataSetChanged")]
+		void NotifyDataSetChanged();
+
+		// -(void)drawRect:(CGRect)rect;
+		[Export("drawRect:")]
+		void DrawRect(CGRect rect);
+
+		// @property (readonly, nonatomic) CGFloat factor;
+		[Export("factor")]
+		nfloat Factor { get; }
+
+		// @property (readonly, nonatomic) CGFloat sliceAngle;
+		[Export("sliceAngle")]
+		nfloat SliceAngle { get; }
+
+		// -(NSInteger)indexForAngle:(CGFloat)angle;
+		[Export("indexForAngle:")]
+		nint IndexForAngle(nfloat angle);
+
+		// @property (readonly, nonatomic, strong) ChartYAxis * _Nonnull yAxis;
+		[Export("yAxis", ArgumentSemantic.Strong)]
+		ChartYAxis YAxis { get; }
+
+		// @property (nonatomic) NSInteger skipWebLineCount;
+		[Export("skipWebLineCount")]
+		nint SkipWebLineCount { get; set; }
+
+		// @property (readonly, nonatomic) CGFloat radius;
+		[Export("radius")]
+		nfloat Radius { get; }
+
+		// @property (readonly, nonatomic) double chartYMax;
+		[Export("chartYMax")]
+		double ChartYMax { get; }
+
+		// @property (readonly, nonatomic) double chartYMin;
+		[Export("chartYMin")]
+		double ChartYMin { get; }
+
+		// @property (readonly, nonatomic) double yRange;
+		[Export("yRange")]
+		double YRange { get; }
+	}
+
+	// @interface RadarChartHighlighter : PieRadarChartHighlighter
+	[BaseType(typeof(PieRadarChartHighlighter), Name = "RadarHighlighter")]
+	interface RadarChartHighlighter
+	{
+		// -(ChartHighlight * _Nullable)closestHighlightWithIndex:(NSInteger)index x:(CGFloat)x y:(CGFloat)y;
+		[Export("closestHighlightWithIndex:x:y:")]
+		[return: NullAllowed]
+		ChartHighlight ClosestHighlightWithIndex(nint index, nfloat x, nfloat y);
+
+		// -(instancetype _Nonnull)initWithChart:(id<ChartDataProvider> _Nonnull)chart __attribute__((objc_designated_initializer));
+		[Export("initWithChart:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(IChartDataProvider chart);
 	}
 
 	// @interface ChartRange : NSObject
-	[BaseType(typeof(NSObject), Name = "_TtC6Charts10ChartRange")]
+	[BaseType(typeof(NSObject), Name = "Range")]
+	[DisableDefaultCtor]
 	interface ChartRange
 	{
 		// @property (nonatomic) double from;
@@ -3788,64 +5485,121 @@ namespace iOSCharts
 		bool IsSmaller(double value);
 	}
 
-	// @interface ChartSelectionDetail : NSObject
-	[BaseType(typeof(NSObject), Name = "_TtC6Charts20ChartSelectionDetail")]
-	interface ChartSelectionDetail
+	// @interface ScatterChartData : BarLineScatterCandleBubbleChartData
+	[BaseType(typeof(BarLineScatterCandleBubbleChartData), Name = "_TtC6Charts16ScatterChartData")]
+	interface ScatterChartData
 	{
-		// -(instancetype _Nonnull)initWithY:(CGFloat)y value:(double)value dataIndex:(NSInteger)dataIndex dataSetIndex:(NSInteger)dataSetIndex dataSet:(id<IInterfaceChartDataSet> _Nonnull)dataSet __attribute__((objc_designated_initializer));
-		[Export("initWithY:value:dataIndex:dataSetIndex:dataSet:")]
+		// -(instancetype _Nonnull)initWithDataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nullable)dataSets __attribute__((objc_designated_initializer));
+		[Export("initWithDataSets:")]
 		[DesignatedInitializer]
-		IntPtr Constructor(nfloat y, double value, nint dataIndex, nint dataSetIndex, IInterfaceChartDataSet dataSet);
+		IntPtr Constructor([NullAllowed] IInterfaceChartDataSet[] dataSets);
 
-		// -(instancetype _Nonnull)initWithY:(CGFloat)y value:(double)value dataSetIndex:(NSInteger)dataSetIndex dataSet:(id<IInterfaceChartDataSet> _Nonnull)dataSet;
-		[Export("initWithY:value:dataSetIndex:dataSet:")]
-		IntPtr Constructor(nfloat y, double value, nint dataSetIndex, IInterfaceChartDataSet dataSet);
+		// -(CGFloat)getGreatestShapeSize;
+		[Export("getGreatestShapeSize")]
+		nfloat GreatestShapeSize { get; }
+	}
 
-		// -(instancetype _Nonnull)initWithValue:(double)value dataSetIndex:(NSInteger)dataSetIndex dataSet:(id<IInterfaceChartDataSet> _Nonnull)dataSet;
-		[Export("initWithValue:dataSetIndex:dataSet:")]
-		IntPtr Constructor(double value, nint dataSetIndex, IInterfaceChartDataSet dataSet);
+	// @interface ScatterChartDataSet : LineScatterCandleRadarChartDataSet <IInterfaceScatterChartDataSet>
+	[BaseType(typeof(LineScatterCandleRadarChartDataSet), Name = "_TtC6Charts19ScatterChartDataSet")]
+	interface ScatterChartDataSet : InterfaceScatterChartDataSet
+	{
+		// @property (nonatomic) CGFloat scatterShapeSize;
+		[Export("scatterShapeSize")]
+		nfloat ScatterShapeSize { get; set; }
 
-		// @property (readonly, nonatomic) CGFloat y;
-		[Export("y")]
-		nfloat Y { get; }
+		// @property (nonatomic) CGFloat scatterShapeHoleRadius;
+		[Export("scatterShapeHoleRadius")]
+		nfloat ScatterShapeHoleRadius { get; set; }
 
-		// @property (readonly, nonatomic) double value;
-		[Export("value")]
-		double Value { get; }
+		// @property (nonatomic, strong) UIColor * _Nullable scatterShapeHoleColor;
+		[NullAllowed, Export("scatterShapeHoleColor", ArgumentSemantic.Strong)]
+		UIColor ScatterShapeHoleColor { get; set; }
 
-		// @property (readonly, nonatomic) NSInteger dataIndex;
-		[Export("dataIndex")]
-		nint DataIndex { get; }
+		// -(void)setScatterShape:(enum ScatterShape)shape;
+		[Export("setScatterShape:")]
+		void SetScatterShape(ScatterShape shape);
 
-		// @property (readonly, nonatomic) NSInteger dataSetIndex;
-		[Export("dataSetIndex")]
-		nint DataSetIndex { get; }
+		// @property (nonatomic, strong) id<InterfaceShapeRenderer> _Nullable shapeRenderer;
+		[NullAllowed, Export("shapeRenderer", ArgumentSemantic.Strong)]
+		InterfaceShapeRenderer ShapeRenderer { get; set; }
 
-		// @property (readonly, nonatomic, strong) id<IInterfaceChartDataSet> _Nullable dataSet;
-		[NullAllowed, Export("dataSet", ArgumentSemantic.Strong)]
-		IInterfaceChartDataSet DataSet { get; }
+		// +(id<InterfaceShapeRenderer> _Nonnull)rendererForShape:(enum ScatterShape)shape;
+		[Static]
+		[Export("rendererForShape:")]
+		InterfaceShapeRenderer RendererForShape(ScatterShape shape);
 
-		// -(BOOL)isEqual:(id _Nullable)object;
-		[Export("isEqual:")]
-		bool IsEqual([NullAllowed] NSObject @object);
+		//u-n-safe NSObject CopyWithZone([NullAllowed] _NSZone* zone);
+
+		// -(instancetype _Nonnull)initWithLabel:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
+		[Export("initWithLabel:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] string label);
+
+		// -(instancetype _Nonnull)initWithValues:(NSArray<ChartDataEntry *> * _Nullable)values label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
+		[Export("initWithValues:label:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] ChartDataEntry[] values, [NullAllowed] string label);
+	}
+
+	// @interface ScatterChartRenderer : LineScatterCandleRadarChartRenderer
+	[BaseType(typeof(LineScatterCandleRadarChartRenderer), Name = "_TtC6Charts20ScatterChartRenderer")]
+	interface ScatterChartRenderer
+	{
+		// @property (nonatomic, weak) id<ScatterChartDataProvider> _Nullable dataProvider;
+		[NullAllowed, Export("dataProvider", ArgumentSemantic.Weak)]
+		IScatterChartDataProvider DataProvider { get; set; }
+
+		// -(instancetype _Nonnull)initWithDataProvider:(id<ScatterChartDataProvider> _Nullable)dataProvider animator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler __attribute__((objc_designated_initializer));
+		[Export("initWithDataProvider:animator:viewPortHandler:")]
+		[DesignatedInitializer]
+		IntPtr Constructor([NullAllowed] IScatterChartDataProvider dataProvider, [NullAllowed] ChartAnimator animator, [NullAllowed] ChartViewPortHandler viewPortHandler);
+
+		//u-n-safe void DrawDataWithContext(CGContextRef* context);
+
+		//u-n-safe void DrawDataSetWithContext(CGContextRef* context, IInterfaceScatterChartDataSet dataSet);
+
+		//u-n-safe void DrawValuesWithContext(CGContextRef* context);
+
+		//u-n-safe void DrawExtrasWithContext(CGContextRef* context);
+
+		//u-n-safe void DrawHighlightedWithContext(CGContextRef* context, ChartHighlight[] indices);
+	}
+
+	// @interface ScatterChartView : BarLineChartViewBase <ScatterChartDataProvider>
+	[BaseType(typeof(BarLineChartViewBase), Name = "_TtC6Charts16ScatterChartView")]
+	interface ScatterChartView : IScatterChartDataProvider
+	{
+		// -(void)initialize __attribute__((objc_method_family("none")));
+		[Export("initialize")]
+		void Initialize();
+
+		// @property (readonly, nonatomic, strong) ScatterChartData * _Nullable scatterData;
+		[NullAllowed, Export("scatterData", ArgumentSemantic.Strong)]
+		ScatterChartData ScatterData { get; }
+
+		// -(instancetype _Nonnull)initWithFrame:(CGRect)frame __attribute__((objc_designated_initializer));
+		[Export("initWithFrame:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(CGRect frame);
+
+		//// -(instancetype _Nullable)initWithCoder:(NSCoder * _Nonnull)aDecoder __attribute__((objc_designated_initializer));
+		//[Export("initWithCoder:")]
+		//[DesignatedInitializer]
+		//IntPtr Constructor(NSCoder aDecoder);
+	}
+
+	// @interface SquareShapeRenderer : NSObject <InterfaceShapeRenderer>
+	[BaseType(typeof(NSObject), Name = "_TtC6Charts19SquareShapeRenderer")]
+	interface SquareShapeRenderer : IInterfaceShapeRenderer
+	{
+		//u-n-safe void RenderShapeWithContext(CGContextRef* context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, CGPoint point, UIColor color);
 	}
 
 	// @interface ChartTransformer : NSObject
-	[BaseType(typeof(NSObject), Name = "_TtC6Charts16ChartTransformer")]
+	[BaseType(typeof(NSObject), Name = "Transformer")]
+	[DisableDefaultCtor]
 	interface ChartTransformer
 	{
-		// @property (nonatomic) CGAffineTransform _matrixValueToPx;
-		[Export("_matrixValueToPx", ArgumentSemantic.Assign)]
-		CGAffineTransform _matrixValueToPx { get; set; }
-
-		// @property (nonatomic) CGAffineTransform _matrixOffset;
-		[Export("_matrixOffset", ArgumentSemantic.Assign)]
-		CGAffineTransform _matrixOffset { get; set; }
-
-		// @property (nonatomic, strong) ChartViewPortHandler * _Nonnull _viewPortHandler;
-		[Export("_viewPortHandler", ArgumentSemantic.Strong)]
-		ChartViewPortHandler _viewPortHandler { get; set; }
-
 		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler __attribute__((objc_designated_initializer));
 		[Export("initWithViewPortHandler:")]
 		[DesignatedInitializer]
@@ -3855,21 +5609,21 @@ namespace iOSCharts
 		[Export("prepareMatrixValuePxWithChartXMin:deltaX:deltaY:chartYMin:")]
 		void PrepareMatrixValuePxWithChartXMin(double chartXMin, nfloat deltaX, nfloat deltaY, double chartYMin);
 
-		// -(void)prepareMatrixOffset:(BOOL)inverted;
-		[Export("prepareMatrixOffset:")]
-		void PrepareMatrixOffset(bool inverted);
+		// -(void)prepareMatrixOffsetWithInverted:(BOOL)inverted;
+		[Export("prepareMatrixOffsetWithInverted:")]
+		void PrepareMatrixOffsetWithInverted(bool inverted);
 
-		// -(CGPoint)getTransformedValueBarChartWithEntry:(ChartDataEntry * _Nonnull)entry xIndex:(NSInteger)xIndex dataSetIndex:(NSInteger)dataSetIndex phaseY:(CGFloat)phaseY dataSetCount:(NSInteger)dataSetCount groupSpace:(CGFloat)groupSpace;
-		[Export("getTransformedValueBarChartWithEntry:xIndex:dataSetIndex:phaseY:dataSetCount:groupSpace:")]
-		CGPoint GetTransformedValueBarChartWithEntry(ChartDataEntry entry, nint xIndex, nint dataSetIndex, nfloat phaseY, nint dataSetCount, nfloat groupSpace);
+		// -(CGPoint)pixelForValuesWithX:(double)x y:(double)y;
+		[Export("pixelForValuesWithX:y:")]
+		CGPoint PixelForValuesWithX(double x, double y);
 
-		// -(CGPoint)getTransformedValueHorizontalBarChartWithEntry:(ChartDataEntry * _Nonnull)entry xIndex:(NSInteger)xIndex dataSetIndex:(NSInteger)dataSetIndex phaseY:(CGFloat)phaseY dataSetCount:(NSInteger)dataSetCount groupSpace:(CGFloat)groupSpace;
-		[Export("getTransformedValueHorizontalBarChartWithEntry:xIndex:dataSetIndex:phaseY:dataSetCount:groupSpace:")]
-		CGPoint GetTransformedValueHorizontalBarChartWithEntry(ChartDataEntry entry, nint xIndex, nint dataSetIndex, nfloat phaseY, nint dataSetCount, nfloat groupSpace);
+		// -(CGPoint)valueForTouchPoint:(CGPoint)point;
+		[Export("valueForTouchPoint:")]
+		CGPoint ValueForTouchPoint(CGPoint point);
 
-		// -(CGPoint)getValueByTouchPoint:(CGPoint)point;
-		[Export("getValueByTouchPoint:")]
-		CGPoint GetValueByTouchPoint(CGPoint point);
+		// -(CGPoint)valueForTouchPointWithX:(CGFloat)x y:(CGFloat)y;
+		[Export("valueForTouchPointWithX:y:")]
+		CGPoint ValueForTouchPointWithX(nfloat x, nfloat y);
 
 		// @property (readonly, nonatomic) CGAffineTransform valueToPixelMatrix;
 		[Export("valueToPixelMatrix")]
@@ -3881,12 +5635,12 @@ namespace iOSCharts
 	}
 
 	// @interface ChartTransformerHorizontalBarChart : ChartTransformer
-	[BaseType(typeof(ChartTransformer), Name = "_TtC6Charts34ChartTransformerHorizontalBarChart")]
+	[BaseType(typeof(ChartTransformer), Name = "TransformerHorizontalBarChart")]
 	interface ChartTransformerHorizontalBarChart
 	{
-		// -(void)prepareMatrixOffset:(BOOL)inverted;
-		[Export("prepareMatrixOffset:")]
-		void PrepareMatrixOffset(bool inverted);
+		// -(void)prepareMatrixOffsetWithInverted:(BOOL)inverted;
+		[Export("prepareMatrixOffsetWithInverted:")]
+		void PrepareMatrixOffsetWithInverted(bool inverted);
 
 		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler __attribute__((objc_designated_initializer));
 		[Export("initWithViewPortHandler:")]
@@ -3894,30 +5648,64 @@ namespace iOSCharts
 		IntPtr Constructor(ChartViewPortHandler viewPortHandler);
 	}
 
-	// @protocol ChartViewDelegate
-	[BaseType(typeof(NSObject), Name = "_TtP6Charts17ChartViewDelegate_")]
-	[Protocol(Name = "_TtP6Charts17ChartViewDelegate_"), Model]
-	interface ChartViewDelegate
+	// @interface TriangleShapeRenderer : NSObject <InterfaceShapeRenderer>
+	[BaseType(typeof(NSObject), Name = "_TtC6Charts21TriangleShapeRenderer")]
+	interface TriangleShapeRenderer : IInterfaceShapeRenderer
 	{
-		// @optional -(void)chartValueSelected:(ChartViewBase * _Nonnull)chartView entry:(ChartDataEntry * _Nonnull)entry dataSetIndex:(NSInteger)dataSetIndex highlight:(ChartHighlight * _Nonnull)highlight;
-		[Export("chartValueSelected:entry:dataSetIndex:highlight:")]
-		void ChartValueSelected(ChartViewBase chartView, ChartDataEntry entry, nint dataSetIndex, ChartHighlight highlight);
+		//u-n-safe void RenderShapeWithContext(CGContextRef* context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, CGPoint point, UIColor color);
+	}
 
-		// @optional -(void)chartValueNothingSelected:(ChartViewBase * _Nonnull)chartView;
-		[Export("chartValueNothingSelected:")]
-		void ChartValueNothingSelected(ChartViewBase chartView);
+	// @interface Charts_Swift_6204 (UIPanGestureRecognizer)
+	[Category]
+	[BaseType(typeof(UIPanGestureRecognizer))]
+	interface UIPanGestureRecognizer_Charts_Swift_6204
+	{
+	}
 
-		// @optional -(void)chartScaled:(ChartViewBase * _Nonnull)chartView scaleX:(CGFloat)scaleX scaleY:(CGFloat)scaleY;
-		[Export("chartScaled:scaleX:scaleY:")]
-		void ChartScaled(ChartViewBase chartView, nfloat scaleX, nfloat scaleY);
+	// @interface Charts_Swift_6208 (UIPinchGestureRecognizer)
+	[Category]
+	[BaseType(typeof(UIPinchGestureRecognizer))]
+	interface UIPinchGestureRecognizer_Charts_Swift_6208
+	{
+	}
 
-		// @optional -(void)chartTranslated:(ChartViewBase * _Nonnull)chartView dX:(CGFloat)dX dY:(CGFloat)dY;
-		[Export("chartTranslated:dX:dY:")]
-		void ChartTranslated(ChartViewBase chartView, nfloat dX, nfloat dY);
+	// @interface Charts_Swift_6212 (UIRotationGestureRecognizer)
+	[Category]
+	[BaseType(typeof(UIRotationGestureRecognizer))]
+	interface UIRotationGestureRecognizer_Charts_Swift_6212
+	{
+	}
+
+	// @interface Charts_Swift_6216 (UIScreen)
+	[Category]
+	[BaseType(typeof(UIScreen))]
+	interface UIScreen_Charts_Swift_6216
+	{
+	}
+
+	// @interface Charts_Swift_6220 (UIScrollView)
+	[Category]
+	[BaseType(typeof(UIScrollView))]
+	interface UIScrollView_Charts_Swift_6220
+	{
+	}
+
+	// @interface Charts_Swift_6224 (UITapGestureRecognizer)
+	[Category]
+	[BaseType(typeof(UITapGestureRecognizer))]
+	interface UITapGestureRecognizer_Charts_Swift_6224
+	{
+	}
+
+	// @interface Charts_Swift_6228 (UIView)
+	[Category]
+	[BaseType(typeof(UIView))]
+	interface UIView_Charts_Swift_6228
+	{
 	}
 
 	// @interface ChartViewPortHandler : NSObject
-	[BaseType(typeof(NSObject), Name = "_TtC6Charts20ChartViewPortHandler")]
+	[BaseType(typeof(NSObject), Name = "ViewPortHandler")]
 	interface ChartViewPortHandler
 	{
 		// -(instancetype _Nonnull)initWithWidth:(CGFloat)width height:(CGFloat)height __attribute__((objc_designated_initializer));
@@ -4019,7 +5807,6 @@ namespace iOSCharts
 
 		// -(CGAffineTransform)fitScreen;
 		[Export("fitScreen")]
-		//[Verify(MethodToProperty)]
 		CGAffineTransform FitScreen { get; }
 
 		// -(CGAffineTransform)translateWithPt:(CGPoint)pt;
@@ -4053,6 +5840,10 @@ namespace iOSCharts
 		// -(void)setMaximumScaleY:(CGFloat)yScale;
 		[Export("setMaximumScaleY:")]
 		void SetMaximumScaleY(nfloat yScale);
+
+		// -(void)setMinMaxScaleYWithMinScaleY:(CGFloat)minScaleY maxScaleY:(CGFloat)maxScaleY;
+		[Export("setMinMaxScaleYWithMinScaleY:maxScaleY:")]
+		void SetMinMaxScaleYWithMinScaleY(nfloat minScaleY, nfloat maxScaleY);
 
 		// @property (readonly, nonatomic) CGAffineTransform touchMatrix;
 		[Export("touchMatrix")]
@@ -4160,7 +5951,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartXAxis : ChartAxisBase
-	[BaseType(typeof(ChartAxisBase), Name = "_TtC6Charts10ChartXAxis")]
+	[BaseType(typeof(ChartAxisBase), Name = "XAxis")]
 	interface ChartXAxis
 	{
 		// @property (nonatomic) CGFloat labelWidth;
@@ -4183,25 +5974,9 @@ namespace iOSCharts
 		[Export("labelRotationAngle")]
 		nfloat LabelRotationAngle { get; set; }
 
-		// @property (nonatomic) NSInteger spaceBetweenLabels;
-		[Export("spaceBetweenLabels")]
-		nint SpaceBetweenLabels { get; set; }
-
-		// @property (nonatomic) NSInteger axisLabelModulus;
-		[Export("axisLabelModulus")]
-		nint AxisLabelModulus { get; set; }
-
-		// @property (nonatomic) NSInteger yAxisLabelModulus;
-		[Export("yAxisLabelModulus")]
-		nint YAxisLabelModulus { get; set; }
-
 		// @property (nonatomic) BOOL avoidFirstLastClippingEnabled;
 		[Export("avoidFirstLastClippingEnabled")]
 		bool AvoidFirstLastClippingEnabled { get; set; }
-
-		// @property (nonatomic, strong) id<ChartXAxisValueFormatter> _Nullable valueFormatter;
-		[NullAllowed, Export("valueFormatter", ArgumentSemantic.Strong)]
-		IChartXAxisValueFormatter ValueFormatter { get; set; }
 
 		// @property (nonatomic) enum XAxisLabelPosition labelPosition;
 		[Export("labelPosition", ArgumentSemantic.Assign)]
@@ -4219,191 +5994,128 @@ namespace iOSCharts
 		[Export("wordWrapWidthPercent")]
 		nfloat WordWrapWidthPercent { get; set; }
 
-		// -(NSString * _Nonnull)getLongestLabel;
-		[Export("getLongestLabel")]
-		//[Verify(MethodToProperty)]
-		string LongestLabel { get; }
-
 		// @property (readonly, nonatomic) BOOL isAvoidFirstLastClippingEnabled;
 		[Export("isAvoidFirstLastClippingEnabled")]
 		bool IsAvoidFirstLastClippingEnabled { get; }
-
-		// -(void)setLabelsToSkip:(NSInteger)count;
-		[Export("setLabelsToSkip:")]
-		void SetLabelsToSkip(nint count);
-
-		// -(void)resetLabelsToSkip;
-		[Export("resetLabelsToSkip")]
-		void ResetLabelsToSkip();
-
-		// @property (readonly, nonatomic) BOOL isAxisModulusCustom;
-		[Export("isAxisModulusCustom")]
-		bool IsAxisModulusCustom { get; }
-
-		// @property (copy, nonatomic) NSArray<NSObject *> * _Nonnull valuesObjc;
-		[Export("valuesObjc", ArgumentSemantic.Copy)]
-		NSObject[] ValuesObjc { get; set; }
 	}
 
 	// @interface ChartXAxisRenderer : ChartAxisRendererBase
-	[BaseType(typeof(ChartAxisRendererBase), Name = "_TtC6Charts18ChartXAxisRenderer")]
+	[BaseType(typeof(ChartAxisRendererBase), Name = "XAxisRenderer")]
+	[DisableDefaultCtor]
 	interface ChartXAxisRenderer
 	{
-		// @property (nonatomic, strong) ChartXAxis * _Nullable xAxis;
-		[NullAllowed, Export("xAxis", ArgumentSemantic.Strong)]
-		ChartXAxis XAxis { get; set; }
-
-		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler xAxis:(ChartXAxis * _Nonnull)xAxis transformer:(ChartTransformer * _Null_unspecified)transformer __attribute__((objc_designated_initializer));
+		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler xAxis:(ChartXAxis * _Nullable)xAxis transformer:(ChartTransformer * _Nullable)transformer __attribute__((objc_designated_initializer));
 		[Export("initWithViewPortHandler:xAxis:transformer:")]
 		[DesignatedInitializer]
-		IntPtr Constructor(ChartViewPortHandler viewPortHandler, ChartXAxis xAxis, ChartTransformer transformer);
+		IntPtr Constructor([NullAllowed] ChartViewPortHandler viewPortHandler, [NullAllowed] ChartXAxis xAxis, [NullAllowed] ChartTransformer transformer);
 
-		//// -(void)renderAxisLabelsWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderAxisLabelsWithContext:")]
-		//unsafe void RenderAxisLabelsWithContext(CGContextRef* context);
+		// -(void)computeAxisWithMin:(double)min max:(double)max inverted:(BOOL)inverted;
+		[Export("computeAxisWithMin:max:inverted:")]
+		void ComputeAxisWithMin(double min, double max, bool inverted);
 
-		//// -(void)renderAxisLineWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderAxisLineWithContext:")]
-		//unsafe void RenderAxisLineWithContext(CGContextRef* context);
+		// -(void)computeAxisValuesWithMin:(double)min max:(double)max;
+		[Export("computeAxisValuesWithMin:max:")]
+		void ComputeAxisValuesWithMin(double min, double max);
 
-		//// -(void)drawLabelsWithContext:(CGContextRef _Nonnull)context pos:(CGFloat)pos anchor:(CGPoint)anchor;
-		//[Export("drawLabelsWithContext:pos:anchor:")]
-		//unsafe void DrawLabelsWithContext(CGContextRef* context, nfloat pos, CGPoint anchor);
+		// -(void)computeSize;
+		[Export("computeSize")]
+		void ComputeSize();
 
-		//// -(void)drawLabelWithContext:(CGContextRef _Nonnull)context label:(NSString * _Nonnull)label xIndex:(NSInteger)xIndex x:(CGFloat)x y:(CGFloat)y attributes:(NSDictionary<NSString *,NSObject *> * _Nonnull)attributes constrainedToSize:(CGSize)constrainedToSize anchor:(CGPoint)anchor angleRadians:(CGFloat)angleRadians;
-		//[Export("drawLabelWithContext:label:xIndex:x:y:attributes:constrainedToSize:anchor:angleRadians:")]
-		//unsafe void DrawLabelWithContext(CGContextRef* context, string label, nint xIndex, nfloat x, nfloat y, NSDictionary<NSString, NSObject> attributes, CGSize constrainedToSize, CGPoint anchor, nfloat angleRadians);
+		//u-n-safe void RenderAxisLabelsWithContext(CGContextRef* context);
 
-		//// -(void)renderGridLinesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderGridLinesWithContext:")]
-		//unsafe void RenderGridLinesWithContext(CGContextRef* context);
+		//u-n-safe void RenderAxisLineWithContext(CGContextRef* context);
 
-		//// -(void)renderLimitLinesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderLimitLinesWithContext:")]
-		//unsafe void RenderLimitLinesWithContext(CGContextRef* context);
+		//u-n-safe void DrawLabelsWithContext(CGContextRef* context, nfloat pos, CGPoint anchor);
 
-		//// -(void)renderLimitLineLineWithContext:(CGContextRef _Nonnull)context limitLine:(ChartLimitLine * _Nonnull)limitLine position:(CGPoint)position;
-		//[Export("renderLimitLineLineWithContext:limitLine:position:")]
-		//unsafe void RenderLimitLineLineWithContext(CGContextRef* context, ChartLimitLine limitLine, CGPoint position);
+		//u-n-safe void DrawLabelWithContext(CGContextRef* context, string formattedLabel, nfloat x, nfloat y, NSDictionary<NSString, NSObject> attributes, CGSize constrainedToSize, CGPoint anchor, nfloat angleRadians);
 
-		//// -(void)renderLimitLineLabelWithContext:(CGContextRef _Nonnull)context limitLine:(ChartLimitLine * _Nonnull)limitLine position:(CGPoint)position yOffset:(CGFloat)yOffset;
-		//[Export("renderLimitLineLabelWithContext:limitLine:position:yOffset:")]
-		//unsafe void RenderLimitLineLabelWithContext(CGContextRef* context, ChartLimitLine limitLine, CGPoint position, nfloat yOffset);
+		//u-n-safe void RenderGridLinesWithContext(CGContextRef* context);
+
+		// @property (readonly, nonatomic) CGRect gridClippingRect;
+		[Export("gridClippingRect")]
+		CGRect GridClippingRect { get; }
+
+		//u-n-safe void DrawGridLineWithContext(CGContextRef* context, nfloat x, nfloat y);
+
+		//u-n-safe void RenderLimitLinesWithContext(CGContextRef* context);
+
+		//u-n-safe void RenderLimitLineLineWithContext(CGContextRef* context, ChartLimitLine limitLine, CGPoint position);
+
+		//u-n-safe void RenderLimitLineLabelWithContext(CGContextRef* context, ChartLimitLine limitLine, CGPoint position, nfloat yOffset);
 	}
 
-	// @interface ChartXAxisRendererBarChart : ChartXAxisRenderer
-	[BaseType(typeof(ChartXAxisRenderer), Name = "_TtC6Charts26ChartXAxisRendererBarChart")]
-	interface ChartXAxisRendererBarChart
+	// @interface XAxisRendererHorizontalBarChart : ChartXAxisRenderer
+	[BaseType(typeof(ChartXAxisRenderer), Name = "_TtC6Charts31XAxisRendererHorizontalBarChart")]
+	interface XAxisRendererHorizontalBarChart
 	{
-		// @property (nonatomic, weak) BarChartView * _Nullable chart;
-		[NullAllowed, Export("chart", ArgumentSemantic.Weak)]
-		BarChartView Chart { get; set; }
-
-		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler xAxis:(ChartXAxis * _Nonnull)xAxis transformer:(ChartTransformer * _Null_unspecified)transformer chart:(BarChartView * _Nonnull)chart __attribute__((objc_designated_initializer));
+		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler xAxis:(ChartXAxis * _Nullable)xAxis transformer:(ChartTransformer * _Nullable)transformer chart:(BarChartView * _Nullable)chart __attribute__((objc_designated_initializer));
 		[Export("initWithViewPortHandler:xAxis:transformer:chart:")]
 		[DesignatedInitializer]
-		IntPtr Constructor(ChartViewPortHandler viewPortHandler, ChartXAxis xAxis, ChartTransformer transformer, BarChartView chart);
+		IntPtr Constructor([NullAllowed] ChartViewPortHandler viewPortHandler, [NullAllowed] ChartXAxis xAxis, [NullAllowed] ChartTransformer transformer, [NullAllowed] BarChartView chart);
 
-		//// -(void)drawLabelsWithContext:(CGContextRef _Nonnull)context pos:(CGFloat)pos anchor:(CGPoint)anchor;
-		//[Export("drawLabelsWithContext:pos:anchor:")]
-		//unsafe void DrawLabelsWithContext(CGContextRef* context, nfloat pos, CGPoint anchor);
+		// -(void)computeAxisWithMin:(double)min max:(double)max inverted:(BOOL)inverted;
+		[Export("computeAxisWithMin:max:inverted:")]
+		void ComputeAxisWithMin(double min, double max, bool inverted);
 
-		//// -(void)renderGridLinesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderGridLinesWithContext:")]
-		//unsafe void RenderGridLinesWithContext(CGContextRef* context);
+		// -(void)computeSize;
+		[Export("computeSize")]
+		void ComputeSize();
+
+		//u-n-safe void RenderAxisLabelsWithContext(CGContextRef* context);
+
+		//u-n-safe void DrawLabelsWithContext(CGContextRef* context, nfloat pos, CGPoint anchor);
+
+		//u-n-safe void DrawLabelWithContext(CGContextRef* context, string formattedLabel, nfloat x, nfloat y, NSDictionary<NSString, NSObject> attributes, CGPoint anchor, nfloat angleRadians);
+
+		// @property (readonly, nonatomic) CGRect gridClippingRect;
+		[Export("gridClippingRect")]
+		CGRect GridClippingRect { get; }
+
+		//u-n-safe void DrawGridLineWithContext(CGContextRef* context, nfloat x, nfloat y);
+
+		//u-n-safe void RenderAxisLineWithContext(CGContextRef* context);
+
+		//u-n-safe void RenderLimitLinesWithContext(CGContextRef* context);
 	}
 
-	// @interface ChartXAxisRendererHorizontalBarChart : ChartXAxisRendererBarChart
-	[BaseType(typeof(ChartXAxisRendererBarChart), Name = "_TtC6Charts36ChartXAxisRendererHorizontalBarChart")]
-	interface ChartXAxisRendererHorizontalBarChart
-	{
-		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler xAxis:(ChartXAxis * _Nonnull)xAxis transformer:(ChartTransformer * _Null_unspecified)transformer chart:(BarChartView * _Nonnull)chart __attribute__((objc_designated_initializer));
-		[Export("initWithViewPortHandler:xAxis:transformer:chart:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(ChartViewPortHandler viewPortHandler, ChartXAxis xAxis, ChartTransformer transformer, BarChartView chart);
-
-		//// -(void)renderAxisLabelsWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderAxisLabelsWithContext:")]
-		//unsafe void RenderAxisLabelsWithContext(CGContextRef* context);
-
-		//// -(void)drawLabelsWithContext:(CGContextRef _Nonnull)context pos:(CGFloat)pos anchor:(CGPoint)anchor;
-		//[Export("drawLabelsWithContext:pos:anchor:")]
-		//unsafe void DrawLabelsWithContext(CGContextRef* context, nfloat pos, CGPoint anchor);
-
-		//// -(void)drawLabelWithContext:(CGContextRef _Nonnull)context label:(NSString * _Nonnull)label xIndex:(NSInteger)xIndex x:(CGFloat)x y:(CGFloat)y attributes:(NSDictionary<NSString *,NSObject *> * _Nonnull)attributes anchor:(CGPoint)anchor angleRadians:(CGFloat)angleRadians;
-		//[Export("drawLabelWithContext:label:xIndex:x:y:attributes:anchor:angleRadians:")]
-		//unsafe void DrawLabelWithContext(CGContextRef* context, string label, nint xIndex, nfloat x, nfloat y, NSDictionary<NSString, NSObject> attributes, CGPoint anchor, nfloat angleRadians);
-
-		//// -(void)renderGridLinesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderGridLinesWithContext:")]
-		//unsafe void RenderGridLinesWithContext(CGContextRef* context);
-
-		//// -(void)renderAxisLineWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderAxisLineWithContext:")]
-		//unsafe void RenderAxisLineWithContext(CGContextRef* context);
-
-		//// -(void)renderLimitLinesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderLimitLinesWithContext:")]
-		//unsafe void RenderLimitLinesWithContext(CGContextRef* context);
-	}
-
-	// @interface ChartXAxisRendererRadarChart : ChartXAxisRenderer
-	[BaseType(typeof(ChartXAxisRenderer), Name = "_TtC6Charts28ChartXAxisRendererRadarChart")]
-	interface ChartXAxisRendererRadarChart
+	// @interface XAxisRendererRadarChart : ChartXAxisRenderer
+	[BaseType(typeof(ChartXAxisRenderer), Name = "_TtC6Charts23XAxisRendererRadarChart")]
+	interface XAxisRendererRadarChart
 	{
 		// @property (nonatomic, weak) RadarChartView * _Nullable chart;
 		[NullAllowed, Export("chart", ArgumentSemantic.Weak)]
 		RadarChartView Chart { get; set; }
 
-		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler xAxis:(ChartXAxis * _Nonnull)xAxis chart:(RadarChartView * _Nonnull)chart __attribute__((objc_designated_initializer));
+		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler xAxis:(ChartXAxis * _Nullable)xAxis chart:(RadarChartView * _Nullable)chart __attribute__((objc_designated_initializer));
 		[Export("initWithViewPortHandler:xAxis:chart:")]
 		[DesignatedInitializer]
-		IntPtr Constructor(ChartViewPortHandler viewPortHandler, ChartXAxis xAxis, RadarChartView chart);
+		IntPtr Constructor([NullAllowed] ChartViewPortHandler viewPortHandler, [NullAllowed] ChartXAxis xAxis, [NullAllowed] RadarChartView chart);
 
-		//// -(void)renderAxisLabelsWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderAxisLabelsWithContext:")]
-		//unsafe void RenderAxisLabelsWithContext(CGContextRef* context);
+		//u-n-safe void RenderAxisLabelsWithContext(CGContextRef* context);
 
-		//// -(void)drawLabelWithContext:(CGContextRef _Nonnull)context label:(NSString * _Nonnull)label xIndex:(NSInteger)xIndex x:(CGFloat)x y:(CGFloat)y attributes:(NSDictionary<NSString *,NSObject *> * _Nonnull)attributes anchor:(CGPoint)anchor angleRadians:(CGFloat)angleRadians;
-		//[Export("drawLabelWithContext:label:xIndex:x:y:attributes:anchor:angleRadians:")]
-		//unsafe void DrawLabelWithContext(CGContextRef* context, string label, nint xIndex, nfloat x, nfloat y, NSDictionary<NSString, NSObject> attributes, CGPoint anchor, nfloat angleRadians);
+		//u-n-safe void DrawLabelWithContext(CGContextRef* context, string formattedLabel, nfloat x, nfloat y, NSDictionary<NSString, NSObject> attributes, CGPoint anchor, nfloat angleRadians);
 
-		//// -(void)renderLimitLinesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderLimitLinesWithContext:")]
-		//unsafe void RenderLimitLinesWithContext(CGContextRef* context);
+		//u-n-safe void RenderLimitLinesWithContext(CGContextRef* context);
+	}
+
+	// @interface XShapeRenderer : NSObject <InterfaceShapeRenderer>
+	[BaseType(typeof(NSObject), Name = "_TtC6Charts14XShapeRenderer")]
+	interface XShapeRenderer : IInterfaceShapeRenderer
+	{
+		//u-n-safe void RenderShapeWithContext(CGContextRef* context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, CGPoint point, UIColor color);
 	}
 
 	// @interface ChartYAxis : ChartAxisBase
-	[BaseType(typeof(ChartAxisBase), Name = "_TtC6Charts10ChartYAxis")]
+	[BaseType(typeof(ChartAxisBase), Name = "YAxis")]
 	interface ChartYAxis
 	{
-		// @property (copy, nonatomic) NSArray<NSNumber *> * _Nonnull entries;
-		[Export("entries", ArgumentSemantic.Copy)]
-		NSNumber[] Entries { get; set; }
-
-		// @property (readonly, nonatomic) NSInteger entryCount;
-		[Export("entryCount")]
-		nint EntryCount { get; }
-
 		// @property (nonatomic) BOOL drawTopYLabelEntryEnabled;
 		[Export("drawTopYLabelEntryEnabled")]
 		bool DrawTopYLabelEntryEnabled { get; set; }
 
-		// @property (nonatomic) BOOL showOnlyMinMaxEnabled;
-		[Export("showOnlyMinMaxEnabled")]
-		bool ShowOnlyMinMaxEnabled { get; set; }
-
 		// @property (nonatomic) BOOL inverted;
 		[Export("inverted")]
 		bool Inverted { get; set; }
-
-		// @property (nonatomic) BOOL startAtZeroEnabled;
-		[Export("startAtZeroEnabled")]
-		bool StartAtZeroEnabled { get; set; }
-
-		// @property (nonatomic) BOOL forceLabelsEnabled;
-		[Export("forceLabelsEnabled")]
-		bool ForceLabelsEnabled { get; set; }
 
 		// @property (nonatomic) BOOL drawZeroLineEnabled;
 		[Export("drawZeroLineEnabled")]
@@ -4425,14 +6137,6 @@ namespace iOSCharts
 		[NullAllowed, Export("zeroLineDashLengths", ArgumentSemantic.Copy)]
 		NSNumber[] ZeroLineDashLengths { get; set; }
 
-		// @property (nonatomic, strong) NSNumberFormatter * _Nullable valueFormatter;
-		[NullAllowed, Export("valueFormatter", ArgumentSemantic.Strong)]
-		NSNumberFormatter ValueFormatter { get; set; }
-
-		// @property (nonatomic, strong) NSNumberFormatter * _Nonnull _defaultValueFormatter;
-		[Export("_defaultValueFormatter", ArgumentSemantic.Strong)]
-		NSNumberFormatter _defaultValueFormatter { get; set; }
-
 		// @property (nonatomic) CGFloat spaceTop;
 		[Export("spaceTop")]
 		nfloat SpaceTop { get; set; }
@@ -4453,14 +6157,6 @@ namespace iOSCharts
 		[Export("maxWidth")]
 		nfloat MaxWidth { get; set; }
 
-		// @property (nonatomic) BOOL granularityEnabled;
-		[Export("granularityEnabled")]
-		bool GranularityEnabled { get; set; }
-
-		// @property (nonatomic) double granularity;
-		[Export("granularity")]
-		double Granularity { get; set; }
-
 		// -(instancetype _Nonnull)initWithPosition:(enum AxisDependency)position __attribute__((objc_designated_initializer));
 		[Export("initWithPosition:")]
 		[DesignatedInitializer]
@@ -4470,32 +6166,13 @@ namespace iOSCharts
 		[Export("axisDependency")]
 		AxisDependency AxisDependency { get; }
 
-		// -(void)setLabelCount:(NSInteger)count force:(BOOL)force;
-		[Export("setLabelCount:force:")]
-		void SetLabelCount(nint count, bool force);
-
-		// @property (nonatomic) NSInteger labelCount;
-		[Export("labelCount")]
-		nint LabelCount { get; set; }
-
 		// -(CGSize)requiredSize;
 		[Export("requiredSize")]
-		////[Verify(MethodToProperty)]
 		CGSize RequiredSize { get; }
 
 		// -(CGFloat)getRequiredHeightSpace;
 		[Export("getRequiredHeightSpace")]
-		////[Verify(MethodToProperty)]
 		nfloat RequiredHeightSpace { get; }
-
-		// -(NSString * _Nonnull)getLongestLabel;
-		[Export("getLongestLabel")]
-		//[Verify(MethodToProperty)]
-		string LongestLabel { get; }
-
-		// -(NSString * _Nonnull)getFormattedLabel:(NSInteger)index;
-		[Export("getFormattedLabel:")]
-		string GetFormattedLabel(nint index);
 
 		// @property (readonly, nonatomic) BOOL needsOffset;
 		[Export("needsOffset")]
@@ -4505,1839 +6182,86 @@ namespace iOSCharts
 		[Export("isInverted")]
 		bool IsInverted { get; }
 
-		// @property (readonly, nonatomic) BOOL isStartAtZeroEnabled;
-		[Export("isStartAtZeroEnabled")]
-		bool IsStartAtZeroEnabled { get; }
-
-		// @property (readonly, nonatomic) BOOL isForceLabelsEnabled;
-		[Export("isForceLabelsEnabled")]
-		bool IsForceLabelsEnabled { get; }
-
-		// @property (readonly, nonatomic) BOOL isShowOnlyMinMaxEnabled;
-		[Export("isShowOnlyMinMaxEnabled")]
-		bool IsShowOnlyMinMaxEnabled { get; }
+		// -(void)calculateWithMin:(double)dataMin max:(double)dataMax;
+		[Export("calculateWithMin:max:")]
+		void CalculateWithMin(double dataMin, double dataMax);
 
 		// @property (readonly, nonatomic) BOOL isDrawTopYLabelEntryEnabled;
 		[Export("isDrawTopYLabelEntryEnabled")]
 		bool IsDrawTopYLabelEntryEnabled { get; }
-
-		// -(void)calculateWithMin:(double)dataMin max:(double)dataMax;
-		[Export("calculateWithMin:max:")]
-		void CalculateWithMin(double dataMin, double dataMax);
 	}
 
 	// @interface ChartYAxisRenderer : ChartAxisRendererBase
-	[BaseType(typeof(ChartAxisRendererBase), Name = "_TtC6Charts18ChartYAxisRenderer")]
+	[BaseType(typeof(ChartAxisRendererBase), Name = "YAxisRenderer")]
+	[DisableDefaultCtor]
 	interface ChartYAxisRenderer
 	{
-		// @property (nonatomic, strong) ChartYAxis * _Nullable yAxis;
-		[NullAllowed, Export("yAxis", ArgumentSemantic.Strong)]
-		ChartYAxis YAxis { get; set; }
-
-		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler yAxis:(ChartYAxis * _Nonnull)yAxis transformer:(ChartTransformer * _Null_unspecified)transformer __attribute__((objc_designated_initializer));
+		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler yAxis:(ChartYAxis * _Nullable)yAxis transformer:(ChartTransformer * _Nullable)transformer __attribute__((objc_designated_initializer));
 		[Export("initWithViewPortHandler:yAxis:transformer:")]
 		[DesignatedInitializer]
-		IntPtr Constructor(ChartViewPortHandler viewPortHandler, ChartYAxis yAxis, ChartTransformer transformer);
+		IntPtr Constructor([NullAllowed] ChartViewPortHandler viewPortHandler, [NullAllowed] ChartYAxis yAxis, [NullAllowed] ChartTransformer transformer);
 
-		// -(void)computeAxisWithYMin:(double)yMin yMax:(double)yMax;
-		[Export("computeAxisWithYMin:yMax:")]
-		void ComputeAxisWithYMin(double yMin, double yMax);
+		//u-n-safe void RenderAxisLabelsWithContext(CGContextRef* context);
 
-		// -(void)computeAxisValuesWithMin:(double)min max:(double)max;
-		[Export("computeAxisValuesWithMin:max:")]
-		void ComputeAxisValuesWithMin(double min, double max);
+		//u-n-safe void RenderAxisLineWithContext(CGContextRef* context);
 
-		//// -(void)renderAxisLabelsWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderAxisLabelsWithContext:")]
-		//unsafe void RenderAxisLabelsWithContext(CGContextRef* context);
+		//u-n-safe void RenderGridLinesWithContext(CGContextRef* context);
 
-		//// -(void)renderAxisLineWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderAxisLineWithContext:")]
-		//unsafe void RenderAxisLineWithContext(CGContextRef* context);
+		// @property (readonly, nonatomic) CGRect gridClippingRect;
+		[Export("gridClippingRect")]
+		CGRect GridClippingRect { get; }
 
-		//// -(void)drawYLabelsWithContext:(CGContextRef _Nonnull)context fixedPosition:(CGFloat)fixedPosition offset:(CGFloat)offset textAlign:(NSTextAlignment)textAlign;
-		//[Export("drawYLabelsWithContext:fixedPosition:offset:textAlign:")]
-		//unsafe void DrawYLabelsWithContext(CGContextRef* context, nfloat fixedPosition, nfloat offset, NSTextAlignment textAlign);
+		//u-n-safe void DrawGridLineWithContext(CGContextRef* context, CGPoint position);
 
-		//// -(void)renderGridLinesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderGridLinesWithContext:")]
-		//unsafe void RenderGridLinesWithContext(CGContextRef* context);
+		//u-n-safe void DrawZeroLineWithContext(CGContextRef* context);
 
-		//// -(void)drawZeroLineWithContext:(CGContextRef _Nonnull)context x1:(CGFloat)x1 x2:(CGFloat)x2 y1:(CGFloat)y1 y2:(CGFloat)y2;
-		//[Export("drawZeroLineWithContext:x1:x2:y1:y2:")]
-		//unsafe void DrawZeroLineWithContext(CGContextRef* context, nfloat x1, nfloat x2, nfloat y1, nfloat y2);
-
-		//// -(void)renderLimitLinesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderLimitLinesWithContext:")]
-		//unsafe void RenderLimitLinesWithContext(CGContextRef* context);
+		//u-n-safe void RenderLimitLinesWithContext(CGContextRef* context);
 	}
 
-	// @interface ChartYAxisRendererHorizontalBarChart : ChartYAxisRenderer
-	[BaseType(typeof(ChartYAxisRenderer), Name = "_TtC6Charts36ChartYAxisRendererHorizontalBarChart")]
-	interface ChartYAxisRendererHorizontalBarChart
+	// @interface YAxisRendererHorizontalBarChart : ChartYAxisRenderer
+	[BaseType(typeof(ChartYAxisRenderer), Name = "_TtC6Charts31YAxisRendererHorizontalBarChart")]
+	interface YAxisRendererHorizontalBarChart
 	{
-		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler yAxis:(ChartYAxis * _Nonnull)yAxis transformer:(ChartTransformer * _Null_unspecified)transformer __attribute__((objc_designated_initializer));
+		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler yAxis:(ChartYAxis * _Nullable)yAxis transformer:(ChartTransformer * _Nullable)transformer __attribute__((objc_designated_initializer));
 		[Export("initWithViewPortHandler:yAxis:transformer:")]
 		[DesignatedInitializer]
-		IntPtr Constructor(ChartViewPortHandler viewPortHandler, ChartYAxis yAxis, ChartTransformer transformer);
+		IntPtr Constructor([NullAllowed] ChartViewPortHandler viewPortHandler, [NullAllowed] ChartYAxis yAxis, [NullAllowed] ChartTransformer transformer);
 
-		// -(void)computeAxisWithYMin:(double)yMin yMax:(double)yMax;
-		[Export("computeAxisWithYMin:yMax:")]
-		void ComputeAxisWithYMin(double yMin, double yMax);
+		// -(void)computeAxisWithMin:(double)min max:(double)max inverted:(BOOL)inverted;
+		[Export("computeAxisWithMin:max:inverted:")]
+		void ComputeAxisWithMin(double min, double max, bool inverted);
 
-		//// -(void)renderAxisLabelsWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderAxisLabelsWithContext:")]
-		//unsafe void RenderAxisLabelsWithContext(CGContextRef* context);
+		// @property (readonly, nonatomic) CGRect gridClippingRect;
+		[Export ("gridClippingRect")]
+		CGRect GridClippingRect { get; }
 
-		//// -(void)renderAxisLineWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderAxisLineWithContext:")]
-		//unsafe void RenderAxisLineWithContext(CGContextRef* context);
-
-		//// -(void)renderGridLinesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderGridLinesWithContext:")]
-		//unsafe void RenderGridLinesWithContext(CGContextRef* context);
-
-		//// -(void)renderLimitLinesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderLimitLinesWithContext:")]
-		//unsafe void RenderLimitLinesWithContext(CGContextRef* context);
 	}
 
-	// @interface ChartYAxisRendererRadarChart : ChartYAxisRenderer
-	[BaseType(typeof(ChartYAxisRenderer), Name = "_TtC6Charts28ChartYAxisRendererRadarChart")]
-	interface ChartYAxisRendererRadarChart
+	// @interface YAxisRendererRadarChart : ChartYAxisRenderer
+	[BaseType (typeof(ChartYAxisRenderer), Name = "_TtC6Charts23YAxisRendererRadarChart")]
+	interface YAxisRendererRadarChart
 	{
-		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler yAxis:(ChartYAxis * _Nonnull)yAxis chart:(RadarChartView * _Nonnull)chart __attribute__((objc_designated_initializer));
-		[Export("initWithViewPortHandler:yAxis:chart:")]
+		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler yAxis:(ChartYAxis * _Nullable)yAxis chart:(RadarChartView * _Nullable)chart __attribute__((objc_designated_initializer));
+		[Export ("initWithViewPortHandler:yAxis:chart:")]
 		[DesignatedInitializer]
-		IntPtr Constructor(ChartViewPortHandler viewPortHandler, ChartYAxis yAxis, RadarChartView chart);
-
-		// -(void)computeAxisWithYMin:(double)yMin yMax:(double)yMax;
-		[Export("computeAxisWithYMin:yMax:")]
-		void ComputeAxisWithYMin(double yMin, double yMax);
+		IntPtr Constructor ([NullAllowed] ChartViewPortHandler viewPortHandler, [NullAllowed] ChartYAxis yAxis, [NullAllowed] RadarChartView chart);
 
 		// -(void)computeAxisValuesWithMin:(double)yMin max:(double)yMax;
-		[Export("computeAxisValuesWithMin:max:")]
-		void ComputeAxisValuesWithMin(double yMin, double yMax);
-
-		//// -(void)renderAxisLabelsWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderAxisLabelsWithContext:")]
-		//unsafe void RenderAxisLabelsWithContext(CGContextRef* context);
-
-		//// -(void)renderLimitLinesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("renderLimitLinesWithContext:")]
-		//unsafe void RenderLimitLinesWithContext(CGContextRef* context);
+		[Export ("computeAxisValuesWithMin:max:")]
+		void ComputeAxisValuesWithMin (double yMin, double yMax);
 	}
 
-	// @interface CombinedChartData : BarLineScatterCandleBubbleChartData
-	[BaseType(typeof(BarLineScatterCandleBubbleChartData), Name = "_TtC6Charts17CombinedChartData")]
-	interface CombinedChartData
+	// @interface ZoomChartViewJob : ChartViewPortJob
+	[BaseType (typeof(ChartViewPortJob), Name = "ZoomViewJob")]
+	interface ZoomChartViewJob
 	{
-		// -(instancetype _Nonnull)initWithXVals:(NSArray<NSObject *> * _Nullable)xVals dataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nullable)dataSets __attribute__((objc_designated_initializer));
-		[Export("initWithXVals:dataSets:")]
+		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler scaleX:(CGFloat)scaleX scaleY:(CGFloat)scaleY xValue:(double)xValue yValue:(double)yValue transformer:(ChartTransformer * _Nonnull)transformer axis:(enum AxisDependency)axis view:(ChartViewBase * _Nonnull)view __attribute__((objc_designated_initializer));
+		[Export ("initWithViewPortHandler:scaleX:scaleY:xValue:yValue:transformer:axis:view:")]
 		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] NSObject[] xVals, [NullAllowed] IInterfaceChartDataSet[] dataSets);
+		IntPtr Constructor (ChartViewPortHandler viewPortHandler, nfloat scaleX, nfloat scaleY, double xValue, double yValue, ChartTransformer transformer, AxisDependency axis, ChartViewBase view);
 
-		// @property (nonatomic, strong) LineChartData * _Null_unspecified lineData;
-		[Export("lineData", ArgumentSemantic.Strong)]
-		LineChartData LineData { get; set; }
-
-		// @property (nonatomic, strong) BarChartData * _Null_unspecified barData;
-		[Export("barData", ArgumentSemantic.Strong)]
-		BarChartData BarData { get; set; }
-
-		// @property (nonatomic, strong) ScatterChartData * _Null_unspecified scatterData;
-		[Export("scatterData", ArgumentSemantic.Strong)]
-		ScatterChartData ScatterData { get; set; }
-
-		// @property (nonatomic, strong) CandleChartData * _Null_unspecified candleData;
-		[Export("candleData", ArgumentSemantic.Strong)]
-		CandleChartData CandleData { get; set; }
-
-		// @property (nonatomic, strong) BubbleChartData * _Null_unspecified bubbleData;
-		[Export("bubbleData", ArgumentSemantic.Strong)]
-		BubbleChartData BubbleData { get; set; }
-
-		// @property (readonly, copy, nonatomic) NSArray<ChartData *> * _Nonnull allData;
-		[Export("allData", ArgumentSemantic.Copy)]
-		ChartData[] AllData { get; }
-
-		// -(void)notifyDataChanged;
-		[Export("notifyDataChanged")]
-		void NotifyDataChanged();
-
-		// -(ChartDataEntry * _Nullable)getEntryForHighlight:(ChartHighlight * _Nonnull)highlight;
-		[Export("getEntryForHighlight:")]
-		[return: NullAllowed]
-		ChartDataEntry GetEntryForHighlight(ChartHighlight highlight);
+		// -(void)doJob;
+		[Export ("doJob")]
+		void DoJob ();
 	}
-
-	// @interface CombinedChartRenderer : ChartDataRendererBase
-	[BaseType(typeof(ChartDataRendererBase), Name = "_TtC6Charts21CombinedChartRenderer")]
-	interface CombinedChartRenderer
-	{
-		// @property (nonatomic, weak) CombinedChartView * _Nullable chart;
-		[NullAllowed, Export("chart", ArgumentSemantic.Weak)]
-		CombinedChartView Chart { get; set; }
-
-		// @property (nonatomic) BOOL drawHighlightArrowEnabled;
-		[Export("drawHighlightArrowEnabled")]
-		bool DrawHighlightArrowEnabled { get; set; }
-
-		// @property (nonatomic) BOOL drawValueAboveBarEnabled;
-		[Export("drawValueAboveBarEnabled")]
-		bool DrawValueAboveBarEnabled { get; set; }
-
-		// @property (nonatomic) BOOL drawBarShadowEnabled;
-		[Export("drawBarShadowEnabled")]
-		bool DrawBarShadowEnabled { get; set; }
-
-		// @property (copy, nonatomic) NSArray<ChartDataRendererBase *> * _Nonnull _renderers;
-		[Export("_renderers", ArgumentSemantic.Copy)]
-		ChartDataRendererBase[] _renderers { get; set; }
-
-		// -(instancetype _Nonnull)initWithChart:(CombinedChartView * _Nonnull)chart animator:(ChartAnimator * _Nonnull)animator viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler __attribute__((objc_designated_initializer));
-		[Export("initWithChart:animator:viewPortHandler:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(CombinedChartView chart, ChartAnimator animator, ChartViewPortHandler viewPortHandler);
-
-		// -(void)createRenderers;
-		[Export("createRenderers")]
-		void CreateRenderers();
-
-		//// -(void)drawDataWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawDataWithContext:")]
-		//unsafe void DrawDataWithContext(CGContextRef* context);
-
-		//// -(void)drawValuesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawValuesWithContext:")]
-		//unsafe void DrawValuesWithContext(CGContextRef* context);
-
-		//// -(void)drawExtrasWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawExtrasWithContext:")]
-		//unsafe void DrawExtrasWithContext(CGContextRef* context);
-
-		//// -(void)drawHighlightedWithContext:(CGContextRef _Nonnull)context indices:(NSArray<ChartHighlight *> * _Nonnull)indices;
-		//[Export("drawHighlightedWithContext:indices:")]
-		//unsafe void DrawHighlightedWithContext(CGContextRef* context, ChartHighlight[] indices);
-
-		// -(void)calcXBoundsWithChart:(id<BarLineScatterCandleBubbleChartDataProvider> _Nonnull)chart xAxisModulus:(NSInteger)xAxisModulus;
-		[Export("calcXBoundsWithChart:xAxisModulus:")]
-		void CalcXBoundsWithChart(IBarLineScatterCandleBubbleChartDataProvider chart, nint xAxisModulus);
-
-		// -(ChartDataRendererBase * _Nullable)getSubRendererWithIndex:(NSInteger)index;
-		[Export("getSubRendererWithIndex:")]
-		[return: NullAllowed]
-		ChartDataRendererBase GetSubRendererWithIndex(nint index);
-
-		// @property (copy, nonatomic) NSArray<ChartDataRendererBase *> * _Nonnull subRenderers;
-		[Export("subRenderers", ArgumentSemantic.Copy)]
-		ChartDataRendererBase[] SubRenderers { get; set; }
-
-		// @property (readonly, nonatomic) BOOL isDrawHighlightArrowEnabled;
-		[Export("isDrawHighlightArrowEnabled")]
-		bool IsDrawHighlightArrowEnabled { get; }
-
-		// @property (readonly, nonatomic) BOOL isDrawValueAboveBarEnabled;
-		[Export("isDrawValueAboveBarEnabled")]
-		bool IsDrawValueAboveBarEnabled { get; }
-
-		// @property (readonly, nonatomic) BOOL isDrawBarShadowEnabled;
-		[Export("isDrawBarShadowEnabled")]
-		bool IsDrawBarShadowEnabled { get; }
-	}
-
-	interface ILineChartDataProvider { }
-
-	// @protocol LineChartDataProvider <BarLineScatterCandleBubbleChartDataProvider>
-	[Protocol(Name = "_TtP6Charts21LineChartDataProvider_"), Model]
-	interface LineChartDataProvider : BarLineScatterCandleBubbleChartDataProvider
-	{
-		// @required @property (readonly, nonatomic, strong) LineChartData * _Nullable lineData;
-		[Abstract]
-		[NullAllowed, Export("lineData", ArgumentSemantic.Strong)]
-		LineChartData LineData { get; }
-
-		// @required -(ChartYAxis * _Nonnull)getAxis:(enum AxisDependency)axis;
-		[Abstract]
-		[Export("getAxis:")]
-		ChartYAxis GetAxis(AxisDependency axis);
-	}
-
-	interface IScatterChartDataProvider { }
-
-	// @protocol ScatterChartDataProvider <BarLineScatterCandleBubbleChartDataProvider>
-	[Protocol(Name = "_TtP6Charts24ScatterChartDataProvider_"), Model]
-	interface ScatterChartDataProvider : BarLineScatterCandleBubbleChartDataProvider
-	{
-		// @required @property (readonly, nonatomic, strong) ScatterChartData * _Nullable scatterData;
-		[Abstract]
-		[NullAllowed, Export("scatterData", ArgumentSemantic.Strong)]
-		ScatterChartData ScatterData { get; }
-	}
-
-	// @interface CombinedChartView : BarLineChartViewBase <BarChartDataProvider, ScatterChartDataProvider, CandleChartDataProvider, BubbleChartDataProvider, LineChartDataProvider>
-	[BaseType(typeof(BarLineChartViewBase), Name = "_TtC6Charts17CombinedChartView")]
-	interface CombinedChartView : BarChartDataProvider, ScatterChartDataProvider, CandleChartDataProvider, BubbleChartDataProvider, LineChartDataProvider
-	{
-		// @property (nonatomic, strong) id<ChartFillFormatter> _Null_unspecified _fillFormatter;
-		[Export("_fillFormatter", ArgumentSemantic.Strong)]
-		IChartFillFormatter _fillFormatter { get; set; }
-
-		// -(void)initialize;
-		[Export("initialize")]
-		void Initialize();
-
-		// -(void)calcMinMax;
-		[Export("calcMinMax")]
-		void CalcMinMax();
-
-		// @property (nonatomic, strong) ChartData * _Nullable data;
-		[NullAllowed, Export("data", ArgumentSemantic.Strong)]
-		ChartData Data { get; set; }
-
-		// @property (nonatomic, strong) id<ChartFillFormatter> _Nonnull fillFormatter;
-		[Export("fillFormatter", ArgumentSemantic.Strong)]
-		IChartFillFormatter FillFormatter { get; set; }
-
-		// @property (readonly, nonatomic, strong) LineChartData * _Nullable lineData;
-		[NullAllowed, Export("lineData", ArgumentSemantic.Strong)]
-		LineChartData LineData { get; }
-
-		// @property (readonly, nonatomic, strong) BarChartData * _Nullable barData;
-		[NullAllowed, Export("barData", ArgumentSemantic.Strong)]
-		BarChartData BarData { get; }
-
-		// @property (readonly, nonatomic, strong) ScatterChartData * _Nullable scatterData;
-		[NullAllowed, Export("scatterData", ArgumentSemantic.Strong)]
-		ScatterChartData ScatterData { get; }
-
-		// @property (readonly, nonatomic, strong) CandleChartData * _Nullable candleData;
-		[NullAllowed, Export("candleData", ArgumentSemantic.Strong)]
-		CandleChartData CandleData { get; }
-
-		// @property (readonly, nonatomic, strong) BubbleChartData * _Nullable bubbleData;
-		[NullAllowed, Export("bubbleData", ArgumentSemantic.Strong)]
-		BubbleChartData BubbleData { get; }
-
-		// @property (nonatomic) BOOL drawHighlightArrowEnabled;
-		[Export("drawHighlightArrowEnabled")]
-		bool DrawHighlightArrowEnabled { get; set; }
-
-		// @property (nonatomic) BOOL drawValueAboveBarEnabled;
-		[Export("drawValueAboveBarEnabled")]
-		bool DrawValueAboveBarEnabled { get; set; }
-
-		// @property (nonatomic) BOOL drawBarShadowEnabled;
-		[Export("drawBarShadowEnabled")]
-		bool DrawBarShadowEnabled { get; set; }
-
-		// @property (readonly, nonatomic) BOOL isDrawHighlightArrowEnabled;
-		[Export("isDrawHighlightArrowEnabled")]
-		bool IsDrawHighlightArrowEnabled { get; }
-
-		// @property (readonly, nonatomic) BOOL isDrawValueAboveBarEnabled;
-		[Export("isDrawValueAboveBarEnabled")]
-		bool IsDrawValueAboveBarEnabled { get; }
-
-		// @property (readonly, nonatomic) BOOL isDrawBarShadowEnabled;
-		[Export("isDrawBarShadowEnabled")]
-		bool IsDrawBarShadowEnabled { get; }
-
-		// @property (copy, nonatomic) NSArray<NSNumber *> * _Nonnull drawOrder;
-		[Export("drawOrder", ArgumentSemantic.Copy)]
-		NSNumber[] DrawOrder { get; set; }
-
-		// -(instancetype _Nonnull)initWithFrame:(CGRect)frame __attribute__((objc_designated_initializer));
-		[Export("initWithFrame:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(CGRect frame);
-
-		//// -(instancetype _Nullable)initWithCoder:(NSCoder * _Nonnull)aDecoder __attribute__((objc_designated_initializer));
-		//[Export("initWithCoder:")]
-		//[DesignatedInitializer]
-		//IntPtr Constructor(NSCoder aDecoder);
-	}
-
-	// @interface CombinedHighlighter : ChartHighlighter
-	[BaseType(typeof(ChartHighlighter), Name = "_TtC6Charts19CombinedHighlighter")]
-	interface CombinedHighlighter
-	{
-		// -(instancetype _Nonnull)initWithChart:(BarLineChartViewBase * _Nonnull)chart __attribute__((objc_designated_initializer));
-		[Export("initWithChart:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(BarLineChartViewBase chart);
-	}
-
-	// @interface HorizontalBarChartHighlighter : BarChartHighlighter
-	[BaseType(typeof(BarChartHighlighter), Name = "_TtC6Charts29HorizontalBarChartHighlighter")]
-	interface HorizontalBarChartHighlighter
-	{
-		// -(ChartHighlight * _Nullable)getHighlightWithX:(CGFloat)x y:(CGFloat)y;
-		[Export("getHighlightWithX:y:")]
-		[return: NullAllowed]
-		ChartHighlight GetHighlightWithX(nfloat x, nfloat y);
-
-		// -(NSInteger)getXIndex:(CGFloat)x;
-		[Export("getXIndex:")]
-		nint GetXIndex(nfloat x);
-
-		// -(double)getBase:(CGFloat)y;
-		[Export("getBase:")]
-		double GetBase(nfloat y);
-
-		// -(instancetype _Nonnull)initWithChart:(BarLineChartViewBase * _Nonnull)chart __attribute__((objc_designated_initializer));
-		[Export("initWithChart:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(BarLineChartViewBase chart);
-	}
-
-	// @interface HorizontalBarChartRenderer : BarChartRenderer
-	[BaseType(typeof(BarChartRenderer), Name = "_TtC6Charts26HorizontalBarChartRenderer")]
-	interface HorizontalBarChartRenderer
-	{
-		// -(instancetype _Nonnull)initWithDataProvider:(id<BarChartDataProvider> _Nullable)dataProvider animator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler __attribute__((objc_designated_initializer));
-		[Export("initWithDataProvider:animator:viewPortHandler:")]
-		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] IBarChartDataProvider dataProvider, [NullAllowed] ChartAnimator animator, ChartViewPortHandler viewPortHandler);
-
-		//// -(void)drawDataSetWithContext:(CGContextRef _Nonnull)context dataSet:(id<IInterfaceBarChartDataSet> _Nonnull)dataSet index:(NSInteger)index;
-		//[Export("drawDataSetWithContext:dataSet:index:")]
-		//unsafe void DrawDataSetWithContext(CGContextRef* context, IInterfaceBarChartDataSet dataSet, nint index);
-
-		//// -(void)drawValuesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawValuesWithContext:")]
-		//unsafe void DrawValuesWithContext(CGContextRef* context);
-
-		// -(BOOL)passesCheck;
-		[Export("passesCheck")]
-		////[Verify(MethodToProperty)]
-		bool PassesCheck { get; }
-	}
-
-	// @interface HorizontalBarChartView : BarChartView
-	[BaseType(typeof(BarChartView), Name = "_TtC6Charts22HorizontalBarChartView")]
-	interface HorizontalBarChartView
-	{
-		// -(void)initialize;
-		[Export("initialize")]
-		void Initialize();
-
-		// -(void)calculateOffsets;
-		[Export("calculateOffsets")]
-		void CalculateOffsets();
-
-		// -(void)prepareValuePxMatrix;
-		[Export("prepareValuePxMatrix")]
-		void PrepareValuePxMatrix();
-
-		// -(void)calcModulus;
-		[Export("calcModulus")]
-		void CalcModulus();
-
-		// -(CGRect)getBarBounds:(BarChartDataEntry * _Nonnull)e;
-		[Export("getBarBounds:")]
-		CGRect GetBarBounds(BarChartDataEntry e);
-
-		// -(CGPoint)getPosition:(ChartDataEntry * _Nonnull)e axis:(enum AxisDependency)axis;
-		[Export("getPosition:axis:")]
-		CGPoint GetPosition(ChartDataEntry e, AxisDependency axis);
-
-		// -(ChartHighlight * _Nullable)getHighlightByTouchPoint:(CGPoint)pt;
-		[Export("getHighlightByTouchPoint:")]
-		[return: NullAllowed]
-		ChartHighlight GetHighlightByTouchPoint(CGPoint pt);
-
-		// @property (readonly, nonatomic) NSInteger lowestVisibleXIndex;
-		[Export("lowestVisibleXIndex")]
-		nint LowestVisibleXIndex { get; }
-
-		// @property (readonly, nonatomic) NSInteger highestVisibleXIndex;
-		[Export("highestVisibleXIndex")]
-		nint HighestVisibleXIndex { get; }
-
-		// -(instancetype _Nonnull)initWithFrame:(CGRect)frame __attribute__((objc_designated_initializer));
-		[Export("initWithFrame:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(CGRect frame);
-
-		//// -(instancetype _Nullable)initWithCoder:(NSCoder * _Nonnull)aDecoder __attribute__((objc_designated_initializer));
-		//[Export("initWithCoder:")]
-		//[DesignatedInitializer]
-		//IntPtr Constructor(NSCoder aDecoder);
-	}
-
-	// @protocol InterfaceLineRadarChartDataSet <IInterfaceLineScatterCandleRadarChartDataSet>
-	[Protocol(Name = "_TtP6Charts22ILineRadarChartDataSet_"), Model]
-	interface InterfaceLineRadarChartDataSet : InterfaceLineScatterCandleRadarChartDataSet
-	{
-		// @required @property (nonatomic, strong) UIColor * _Nonnull fillColor;
-		[Abstract]
-		[Export("fillColor", ArgumentSemantic.Strong)]
-		UIColor FillColor { get; set; }
-
-		// @required @property (nonatomic, strong) ChartFill * _Nullable fill;
-		[Abstract]
-		[NullAllowed, Export("fill", ArgumentSemantic.Strong)]
-		ChartFill Fill { get; set; }
-
-		// @required @property (nonatomic) CGFloat fillAlpha;
-		[Abstract]
-		[Export("fillAlpha")]
-		nfloat FillAlpha { get; set; }
-
-		// @required @property (nonatomic) CGFloat lineWidth;
-		[Abstract]
-		[Export("lineWidth")]
-		nfloat LineWidth { get; set; }
-
-		// @required @property (nonatomic) BOOL drawFilledEnabled;
-		[Abstract]
-		[Export("drawFilledEnabled")]
-		bool DrawFilledEnabled { get; set; }
-
-		// @required @property (readonly, nonatomic) BOOL isDrawFilledEnabled;
-		[Abstract]
-		[Export("isDrawFilledEnabled")]
-		bool IsDrawFilledEnabled { get; }
-	}
-
-	interface IInterfaceLineChartDataSet { }
-
-	// @protocol IInterfaceLineChartDataSet <InterfaceLineRadarChartDataSet>
-	[Protocol(Name = "_TtP6Charts17ILineChartDataSet_"), Model]
-	interface InterfaceLineChartDataSet : InterfaceLineRadarChartDataSet
-	{
-		// @required @property (nonatomic) enum LineChartMode mode;
-		[Abstract]
-		[Export("mode", ArgumentSemantic.Assign)]
-		LineChartMode Mode { get; set; }
-
-		// @required @property (nonatomic) CGFloat cubicIntensity;
-		[Abstract]
-		[Export("cubicIntensity")]
-		nfloat CubicIntensity { get; set; }
-
-		// @required @property (nonatomic) BOOL drawCubicEnabled;
-		[Abstract]
-		[Export("drawCubicEnabled")]
-		bool DrawCubicEnabled { get; set; }
-
-		// @required @property (readonly, nonatomic) BOOL isDrawCubicEnabled;
-		[Abstract]
-		[Export("isDrawCubicEnabled")]
-		bool IsDrawCubicEnabled { get; }
-
-		// @required @property (nonatomic) BOOL drawSteppedEnabled;
-		[Abstract]
-		[Export("drawSteppedEnabled")]
-		bool DrawSteppedEnabled { get; set; }
-
-		// @required @property (readonly, nonatomic) BOOL isDrawSteppedEnabled;
-		[Abstract]
-		[Export("isDrawSteppedEnabled")]
-		bool IsDrawSteppedEnabled { get; }
-
-		// @required @property (nonatomic) CGFloat circleRadius;
-		[Abstract]
-		[Export("circleRadius")]
-		nfloat CircleRadius { get; set; }
-
-		// @required @property (nonatomic) CGFloat circleHoleRadius;
-		[Abstract]
-		[Export("circleHoleRadius")]
-		nfloat CircleHoleRadius { get; set; }
-
-		// @required @property (copy, nonatomic) NSArray<UIColor *> * _Nonnull circleColors;
-		[Abstract]
-		[Export("circleColors", ArgumentSemantic.Copy)]
-		UIColor[] CircleColors { get; set; }
-
-		// @required -(UIColor * _Nullable)getCircleColor:(NSInteger)index;
-		[Abstract]
-		[Export("getCircleColor:")]
-		[return: NullAllowed]
-		UIColor GetCircleColor(nint index);
-
-		// @required -(void)setCircleColor:(UIColor * _Nonnull)color;
-		[Abstract]
-		[Export("setCircleColor:")]
-		void SetCircleColor(UIColor color);
-
-		// @required -(void)resetCircleColors:(NSInteger)index;
-		[Abstract]
-		[Export("resetCircleColors:")]
-		void ResetCircleColors(nint index);
-
-		// @required @property (nonatomic) BOOL drawCirclesEnabled;
-		[Abstract]
-		[Export("drawCirclesEnabled")]
-		bool DrawCirclesEnabled { get; set; }
-
-		// @required @property (readonly, nonatomic) BOOL isDrawCirclesEnabled;
-		[Abstract]
-		[Export("isDrawCirclesEnabled")]
-		bool IsDrawCirclesEnabled { get; }
-
-		// @required @property (nonatomic, strong) UIColor * _Nullable circleHoleColor;
-		[Abstract]
-		[NullAllowed, Export("circleHoleColor", ArgumentSemantic.Strong)]
-		UIColor CircleHoleColor { get; set; }
-
-		// @required @property (nonatomic) BOOL drawCircleHoleEnabled;
-		[Abstract]
-		[Export("drawCircleHoleEnabled")]
-		bool DrawCircleHoleEnabled { get; set; }
-
-		// @required @property (readonly, nonatomic) BOOL isDrawCircleHoleEnabled;
-		[Abstract]
-		[Export("isDrawCircleHoleEnabled")]
-		bool IsDrawCircleHoleEnabled { get; }
-
-		// @required @property (readonly, nonatomic) CGFloat lineDashPhase;
-		[Abstract]
-		[Export("lineDashPhase")]
-		nfloat LineDashPhase { get; }
-
-		// @required @property (copy, nonatomic) NSArray<NSNumber *> * _Nullable lineDashLengths;
-		[Abstract]
-		[NullAllowed, Export("lineDashLengths", ArgumentSemantic.Copy)]
-		NSNumber[] LineDashLengths { get; set; }
-
-		// @required @property (nonatomic) CGLineCap lineCapType;
-		[Abstract]
-		[Export("lineCapType", ArgumentSemantic.Assign)]
-		CGLineCap LineCapType { get; set; }
-
-		// @required @property (nonatomic, strong) id<ChartFillFormatter> _Nullable fillFormatter;
-		[Abstract]
-		[NullAllowed, Export("fillFormatter", ArgumentSemantic.Strong)]
-		IChartFillFormatter FillFormatter { get; set; }
-	}
-
-	interface IInterfacePieChartDataSet { }
-
-	// @protocol IInterfacePieChartDataSet <IInterfaceChartDataSet>
-	[Protocol(Name = "_TtP6Charts16IPieChartDataSet_"), Model]
-	interface InterfacePieChartDataSet : InterfaceChartDataSet
-	{
-		// @required @property (nonatomic) CGFloat sliceSpace;
-		[Abstract]
-		[Export("sliceSpace")]
-		nfloat SliceSpace { get; set; }
-
-		// @required @property (nonatomic) CGFloat selectionShift;
-		[Abstract]
-		[Export("selectionShift")]
-		nfloat SelectionShift { get; set; }
-
-		// @required @property (nonatomic) enum PieChartValuePosition xValuePosition;
-		[Abstract]
-		[Export("xValuePosition", ArgumentSemantic.Assign)]
-		PieChartValuePosition XValuePosition { get; set; }
-
-		// @required @property (nonatomic) enum PieChartValuePosition yValuePosition;
-		[Abstract]
-		[Export("yValuePosition", ArgumentSemantic.Assign)]
-		PieChartValuePosition YValuePosition { get; set; }
-
-		// @required @property (nonatomic, strong) UIColor * _Nullable valueLineColor;
-		[Abstract]
-		[NullAllowed, Export("valueLineColor", ArgumentSemantic.Strong)]
-		UIColor ValueLineColor { get; set; }
-
-		// @required @property (nonatomic) CGFloat valueLineWidth;
-		[Abstract]
-		[Export("valueLineWidth")]
-		nfloat ValueLineWidth { get; set; }
-
-		// @required @property (nonatomic) CGFloat valueLinePart1OffsetPercentage;
-		[Abstract]
-		[Export("valueLinePart1OffsetPercentage")]
-		nfloat ValueLinePart1OffsetPercentage { get; set; }
-
-		// @required @property (nonatomic) CGFloat valueLinePart1Length;
-		[Abstract]
-		[Export("valueLinePart1Length")]
-		nfloat ValueLinePart1Length { get; set; }
-
-		// @required @property (nonatomic) CGFloat valueLinePart2Length;
-		[Abstract]
-		[Export("valueLinePart2Length")]
-		nfloat ValueLinePart2Length { get; set; }
-
-		// @required @property (nonatomic) BOOL valueLineVariableLength;
-		[Abstract]
-		[Export("valueLineVariableLength")]
-		bool ValueLineVariableLength { get; set; }
-	}
-
-	// @protocol InterfaceRadarChartDataSet <InterfaceLineRadarChartDataSet>
-	[Protocol(Name = "_TtP6Charts18IRadarChartDataSet_"), Model]
-	interface InterfaceRadarChartDataSet : InterfaceLineRadarChartDataSet
-	{
-		// @required @property (nonatomic) BOOL drawHighlightCircleEnabled;
-		[Abstract]
-		[Export("drawHighlightCircleEnabled")]
-		bool DrawHighlightCircleEnabled { get; set; }
-
-		// @required @property (readonly, nonatomic) BOOL isDrawHighlightCircleEnabled;
-		[Abstract]
-		[Export("isDrawHighlightCircleEnabled")]
-		bool IsDrawHighlightCircleEnabled { get; }
-
-		// @required @property (nonatomic, strong) UIColor * _Nullable highlightCircleFillColor;
-		[Abstract]
-		[NullAllowed, Export("highlightCircleFillColor", ArgumentSemantic.Strong)]
-		UIColor HighlightCircleFillColor { get; set; }
-
-		// @required @property (nonatomic, strong) UIColor * _Nullable highlightCircleStrokeColor;
-		[Abstract]
-		[NullAllowed, Export("highlightCircleStrokeColor", ArgumentSemantic.Strong)]
-		UIColor HighlightCircleStrokeColor { get; set; }
-
-		// @required @property (nonatomic) CGFloat highlightCircleStrokeAlpha;
-		[Abstract]
-		[Export("highlightCircleStrokeAlpha")]
-		nfloat HighlightCircleStrokeAlpha { get; set; }
-
-		// @required @property (nonatomic) CGFloat highlightCircleInnerRadius;
-		[Abstract]
-		[Export("highlightCircleInnerRadius")]
-		nfloat HighlightCircleInnerRadius { get; set; }
-
-		// @required @property (nonatomic) CGFloat highlightCircleOuterRadius;
-		[Abstract]
-		[Export("highlightCircleOuterRadius")]
-		nfloat HighlightCircleOuterRadius { get; set; }
-
-		// @required @property (nonatomic) CGFloat highlightCircleStrokeWidth;
-		[Abstract]
-		[Export("highlightCircleStrokeWidth")]
-		nfloat HighlightCircleStrokeWidth { get; set; }
-	}
-
-	// @protocol InterfaceScatterChartDataSet <IInterfaceLineScatterCandleRadarChartDataSet>
-	[Protocol(Name = "_TtP6Charts20IScatterChartDataSet_"), Model]
-	interface InterfaceScatterChartDataSet : InterfaceLineScatterCandleRadarChartDataSet
-	{
-		// @required @property (nonatomic) CGFloat scatterShapeSize;
-		[Abstract]
-		[Export("scatterShapeSize")]
-		nfloat ScatterShapeSize { get; set; }
-
-		// @required @property (nonatomic) enum ScatterShape scatterShape;
-		[Abstract]
-		[Export("scatterShape", ArgumentSemantic.Assign)]
-		ScatterShape ScatterShape { get; set; }
-
-		// @required @property (nonatomic) CGFloat scatterShapeHoleRadius;
-		[Abstract]
-		[Export("scatterShapeHoleRadius")]
-		nfloat ScatterShapeHoleRadius { get; set; }
-
-		// @required @property (nonatomic, strong) UIColor * _Nullable scatterShapeHoleColor;
-		[Abstract]
-		[NullAllowed, Export("scatterShapeHoleColor", ArgumentSemantic.Strong)]
-		UIColor ScatterShapeHoleColor { get; set; }
-
-		//// @required @property (nonatomic) CGPathRef _Nullable customScatterShape;
-		//[Abstract]
-		//[NullAllowed, Export("customScatterShape", ArgumentSemantic.Assign)]
-		//unsafe CGPathRef* CustomScatterShape { get; set; }
-	}
-
-	// @interface LineChartData : ChartData
-	[BaseType(typeof(ChartData), Name = "_TtC6Charts13LineChartData")]
-	interface LineChartData
-	{
-		// -(instancetype _Nonnull)initWithXVals:(NSArray<NSObject *> * _Nullable)xVals dataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nullable)dataSets __attribute__((objc_designated_initializer));
-		[Export("initWithXVals:dataSets:")]
-		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] NSObject[] xVals, [NullAllowed] IInterfaceChartDataSet[] dataSets);
-	}
-
-	// @interface LineRadarChartDataSet : LineScatterCandleRadarChartDataSet <InterfaceLineRadarChartDataSet>
-	[BaseType(typeof(LineScatterCandleRadarChartDataSet), Name = "_TtC6Charts21LineRadarChartDataSet")]
-	interface LineRadarChartDataSet : InterfaceLineRadarChartDataSet
-	{
-		// @property (nonatomic, strong) UIColor * _Nonnull fillColor;
-		[Export("fillColor", ArgumentSemantic.Strong)]
-		UIColor FillColor { get; set; }
-
-		// @property (nonatomic, strong) ChartFill * _Nullable fill;
-		[NullAllowed, Export("fill", ArgumentSemantic.Strong)]
-		ChartFill Fill { get; set; }
-
-		// @property (nonatomic) CGFloat fillAlpha;
-		[Export("fillAlpha")]
-		nfloat FillAlpha { get; set; }
-
-		// @property (nonatomic) CGFloat lineWidth;
-		[Export("lineWidth")]
-		nfloat LineWidth { get; set; }
-
-		// @property (nonatomic) BOOL drawFilledEnabled;
-		[Export("drawFilledEnabled")]
-		bool DrawFilledEnabled { get; set; }
-
-		// @property (readonly, nonatomic) BOOL isDrawFilledEnabled;
-		[Export("isDrawFilledEnabled")]
-		bool IsDrawFilledEnabled { get; }
-
-		//// -(id _Nonnull)copyWithZone:(struct _NSZone * _Null_unspecified)zone;
-		//[Export("copyWithZone:")]
-		//unsafe NSObject CopyWithZone(_NSZone* zone);
-
-		// -(instancetype _Nonnull)initWithLabel:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
-		[Export("initWithLabel:")]
-		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] string label);
-
-		// -(instancetype _Nonnull)initWithYVals:(NSArray<ChartDataEntry *> * _Nullable)yVals label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
-		[Export("initWithYVals:label:")]
-		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] ChartDataEntry[] yVals, [NullAllowed] string label);
-	}
-
-	// @interface LineChartDataSet : LineRadarChartDataSet <IInterfaceLineChartDataSet>
-	[BaseType(typeof(LineRadarChartDataSet), Name = "_TtC6Charts16LineChartDataSet")]
-	interface LineChartDataSet : InterfaceLineChartDataSet
-	{
-		// -(instancetype _Nonnull)initWithYVals:(NSArray<ChartDataEntry *> * _Nullable)yVals label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
-		[Export("initWithYVals:label:")]
-		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] ChartDataEntry[] yVals, [NullAllowed] string label);
-
-		// @property (nonatomic) enum LineChartMode mode;
-		[Export("mode", ArgumentSemantic.Assign)]
-		LineChartMode Mode { get; set; }
-
-		// @property (nonatomic) CGFloat cubicIntensity;
-		[Export("cubicIntensity")]
-		nfloat CubicIntensity { get; set; }
-
-		// @property (nonatomic) BOOL drawCubicEnabled;
-		[Export("drawCubicEnabled")]
-		bool DrawCubicEnabled { get; set; }
-
-		// @property (readonly, nonatomic) BOOL isDrawCubicEnabled;
-		[Export("isDrawCubicEnabled")]
-		bool IsDrawCubicEnabled { get; }
-
-		// @property (nonatomic) BOOL drawSteppedEnabled;
-		[Export("drawSteppedEnabled")]
-		bool DrawSteppedEnabled { get; set; }
-
-		// @property (readonly, nonatomic) BOOL isDrawSteppedEnabled;
-		[Export("isDrawSteppedEnabled")]
-		bool IsDrawSteppedEnabled { get; }
-
-		// @property (nonatomic) CGFloat circleRadius;
-		[Export("circleRadius")]
-		nfloat CircleRadius { get; set; }
-
-		// @property (nonatomic) CGFloat circleHoleRadius;
-		[Export("circleHoleRadius")]
-		nfloat CircleHoleRadius { get; set; }
-
-		// @property (copy, nonatomic) NSArray<UIColor *> * _Nonnull circleColors;
-		[Export("circleColors", ArgumentSemantic.Copy)]
-		UIColor[] CircleColors { get; set; }
-
-		// -(UIColor * _Nullable)getCircleColor:(NSInteger)index;
-		[Export("getCircleColor:")]
-		[return: NullAllowed]
-		UIColor GetCircleColor(nint index);
-
-		// -(void)setCircleColor:(UIColor * _Nonnull)color;
-		[Export("setCircleColor:")]
-		void SetCircleColor(UIColor color);
-
-		// -(void)resetCircleColors:(NSInteger)index;
-		[Export("resetCircleColors:")]
-		void ResetCircleColors(nint index);
-
-		// @property (nonatomic) BOOL drawCirclesEnabled;
-		[Export("drawCirclesEnabled")]
-		bool DrawCirclesEnabled { get; set; }
-
-		// @property (readonly, nonatomic) BOOL isDrawCirclesEnabled;
-		[Export("isDrawCirclesEnabled")]
-		bool IsDrawCirclesEnabled { get; }
-
-		// @property (nonatomic, strong) UIColor * _Nullable circleHoleColor;
-		[NullAllowed, Export("circleHoleColor", ArgumentSemantic.Strong)]
-		UIColor CircleHoleColor { get; set; }
-
-		// @property (nonatomic) BOOL drawCircleHoleEnabled;
-		[Export("drawCircleHoleEnabled")]
-		bool DrawCircleHoleEnabled { get; set; }
-
-		// @property (readonly, nonatomic) BOOL isDrawCircleHoleEnabled;
-		[Export("isDrawCircleHoleEnabled")]
-		bool IsDrawCircleHoleEnabled { get; }
-
-		// @property (nonatomic) CGFloat lineDashPhase;
-		[Export("lineDashPhase")]
-		nfloat LineDashPhase { get; set; }
-
-		// @property (copy, nonatomic) NSArray<NSNumber *> * _Nullable lineDashLengths;
-		[NullAllowed, Export("lineDashLengths", ArgumentSemantic.Copy)]
-		NSNumber[] LineDashLengths { get; set; }
-
-		// @property (nonatomic) CGLineCap lineCapType;
-		[Export("lineCapType", ArgumentSemantic.Assign)]
-		CGLineCap LineCapType { get; set; }
-
-		// @property (nonatomic, strong) id<ChartFillFormatter> _Nullable fillFormatter;
-		[NullAllowed, Export("fillFormatter", ArgumentSemantic.Strong)]
-		IChartFillFormatter FillFormatter { get; set; }
-
-		//// -(id _Nonnull)copyWithZone:(struct _NSZone * _Null_unspecified)zone;
-		//[Export("copyWithZone:")]
-		//unsafe NSObject CopyWithZone(_NSZone* zone);
-	}
-
-	// @interface LineRadarChartRenderer : LineScatterCandleRadarChartRenderer
-	[BaseType(typeof(LineScatterCandleRadarChartRenderer), Name = "_TtC6Charts22LineRadarChartRenderer")]
-	interface LineRadarChartRenderer
-	{
-		// -(instancetype _Nonnull)initWithAnimator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler __attribute__((objc_designated_initializer));
-		[Export("initWithAnimator:viewPortHandler:")]
-		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] ChartAnimator animator, ChartViewPortHandler viewPortHandler);
-
-		//// -(void)drawFilledPathWithContext:(CGContextRef _Nonnull)context path:(CGPathRef _Nonnull)path fill:(ChartFill * _Nonnull)fill fillAlpha:(CGFloat)fillAlpha;
-		//[Export("drawFilledPathWithContext:path:fill:fillAlpha:")]
-		//unsafe void DrawFilledPathWithContext(CGContextRef* context, CGPathRef* path, ChartFill fill, nfloat fillAlpha);
-
-		//// -(void)drawFilledPathWithContext:(CGContextRef _Nonnull)context path:(CGPathRef _Nonnull)path fillColor:(UIColor * _Nonnull)fillColor fillAlpha:(CGFloat)fillAlpha;
-		//[Export("drawFilledPathWithContext:path:fillColor:fillAlpha:")]
-		//unsafe void DrawFilledPathWithContext(CGContextRef* context, CGPathRef* path, UIColor fillColor, nfloat fillAlpha);
-	}
-
-	// @interface LineChartRenderer : LineRadarChartRenderer
-	[BaseType(typeof(LineRadarChartRenderer), Name = "_TtC6Charts17LineChartRenderer")]
-	interface LineChartRenderer
-	{
-		// @property (nonatomic, weak) id<LineChartDataProvider> _Nullable dataProvider;
-		[NullAllowed, Export("dataProvider", ArgumentSemantic.Weak)]
-		ILineChartDataProvider DataProvider { get; set; }
-
-		// -(instancetype _Nonnull)initWithDataProvider:(id<LineChartDataProvider> _Nullable)dataProvider animator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler __attribute__((objc_designated_initializer));
-		[Export("initWithDataProvider:animator:viewPortHandler:")]
-		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] ILineChartDataProvider dataProvider, [NullAllowed] ChartAnimator animator, ChartViewPortHandler viewPortHandler);
-
-		//// -(void)drawDataWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawDataWithContext:")]
-		//unsafe void DrawDataWithContext(CGContextRef* context);
-
-		//// -(void)drawDataSetWithContext:(CGContextRef _Nonnull)context dataSet:(id<IInterfaceLineChartDataSet> _Nonnull)dataSet;
-		//[Export("drawDataSetWithContext:dataSet:")]
-		//unsafe void DrawDataSetWithContext(CGContextRef* context, IInterfaceLineChartDataSet dataSet);
-
-		//// -(void)drawCubicBezierWithContext:(CGContextRef _Nonnull)context dataSet:(id<IInterfaceLineChartDataSet> _Nonnull)dataSet;
-		//[Export("drawCubicBezierWithContext:dataSet:")]
-		//unsafe void DrawCubicBezierWithContext(CGContextRef* context, IInterfaceLineChartDataSet dataSet);
-
-		//// -(void)drawHorizontalBezierWithContext:(CGContextRef _Nonnull)context dataSet:(id<IInterfaceLineChartDataSet> _Nonnull)dataSet;
-		//[Export("drawHorizontalBezierWithContext:dataSet:")]
-		//unsafe void DrawHorizontalBezierWithContext(CGContextRef* context, IInterfaceLineChartDataSet dataSet);
-
-		//// -(void)drawCubicFillWithContext:(CGContextRef _Nonnull)context dataSet:(id<IInterfaceLineChartDataSet> _Nonnull)dataSet spline:(CGMutablePathRef _Nonnull)spline matrix:(CGAffineTransform)matrix from:(NSInteger)from to:(NSInteger)to;
-		//[Export("drawCubicFillWithContext:dataSet:spline:matrix:from:to:")]
-		//unsafe void DrawCubicFillWithContext(CGContextRef* context, IInterfaceLineChartDataSet dataSet, CGMutablePathRef* spline, CGAffineTransform matrix, nint from, nint to);
-
-		//// -(void)drawLinearWithContext:(CGContextRef _Nonnull)context dataSet:(id<IInterfaceLineChartDataSet> _Nonnull)dataSet;
-		//[Export("drawLinearWithContext:dataSet:")]
-		//unsafe void DrawLinearWithContext(CGContextRef* context, IInterfaceLineChartDataSet dataSet);
-
-		//// -(void)drawLinearFillWithContext:(CGContextRef _Nonnull)context dataSet:(id<IInterfaceLineChartDataSet> _Nonnull)dataSet minx:(NSInteger)minx maxx:(NSInteger)maxx trans:(ChartTransformer * _Nonnull)trans;
-		//[Export("drawLinearFillWithContext:dataSet:minx:maxx:trans:")]
-		//unsafe void DrawLinearFillWithContext(CGContextRef* context, IInterfaceLineChartDataSet dataSet, nint minx, nint maxx, ChartTransformer trans);
-
-		//// -(void)drawValuesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawValuesWithContext:")]
-		//unsafe void DrawValuesWithContext(CGContextRef* context);
-
-		//// -(void)drawExtrasWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawExtrasWithContext:")]
-		//unsafe void DrawExtrasWithContext(CGContextRef* context);
-
-		//// -(void)drawHighlightedWithContext:(CGContextRef _Nonnull)context indices:(NSArray<ChartHighlight *> * _Nonnull)indices;
-		//[Export("drawHighlightedWithContext:indices:")]
-		//unsafe void DrawHighlightedWithContext(CGContextRef* context, ChartHighlight[] indices);
-	}
-
-	// @interface LineChartView : BarLineChartViewBase <LineChartDataProvider>
-	[BaseType(typeof(BarLineChartViewBase), Name = "_TtC6Charts13LineChartView")]
-	interface LineChartView : LineChartDataProvider
-	{
-		// -(void)initialize;
-		[Export("initialize")]
-		void Initialize();
-
-		// -(void)calcMinMax;
-		[Export("calcMinMax")]
-		void CalcMinMax();
-
-		// @property (readonly, nonatomic, strong) LineChartData * _Nullable lineData;
-		[NullAllowed, Export("lineData", ArgumentSemantic.Strong)]
-		LineChartData LineData { get; }
-
-		// -(instancetype _Nonnull)initWithFrame:(CGRect)frame __attribute__((objc_designated_initializer));
-		[Export("initWithFrame:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(CGRect frame);
-
-		//// -(instancetype _Nullable)initWithCoder:(NSCoder * _Nonnull)aDecoder __attribute__((objc_designated_initializer));
-		//[Export("initWithCoder:")]
-		//[DesignatedInitializer]
-		//IntPtr Constructor(NSCoder aDecoder);
-	}
-
-	// @interface PieChartData : ChartData
-	[BaseType(typeof(ChartData), Name = "_TtC6Charts12PieChartData")]
-	interface PieChartData
-	{
-		// -(instancetype _Nonnull)initWithXVals:(NSArray<NSObject *> * _Nullable)xVals dataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nullable)dataSets __attribute__((objc_designated_initializer));
-		[Export("initWithXVals:dataSets:")]
-		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] NSObject[] xVals, [NullAllowed] IInterfaceChartDataSet[] dataSets);
-
-		// @property (nonatomic, strong) id<IInterfacePieChartDataSet> _Nullable dataSet;
-		[NullAllowed, Export("dataSet", ArgumentSemantic.Strong)]
-		IInterfacePieChartDataSet DataSet { get; set; }
-
-		// -(id<IInterfaceChartDataSet> _Nullable)getDataSetByIndex:(NSInteger)index;
-		[Export("getDataSetByIndex:")]
-		[return: NullAllowed]
-		IInterfaceChartDataSet GetDataSetByIndex(nint index);
-
-		// -(id<IInterfaceChartDataSet> _Nullable)getDataSetByLabel:(NSString * _Nonnull)label ignorecase:(BOOL)ignorecase;
-		[Export("getDataSetByLabel:ignorecase:")]
-		[return: NullAllowed]
-		IInterfaceChartDataSet GetDataSetByLabel(string label, bool ignorecase);
-
-		// -(void)addDataSet:(id<IInterfaceChartDataSet> _Null_unspecified)d;
-		[Export("addDataSet:")]
-		void AddDataSet(IInterfaceChartDataSet d);
-
-		// -(BOOL)removeDataSetByIndex:(NSInteger)index;
-		[Export("removeDataSetByIndex:")]
-		bool RemoveDataSetByIndex(nint index);
-
-		// @property (readonly, nonatomic) double yValueSum;
-		[Export("yValueSum")]
-		double YValueSum { get; }
-	}
-
-	// @interface PieChartDataSet : ChartDataSet <IInterfacePieChartDataSet>
-	[BaseType(typeof(ChartDataSet), Name = "_TtC6Charts15PieChartDataSet")]
-	interface PieChartDataSet : InterfacePieChartDataSet
-	{
-		// -(instancetype _Nonnull)initWithYVals:(NSArray<ChartDataEntry *> * _Nullable)yVals label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
-		[Export("initWithYVals:label:")]
-		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] ChartDataEntry[] yVals, [NullAllowed] string label);
-
-		// @property (nonatomic) CGFloat sliceSpace;
-		[Export("sliceSpace")]
-		nfloat SliceSpace { get; set; }
-
-		// @property (nonatomic) CGFloat selectionShift;
-		[Export("selectionShift")]
-		nfloat SelectionShift { get; set; }
-
-		// @property (nonatomic) enum PieChartValuePosition xValuePosition;
-		[Export("xValuePosition", ArgumentSemantic.Assign)]
-		PieChartValuePosition XValuePosition { get; set; }
-
-		// @property (nonatomic) enum PieChartValuePosition yValuePosition;
-		[Export("yValuePosition", ArgumentSemantic.Assign)]
-		PieChartValuePosition YValuePosition { get; set; }
-
-		// @property (nonatomic, strong) UIColor * _Nullable valueLineColor;
-		[NullAllowed, Export("valueLineColor", ArgumentSemantic.Strong)]
-		UIColor ValueLineColor { get; set; }
-
-		// @property (nonatomic) CGFloat valueLineWidth;
-		[Export("valueLineWidth")]
-		nfloat ValueLineWidth { get; set; }
-
-		// @property (nonatomic) CGFloat valueLinePart1OffsetPercentage;
-		[Export("valueLinePart1OffsetPercentage")]
-		nfloat ValueLinePart1OffsetPercentage { get; set; }
-
-		// @property (nonatomic) CGFloat valueLinePart1Length;
-		[Export("valueLinePart1Length")]
-		nfloat ValueLinePart1Length { get; set; }
-
-		// @property (nonatomic) CGFloat valueLinePart2Length;
-		[Export("valueLinePart2Length")]
-		nfloat ValueLinePart2Length { get; set; }
-
-		// @property (nonatomic) BOOL valueLineVariableLength;
-		[Export("valueLineVariableLength")]
-		bool ValueLineVariableLength { get; set; }
-
-		//// -(id _Nonnull)copyWithZone:(struct _NSZone * _Null_unspecified)zone;
-		//[Export("copyWithZone:")]
-		//unsafe NSObject CopyWithZone(_NSZone* zone);
-	}
-
-	// @interface PieChartRenderer : ChartDataRendererBase
-	[BaseType(typeof(ChartDataRendererBase), Name = "_TtC6Charts16PieChartRenderer")]
-	interface PieChartRenderer
-	{
-		// @property (nonatomic, weak) PieChartView * _Nullable chart;
-		[NullAllowed, Export("chart", ArgumentSemantic.Weak)]
-		PieChartView Chart { get; set; }
-
-		// -(instancetype _Nonnull)initWithChart:(PieChartView * _Nonnull)chart animator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler __attribute__((objc_designated_initializer));
-		[Export("initWithChart:animator:viewPortHandler:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(PieChartView chart, [NullAllowed] ChartAnimator animator, ChartViewPortHandler viewPortHandler);
-
-		//// -(void)drawDataWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawDataWithContext:")]
-		//unsafe void DrawDataWithContext(CGContextRef* context);
-
-		// -(CGFloat)calculateMinimumRadiusForSpacedSliceWithCenter:(CGPoint)center radius:(CGFloat)radius angle:(CGFloat)angle arcStartPointX:(CGFloat)arcStartPointX arcStartPointY:(CGFloat)arcStartPointY startAngle:(CGFloat)startAngle sweepAngle:(CGFloat)sweepAngle;
-		[Export("calculateMinimumRadiusForSpacedSliceWithCenter:radius:angle:arcStartPointX:arcStartPointY:startAngle:sweepAngle:")]
-		nfloat CalculateMinimumRadiusForSpacedSliceWithCenter(CGPoint center, nfloat radius, nfloat angle, nfloat arcStartPointX, nfloat arcStartPointY, nfloat startAngle, nfloat sweepAngle);
-
-		//// -(void)drawDataSetWithContext:(CGContextRef _Nonnull)context dataSet:(id<IInterfacePieChartDataSet> _Nonnull)dataSet;
-		//[Export("drawDataSetWithContext:dataSet:")]
-		//unsafe void DrawDataSetWithContext(CGContextRef* context, IInterfacePieChartDataSet dataSet);
-
-		//// -(void)drawValuesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawValuesWithContext:")]
-		//unsafe void DrawValuesWithContext(CGContextRef* context);
-
-		//// -(void)drawExtrasWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawExtrasWithContext:")]
-		//unsafe void DrawExtrasWithContext(CGContextRef* context);
-
-		//// -(void)drawHighlightedWithContext:(CGContextRef _Nonnull)context indices:(NSArray<ChartHighlight *> * _Nonnull)indices;
-		//[Export("drawHighlightedWithContext:indices:")]
-		//unsafe void DrawHighlightedWithContext(CGContextRef* context, ChartHighlight[] indices);
-	}
-
-	// @interface PieRadarChartViewBase : ChartViewBase
-	[BaseType(typeof(ChartViewBase), Name = "_TtC6Charts21PieRadarChartViewBase")]
-	interface PieRadarChartViewBase
-	{
-		// @property (nonatomic) BOOL rotationEnabled;
-		[Export("rotationEnabled")]
-		bool RotationEnabled { get; set; }
-
-		// @property (nonatomic) CGFloat minOffset;
-		[Export("minOffset")]
-		nfloat MinOffset { get; set; }
-
-		// -(instancetype _Nonnull)initWithFrame:(CGRect)frame __attribute__((objc_designated_initializer));
-		[Export("initWithFrame:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(CGRect frame);
-
-		//// -(instancetype _Nullable)initWithCoder:(NSCoder * _Nonnull)aDecoder __attribute__((objc_designated_initializer));
-		//[Export("initWithCoder:")]
-		//[DesignatedInitializer]
-		//IntPtr Constructor(NSCoder aDecoder);
-
-		// -(void)initialize;
-		[Export("initialize")]
-		void Initialize();
-
-		// -(void)calcMinMax;
-		[Export("calcMinMax")]
-		void CalcMinMax();
-
-		// -(void)notifyDataSetChanged;
-		[Export("notifyDataSetChanged")]
-		void NotifyDataSetChanged();
-
-		// -(void)calculateOffsets;
-		[Export("calculateOffsets")]
-		void CalculateOffsets();
-
-		// -(CGFloat)angleForPointWithX:(CGFloat)x y:(CGFloat)y;
-		[Export("angleForPointWithX:y:")]
-		nfloat AngleForPointWithX(nfloat x, nfloat y);
-
-		// -(CGPoint)getPositionWithCenter:(CGPoint)center dist:(CGFloat)dist angle:(CGFloat)angle;
-		[Export("getPositionWithCenter:dist:angle:")]
-		CGPoint GetPositionWithCenter(CGPoint center, nfloat dist, nfloat angle);
-
-		// -(CGFloat)distanceToCenterWithX:(CGFloat)x y:(CGFloat)y;
-		[Export("distanceToCenterWithX:y:")]
-		nfloat DistanceToCenterWithX(nfloat x, nfloat y);
-
-		// -(NSInteger)indexForAngle:(CGFloat)angle;
-		[Export("indexForAngle:")]
-		nint IndexForAngle(nfloat angle);
-
-		// @property (nonatomic) CGFloat rotationAngle;
-		[Export("rotationAngle")]
-		nfloat RotationAngle { get; set; }
-
-		// @property (readonly, nonatomic) CGFloat rawRotationAngle;
-		[Export("rawRotationAngle")]
-		nfloat RawRotationAngle { get; }
-
-		// @property (readonly, nonatomic) CGFloat diameter;
-		[Export("diameter")]
-		nfloat Diameter { get; }
-
-		// @property (readonly, nonatomic) CGFloat radius;
-		[Export("radius")]
-		nfloat Radius { get; }
-
-		// @property (readonly, nonatomic) CGFloat requiredLegendOffset;
-		[Export("requiredLegendOffset")]
-		nfloat RequiredLegendOffset { get; }
-
-		// @property (readonly, nonatomic) CGFloat requiredBaseOffset;
-		[Export("requiredBaseOffset")]
-		nfloat RequiredBaseOffset { get; }
-
-		// @property (readonly, nonatomic) double chartYMax;
-		[Export("chartYMax")]
-		double ChartYMax { get; }
-
-		// @property (readonly, nonatomic) double chartYMin;
-		[Export("chartYMin")]
-		double ChartYMin { get; }
-
-		// -(NSArray<ChartSelectionDetail *> * _Nonnull)getSelectionDetailsAtIndex:(NSInteger)xIndex;
-		[Export("getSelectionDetailsAtIndex:")]
-		ChartSelectionDetail[] GetSelectionDetailsAtIndex(nint xIndex);
-
-		// @property (readonly, nonatomic) BOOL isRotationEnabled;
-		[Export("isRotationEnabled")]
-		bool IsRotationEnabled { get; }
-
-		// @property (nonatomic) BOOL rotationWithTwoFingers;
-		[Export("rotationWithTwoFingers")]
-		bool RotationWithTwoFingers { get; set; }
-
-		// @property (readonly, nonatomic) BOOL isRotationWithTwoFingers;
-		[Export("isRotationWithTwoFingers")]
-		bool IsRotationWithTwoFingers { get; }
-
-		// -(void)spinWithDuration:(NSTimeInterval)duration fromAngle:(CGFloat)fromAngle toAngle:(CGFloat)toAngle easing:(CGFloat (^ _Nullable)(NSTimeInterval, NSTimeInterval))easing;
-		[Export("spinWithDuration:fromAngle:toAngle:easing:")]
-		void SpinWithDuration(double duration, nfloat fromAngle, nfloat toAngle, [NullAllowed] Func<double, double, nfloat> easing);
-
-		// -(void)spinWithDuration:(NSTimeInterval)duration fromAngle:(CGFloat)fromAngle toAngle:(CGFloat)toAngle easingOption:(enum ChartEasingOption)easingOption;
-		[Export("spinWithDuration:fromAngle:toAngle:easingOption:")]
-		void SpinWithDuration(double duration, nfloat fromAngle, nfloat toAngle, ChartEasingOption easingOption);
-
-		// -(void)spinWithDuration:(NSTimeInterval)duration fromAngle:(CGFloat)fromAngle toAngle:(CGFloat)toAngle;
-		[Export("spinWithDuration:fromAngle:toAngle:")]
-		void SpinWithDuration(double duration, nfloat fromAngle, nfloat toAngle);
-
-		// -(void)stopSpinAnimation;
-		[Export("stopSpinAnimation")]
-		void StopSpinAnimation();
-
-		// -(void)processRotationGestureBeganWithLocation:(CGPoint)location;
-		[Export("processRotationGestureBeganWithLocation:")]
-		void ProcessRotationGestureBeganWithLocation(CGPoint location);
-
-		// -(void)processRotationGestureMovedWithLocation:(CGPoint)location;
-		[Export("processRotationGestureMovedWithLocation:")]
-		void ProcessRotationGestureMovedWithLocation(CGPoint location);
-
-		// -(void)processRotationGestureEndedWithLocation:(CGPoint)location;
-		[Export("processRotationGestureEndedWithLocation:")]
-		void ProcessRotationGestureEndedWithLocation(CGPoint location);
-
-		// -(void)processRotationGestureCancelled;
-		[Export("processRotationGestureCancelled")]
-		void ProcessRotationGestureCancelled();
-
-		// -(void)nsuiTouchesBegan:(NSSet<UITouch *> * _Nonnull)touches withEvent:(UIEvent * _Nullable)event;
-		[Export("nsuiTouchesBegan:withEvent:")]
-		void NsuiTouchesBegan(NSSet<UITouch> touches, [NullAllowed] UIEvent @event);
-
-		// -(void)nsuiTouchesMoved:(NSSet<UITouch *> * _Nonnull)touches withEvent:(UIEvent * _Nullable)event;
-		[Export("nsuiTouchesMoved:withEvent:")]
-		void NsuiTouchesMoved(NSSet<UITouch> touches, [NullAllowed] UIEvent @event);
-
-		// -(void)nsuiTouchesEnded:(NSSet<UITouch *> * _Nonnull)touches withEvent:(UIEvent * _Nullable)event;
-		[Export("nsuiTouchesEnded:withEvent:")]
-		void NsuiTouchesEnded(NSSet<UITouch> touches, [NullAllowed] UIEvent @event);
-
-		// -(void)nsuiTouchesCancelled:(NSSet<UITouch *> * _Nullable)touches withEvent:(UIEvent * _Nullable)event;
-		[Export("nsuiTouchesCancelled:withEvent:")]
-		void NsuiTouchesCancelled([NullAllowed] NSSet<UITouch> touches, [NullAllowed] UIEvent @event);
-
-		// -(void)stopDeceleration;
-		[Export("stopDeceleration")]
-		void StopDeceleration();
-	}
-
-	// @interface PieChartView : PieRadarChartViewBase
-	[BaseType(typeof(PieRadarChartViewBase), Name = "_TtC6Charts12PieChartView")]
-	interface PieChartView
-	{
-		// -(instancetype _Nonnull)initWithFrame:(CGRect)frame __attribute__((objc_designated_initializer));
-		[Export("initWithFrame:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(CGRect frame);
-
-		//// -(instancetype _Nullable)initWithCoder:(NSCoder * _Nonnull)aDecoder __attribute__((objc_designated_initializer));
-		//[Export("initWithCoder:")]
-		//[DesignatedInitializer]
-		//IntPtr Constructor(NSCoder aDecoder);
-
-		// -(void)initialize;
-		[Export("initialize")]
-		void Initialize();
-
-		// -(void)drawRect:(CGRect)rect;
-		[Export("drawRect:")]
-		void DrawRect(CGRect rect);
-
-		// -(void)calculateOffsets;
-		[Export("calculateOffsets")]
-		void CalculateOffsets();
-
-		// -(void)calcMinMax;
-		[Export("calcMinMax")]
-		void CalcMinMax();
-
-		// -(CGPoint)getMarkerPositionWithEntry:(ChartDataEntry * _Nonnull)e highlight:(ChartHighlight * _Nonnull)highlight;
-		[Export("getMarkerPositionWithEntry:highlight:")]
-		CGPoint GetMarkerPositionWithEntry(ChartDataEntry e, ChartHighlight highlight);
-
-		// -(BOOL)needsHighlightWithXIndex:(NSInteger)xIndex dataSetIndex:(NSInteger)dataSetIndex;
-		[Export("needsHighlightWithXIndex:dataSetIndex:")]
-		bool NeedsHighlightWithXIndex(nint xIndex, nint dataSetIndex);
-
-		// @property (readonly, nonatomic, strong) ChartXAxis * _Nonnull xAxis;
-		[Export("xAxis", ArgumentSemantic.Strong)]
-		ChartXAxis XAxis { get; }
-
-		// -(NSInteger)indexForAngle:(CGFloat)angle;
-		[Export("indexForAngle:")]
-		nint IndexForAngle(nfloat angle);
-
-		// -(NSInteger)dataSetIndexForIndex:(NSInteger)xIndex;
-		[Export("dataSetIndexForIndex:")]
-		nint DataSetIndexForIndex(nint xIndex);
-
-		// @property (readonly, copy, nonatomic) NSArray<NSNumber *> * _Nonnull drawAngles;
-		[Export("drawAngles", ArgumentSemantic.Copy)]
-		NSNumber[] DrawAngles { get; }
-
-		// @property (readonly, copy, nonatomic) NSArray<NSNumber *> * _Nonnull absoluteAngles;
-		[Export("absoluteAngles", ArgumentSemantic.Copy)]
-		NSNumber[] AbsoluteAngles { get; }
-
-		// @property (nonatomic, strong) UIColor * _Nullable holeColor;
-		[NullAllowed, Export("holeColor", ArgumentSemantic.Strong)]
-		UIColor HoleColor { get; set; }
-
-		// @property (nonatomic) BOOL drawSlicesUnderHoleEnabled;
-		[Export("drawSlicesUnderHoleEnabled")]
-		bool DrawSlicesUnderHoleEnabled { get; set; }
-
-		// @property (readonly, nonatomic) BOOL isDrawSlicesUnderHoleEnabled;
-		[Export("isDrawSlicesUnderHoleEnabled")]
-		bool IsDrawSlicesUnderHoleEnabled { get; }
-
-		// @property (nonatomic) BOOL drawHoleEnabled;
-		[Export("drawHoleEnabled")]
-		bool DrawHoleEnabled { get; set; }
-
-		// @property (readonly, nonatomic) BOOL isDrawHoleEnabled;
-		[Export("isDrawHoleEnabled")]
-		bool IsDrawHoleEnabled { get; }
-
-		// @property (copy, nonatomic) NSString * _Nullable centerText;
-		[NullAllowed, Export("centerText")]
-		string CenterText { get; set; }
-
-		// @property (nonatomic, strong) NSAttributedString * _Nullable centerAttributedText;
-		[NullAllowed, Export("centerAttributedText", ArgumentSemantic.Strong)]
-		NSAttributedString CenterAttributedText { get; set; }
-
-		// @property (nonatomic) BOOL drawCenterTextEnabled;
-		[Export("drawCenterTextEnabled")]
-		bool DrawCenterTextEnabled { get; set; }
-
-		// @property (readonly, nonatomic) BOOL isDrawCenterTextEnabled;
-		[Export("isDrawCenterTextEnabled")]
-		bool IsDrawCenterTextEnabled { get; }
-
-		// @property (readonly, nonatomic) CGFloat requiredLegendOffset;
-		[Export("requiredLegendOffset")]
-		nfloat RequiredLegendOffset { get; }
-
-		// @property (readonly, nonatomic) CGFloat requiredBaseOffset;
-		[Export("requiredBaseOffset")]
-		nfloat RequiredBaseOffset { get; }
-
-		// @property (readonly, nonatomic) CGFloat radius;
-		[Export("radius")]
-		nfloat Radius { get; }
-
-		// @property (readonly, nonatomic) CGRect circleBox;
-		[Export("circleBox")]
-		CGRect CircleBox { get; }
-
-		// @property (readonly, nonatomic) CGPoint centerCircleBox;
-		[Export("centerCircleBox")]
-		CGPoint CenterCircleBox { get; }
-
-		// @property (nonatomic) CGFloat holeRadiusPercent;
-		[Export("holeRadiusPercent")]
-		nfloat HoleRadiusPercent { get; set; }
-
-		// @property (nonatomic, strong) UIColor * _Nullable transparentCircleColor;
-		[NullAllowed, Export("transparentCircleColor", ArgumentSemantic.Strong)]
-		UIColor TransparentCircleColor { get; set; }
-
-		// @property (nonatomic) CGFloat transparentCircleRadiusPercent;
-		[Export("transparentCircleRadiusPercent")]
-		nfloat TransparentCircleRadiusPercent { get; set; }
-
-		// @property (nonatomic) BOOL drawSliceTextEnabled;
-		[Export("drawSliceTextEnabled")]
-		bool DrawSliceTextEnabled { get; set; }
-
-		// @property (readonly, nonatomic) BOOL isDrawSliceTextEnabled;
-		[Export("isDrawSliceTextEnabled")]
-		bool IsDrawSliceTextEnabled { get; }
-
-		// @property (nonatomic) BOOL usePercentValuesEnabled;
-		[Export("usePercentValuesEnabled")]
-		bool UsePercentValuesEnabled { get; set; }
-
-		// @property (readonly, nonatomic) BOOL isUsePercentValuesEnabled;
-		[Export("isUsePercentValuesEnabled")]
-		bool IsUsePercentValuesEnabled { get; }
-
-		// @property (nonatomic) CGFloat centerTextRadiusPercent;
-		[Export("centerTextRadiusPercent")]
-		nfloat CenterTextRadiusPercent { get; set; }
-
-		// @property (nonatomic) CGFloat maxAngle;
-		[Export("maxAngle")]
-		nfloat MaxAngle { get; set; }
-	}
-
-	// @interface RadarChartData : ChartData
-	[BaseType(typeof(ChartData), Name = "_TtC6Charts14RadarChartData")]
-	interface RadarChartData
-	{
-		// @property (nonatomic, strong) UIColor * _Nonnull highlightColor;
-		[Export("highlightColor", ArgumentSemantic.Strong)]
-		UIColor HighlightColor { get; set; }
-
-		// @property (nonatomic) CGFloat highlightLineWidth;
-		[Export("highlightLineWidth")]
-		nfloat HighlightLineWidth { get; set; }
-
-		// @property (nonatomic) CGFloat highlightLineDashPhase;
-		[Export("highlightLineDashPhase")]
-		nfloat HighlightLineDashPhase { get; set; }
-
-		// @property (copy, nonatomic) NSArray<NSNumber *> * _Nullable highlightLineDashLengths;
-		[NullAllowed, Export("highlightLineDashLengths", ArgumentSemantic.Copy)]
-		NSNumber[] HighlightLineDashLengths { get; set; }
-
-		// -(instancetype _Nonnull)initWithXVals:(NSArray<NSObject *> * _Nullable)xVals dataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nullable)dataSets __attribute__((objc_designated_initializer));
-		[Export("initWithXVals:dataSets:")]
-		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] NSObject[] xVals, [NullAllowed] IInterfaceChartDataSet[] dataSets);
-	}
-
-	// @interface RadarChartDataSet : LineRadarChartDataSet <InterfaceRadarChartDataSet>
-	[BaseType(typeof(LineRadarChartDataSet), Name = "_TtC6Charts17RadarChartDataSet")]
-	interface RadarChartDataSet : InterfaceRadarChartDataSet
-	{
-		// -(instancetype _Nonnull)initWithYVals:(NSArray<ChartDataEntry *> * _Nullable)yVals label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
-		[Export("initWithYVals:label:")]
-		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] ChartDataEntry[] yVals, [NullAllowed] string label);
-
-		// @property (nonatomic) BOOL drawHighlightCircleEnabled;
-		[Export("drawHighlightCircleEnabled")]
-		bool DrawHighlightCircleEnabled { get; set; }
-
-		// @property (readonly, nonatomic) BOOL isDrawHighlightCircleEnabled;
-		[Export("isDrawHighlightCircleEnabled")]
-		bool IsDrawHighlightCircleEnabled { get; }
-
-		// @property (nonatomic, strong) UIColor * _Nullable highlightCircleFillColor;
-		[NullAllowed, Export("highlightCircleFillColor", ArgumentSemantic.Strong)]
-		UIColor HighlightCircleFillColor { get; set; }
-
-		// @property (nonatomic, strong) UIColor * _Nullable highlightCircleStrokeColor;
-		[NullAllowed, Export("highlightCircleStrokeColor", ArgumentSemantic.Strong)]
-		UIColor HighlightCircleStrokeColor { get; set; }
-
-		// @property (nonatomic) CGFloat highlightCircleStrokeAlpha;
-		[Export("highlightCircleStrokeAlpha")]
-		nfloat HighlightCircleStrokeAlpha { get; set; }
-
-		// @property (nonatomic) CGFloat highlightCircleInnerRadius;
-		[Export("highlightCircleInnerRadius")]
-		nfloat HighlightCircleInnerRadius { get; set; }
-
-		// @property (nonatomic) CGFloat highlightCircleOuterRadius;
-		[Export("highlightCircleOuterRadius")]
-		nfloat HighlightCircleOuterRadius { get; set; }
-
-		// @property (nonatomic) CGFloat highlightCircleStrokeWidth;
-		[Export("highlightCircleStrokeWidth")]
-		nfloat HighlightCircleStrokeWidth { get; set; }
-	}
-
-	// @interface RadarChartRenderer : LineRadarChartRenderer
-	[BaseType(typeof(LineRadarChartRenderer), Name = "_TtC6Charts18RadarChartRenderer")]
-	interface RadarChartRenderer
-	{
-		// @property (nonatomic, weak) RadarChartView * _Nullable chart;
-		[NullAllowed, Export("chart", ArgumentSemantic.Weak)]
-		RadarChartView Chart { get; set; }
-
-		// -(instancetype _Nonnull)initWithChart:(RadarChartView * _Nonnull)chart animator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler __attribute__((objc_designated_initializer));
-		[Export("initWithChart:animator:viewPortHandler:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(RadarChartView chart, [NullAllowed] ChartAnimator animator, ChartViewPortHandler viewPortHandler);
-
-		//// -(void)drawDataWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawDataWithContext:")]
-		//unsafe void DrawDataWithContext(CGContextRef* context);
-
-		//// -(void)drawDataSetWithContext:(CGContextRef _Nonnull)context dataSet:(id<InterfaceRadarChartDataSet> _Nonnull)dataSet mostEntries:(NSInteger)mostEntries;
-		//[Export("drawDataSetWithContext:dataSet:mostEntries:")]
-		//unsafe void DrawDataSetWithContext(CGContextRef* context, InterfaceRadarChartDataSet dataSet, nint mostEntries);
-
-		//// -(void)drawValuesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawValuesWithContext:")]
-		//unsafe void DrawValuesWithContext(CGContextRef* context);
-
-		//// -(void)drawExtrasWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawExtrasWithContext:")]
-		//unsafe void DrawExtrasWithContext(CGContextRef* context);
-
-		//// -(void)drawWebWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawWebWithContext:")]
-		//unsafe void DrawWebWithContext(CGContextRef* context);
-
-		//// -(void)drawHighlightedWithContext:(CGContextRef _Nonnull)context indices:(NSArray<ChartHighlight *> * _Nonnull)indices;
-		//[Export("drawHighlightedWithContext:indices:")]
-		//unsafe void DrawHighlightedWithContext(CGContextRef* context, ChartHighlight[] indices);
-
-		//// -(void)drawHighlightCircleWithContext:(CGContextRef _Nonnull)context atPoint:(CGPoint)point innerRadius:(CGFloat)innerRadius outerRadius:(CGFloat)outerRadius fillColor:(UIColor * _Nullable)fillColor strokeColor:(UIColor * _Nullable)strokeColor strokeWidth:(CGFloat)strokeWidth;
-		//[Export("drawHighlightCircleWithContext:atPoint:innerRadius:outerRadius:fillColor:strokeColor:strokeWidth:")]
-		//unsafe void DrawHighlightCircleWithContext(CGContextRef* context, CGPoint point, nfloat innerRadius, nfloat outerRadius, [NullAllowed] UIColor fillColor, [NullAllowed] UIColor strokeColor, nfloat strokeWidth);
-	}
-
-	// @interface RadarChartView : PieRadarChartViewBase
-	[BaseType(typeof(PieRadarChartViewBase), Name = "_TtC6Charts14RadarChartView")]
-	interface RadarChartView
-	{
-		// @property (nonatomic) CGFloat webLineWidth;
-		[Export("webLineWidth")]
-		nfloat WebLineWidth { get; set; }
-
-		// @property (nonatomic) CGFloat innerWebLineWidth;
-		[Export("innerWebLineWidth")]
-		nfloat InnerWebLineWidth { get; set; }
-
-		// @property (nonatomic, strong) UIColor * _Nonnull webColor;
-		[Export("webColor", ArgumentSemantic.Strong)]
-		UIColor WebColor { get; set; }
-
-		// @property (nonatomic, strong) UIColor * _Nonnull innerWebColor;
-		[Export("innerWebColor", ArgumentSemantic.Strong)]
-		UIColor InnerWebColor { get; set; }
-
-		// @property (nonatomic) CGFloat webAlpha;
-		[Export("webAlpha")]
-		nfloat WebAlpha { get; set; }
-
-		// @property (nonatomic) BOOL drawWeb;
-		[Export("drawWeb")]
-		bool DrawWeb { get; set; }
-
-		// @property (nonatomic, strong) ChartYAxisRendererRadarChart * _Null_unspecified _yAxisRenderer;
-		[Export("_yAxisRenderer", ArgumentSemantic.Strong)]
-		ChartYAxisRendererRadarChart _yAxisRenderer { get; set; }
-
-		// @property (nonatomic, strong) ChartXAxisRendererRadarChart * _Null_unspecified _xAxisRenderer;
-		[Export("_xAxisRenderer", ArgumentSemantic.Strong)]
-		ChartXAxisRendererRadarChart _xAxisRenderer { get; set; }
-
-		// -(instancetype _Nonnull)initWithFrame:(CGRect)frame __attribute__((objc_designated_initializer));
-		[Export("initWithFrame:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(CGRect frame);
-
-		//// -(instancetype _Nullable)initWithCoder:(NSCoder * _Nonnull)aDecoder __attribute__((objc_designated_initializer));
-		//[Export("initWithCoder:")]
-		//[DesignatedInitializer]
-		//IntPtr Constructor(NSCoder aDecoder);
-
-		// -(void)initialize;
-		[Export("initialize")]
-		void Initialize();
-
-		// -(void)calcMinMax;
-		[Export("calcMinMax")]
-		void CalcMinMax();
-
-		// -(CGPoint)getMarkerPositionWithEntry:(ChartDataEntry * _Nonnull)entry highlight:(ChartHighlight * _Nonnull)highlight;
-		[Export("getMarkerPositionWithEntry:highlight:")]
-		CGPoint GetMarkerPositionWithEntry(ChartDataEntry entry, ChartHighlight highlight);
-
-		// -(void)notifyDataSetChanged;
-		[Export("notifyDataSetChanged")]
-		void NotifyDataSetChanged();
-
-		// -(void)drawRect:(CGRect)rect;
-		[Export("drawRect:")]
-		void DrawRect(CGRect rect);
-
-		// @property (readonly, nonatomic) CGFloat factor;
-		[Export("factor")]
-		nfloat Factor { get; }
-
-		// @property (readonly, nonatomic) CGFloat sliceAngle;
-		[Export("sliceAngle")]
-		nfloat SliceAngle { get; }
-
-		// -(NSInteger)indexForAngle:(CGFloat)angle;
-		[Export("indexForAngle:")]
-		nint IndexForAngle(nfloat angle);
-
-		// @property (readonly, nonatomic, strong) ChartYAxis * _Nonnull yAxis;
-		[Export("yAxis", ArgumentSemantic.Strong)]
-		ChartYAxis YAxis { get; }
-
-		// @property (nonatomic) NSInteger skipWebLineCount;
-		[Export("skipWebLineCount")]
-		nint SkipWebLineCount { get; set; }
-
-		// @property (readonly, nonatomic) CGFloat requiredLegendOffset;
-		[Export("requiredLegendOffset")]
-		nfloat RequiredLegendOffset { get; }
-
-		// @property (readonly, nonatomic) CGFloat requiredBaseOffset;
-		[Export("requiredBaseOffset")]
-		nfloat RequiredBaseOffset { get; }
-
-		// @property (readonly, nonatomic) CGFloat radius;
-		[Export("radius")]
-		nfloat Radius { get; }
-
-		// @property (readonly, nonatomic) double chartYMax;
-		[Export("chartYMax")]
-		double ChartYMax { get; }
-
-		// @property (readonly, nonatomic) double chartYMin;
-		[Export("chartYMin")]
-		double ChartYMin { get; }
-
-		// @property (readonly, nonatomic) double yRange;
-		[Export("yRange")]
-		double YRange { get; }
-	}
-
-	// @interface ScatterChartData : BarLineScatterCandleBubbleChartData
-	[BaseType(typeof(BarLineScatterCandleBubbleChartData), Name = "_TtC6Charts16ScatterChartData")]
-	interface ScatterChartData
-	{
-		// -(instancetype _Nonnull)initWithXVals:(NSArray<NSObject *> * _Nullable)xVals dataSets:(NSArray<id<IInterfaceChartDataSet>> * _Nullable)dataSets __attribute__((objc_designated_initializer));
-		[Export("initWithXVals:dataSets:")]
-		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] NSObject[] xVals, [NullAllowed] IInterfaceChartDataSet[] dataSets);
-
-		// -(CGFloat)getGreatestShapeSize;
-		[Export("getGreatestShapeSize")]
-		//[Verify(MethodToProperty)]
-		nfloat GreatestShapeSize { get; }
-	}
-
-	// @interface ScatterChartDataSet : LineScatterCandleRadarChartDataSet <InterfaceScatterChartDataSet>
-	[BaseType(typeof(LineScatterCandleRadarChartDataSet), Name = "_TtC6Charts19ScatterChartDataSet")]
-	interface ScatterChartDataSet : InterfaceScatterChartDataSet
-	{
-		// @property (nonatomic) CGFloat scatterShapeSize;
-		[Export("scatterShapeSize")]
-		nfloat ScatterShapeSize { get; set; }
-
-		// @property (nonatomic) enum ScatterShape scatterShape;
-		[Export("scatterShape", ArgumentSemantic.Assign)]
-		ScatterShape ScatterShape { get; set; }
-
-		// @property (nonatomic) CGFloat scatterShapeHoleRadius;
-		[Export("scatterShapeHoleRadius")]
-		nfloat ScatterShapeHoleRadius { get; set; }
-
-		// @property (nonatomic, strong) UIColor * _Nullable scatterShapeHoleColor;
-		[NullAllowed, Export("scatterShapeHoleColor", ArgumentSemantic.Strong)]
-		UIColor ScatterShapeHoleColor { get; set; }
-
-		//// @property (nonatomic) CGPathRef _Nullable customScatterShape;
-		//[NullAllowed, Export("customScatterShape", ArgumentSemantic.Assign)]
-		//unsafe CGPathRef* CustomScatterShape { get; set; }
-
-		//// -(id _Nonnull)copyWithZone:(struct _NSZone * _Null_unspecified)zone;
-		//[Export("copyWithZone:")]
-		//unsafe NSObject CopyWithZone(_NSZone* zone);
-
-		// -(instancetype _Nonnull)initWithLabel:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
-		[Export("initWithLabel:")]
-		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] string label);
-
-		// -(instancetype _Nonnull)initWithYVals:(NSArray<ChartDataEntry *> * _Nullable)yVals label:(NSString * _Nullable)label __attribute__((objc_designated_initializer));
-		[Export("initWithYVals:label:")]
-		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] ChartDataEntry[] yVals, [NullAllowed] string label);
-	}
-
-	// @interface ScatterChartRenderer : LineScatterCandleRadarChartRenderer
-	[BaseType(typeof(LineScatterCandleRadarChartRenderer), Name = "_TtC6Charts20ScatterChartRenderer")]
-	interface ScatterChartRenderer
-	{
-		// @property (nonatomic, weak) id<ScatterChartDataProvider> _Nullable dataProvider;
-		[NullAllowed, Export("dataProvider", ArgumentSemantic.Weak)]
-		IScatterChartDataProvider DataProvider { get; set; }
-
-		// -(instancetype _Nonnull)initWithDataProvider:(id<ScatterChartDataProvider> _Nullable)dataProvider animator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler __attribute__((objc_designated_initializer));
-		[Export("initWithDataProvider:animator:viewPortHandler:")]
-		[DesignatedInitializer]
-		IntPtr Constructor([NullAllowed] IScatterChartDataProvider dataProvider, [NullAllowed] ChartAnimator animator, ChartViewPortHandler viewPortHandler);
-
-		//// -(void)drawDataWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawDataWithContext:")]
-		//unsafe void DrawDataWithContext(CGContextRef* context);
-
-		//// -(void)drawDataSetWithContext:(CGContextRef _Nonnull)context dataSet:(id<InterfaceScatterChartDataSet> _Nonnull)dataSet;
-		//[Export("drawDataSetWithContext:dataSet:")]
-		//unsafe void DrawDataSetWithContext(CGContextRef* context, InterfaceScatterChartDataSet dataSet);
-
-		//// -(void)drawValuesWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawValuesWithContext:")]
-		//unsafe void DrawValuesWithContext(CGContextRef* context);
-
-		//// -(void)drawExtrasWithContext:(CGContextRef _Nonnull)context;
-		//[Export("drawExtrasWithContext:")]
-		//unsafe void DrawExtrasWithContext(CGContextRef* context);
-
-		//// -(void)drawHighlightedWithContext:(CGContextRef _Nonnull)context indices:(NSArray<ChartHighlight *> * _Nonnull)indices;
-		//[Export("drawHighlightedWithContext:indices:")]
-		//unsafe void DrawHighlightedWithContext(CGContextRef* context, ChartHighlight[] indices);
-	}
-
-	// @interface ScatterChartView : BarLineChartViewBase <ScatterChartDataProvider>
-	[BaseType(typeof(BarLineChartViewBase), Name = "_TtC6Charts16ScatterChartView")]
-	interface ScatterChartView : ScatterChartDataProvider
-	{
-		// -(void)initialize;
-		[Export("initialize")]
-		void Initialize();
-
-		// -(void)calcMinMax;
-		[Export("calcMinMax")]
-		void CalcMinMax();
-
-		// @property (readonly, nonatomic, strong) ScatterChartData * _Nullable scatterData;
-		[NullAllowed, Export("scatterData", ArgumentSemantic.Strong)]
-		ScatterChartData ScatterData { get; }
-
-		// -(instancetype _Nonnull)initWithFrame:(CGRect)frame __attribute__((objc_designated_initializer));
-		[Export ("initWithFrame:")]
-		[DesignatedInitializer]
-		IntPtr Constructor (CGRect frame);
-
-		//// -(instancetype _Nullable)initWithCoder:(NSCoder * _Nonnull)aDecoder __attribute__((objc_designated_initializer));
-		//[Export ("initWithCoder:")]
-		//[DesignatedInitializer]
-		//IntPtr Constructor (NSCoder aDecoder);
-	}
-
-	//// @interface Charts_Swift_4376 (UIPanGestureRecognizer)
-	//[Category]
-	//[BaseType (typeof(UIPanGestureRecognizer))]
-	//interface UIPanGestureRecognizer_Charts_Swift_4376
-	//{
-	//	// -(NSInteger)nsuiNumberOfTouches;
-	//	[Export ("nsuiNumberOfTouches")]
-	//	//[Verify (MethodToProperty)]
-	//	nint NsuiNumberOfTouches { get; }
-
-	//	// -(CGPoint)nsuiLocationOfTouch:(NSInteger)touch inView:(UIView * _Nullable)inView;
-	//	[Export ("nsuiLocationOfTouch:inView:")]
-	//	CGPoint NsuiLocationOfTouch (nint touch, [NullAllowed] UIView inView);
-	//}
-
-	//// @interface Charts_Swift_4382 (UIPinchGestureRecognizer)
-	//[Category]
-	//[BaseType (typeof(UIPinchGestureRecognizer))]
-	//interface UIPinchGestureRecognizer_Charts_Swift_4382
-	//{
-	//	// @property (nonatomic) CGFloat nsuiScale;
-	//	[Export ("nsuiScale")]
-	//	nfloat NsuiScale { get; set; }
-
-	//	// -(CGPoint)nsuiLocationOfTouch:(NSInteger)touch inView:(UIView * _Nullable)inView;
-	//	[Export ("nsuiLocationOfTouch:inView:")]
-	//	CGPoint NsuiLocationOfTouch (nint touch, [NullAllowed] UIView inView);
-	//}
-
-	//// @interface Charts_Swift_4388 (UIRotationGestureRecognizer)
-	//[Category]
-	//[BaseType (typeof(UIRotationGestureRecognizer))]
-	//interface UIRotationGestureRecognizer_Charts_Swift_4388
-	//{
-	//	// @property (nonatomic) CGFloat nsuiRotation;
-	//	[Export ("nsuiRotation")]
-	//	nfloat NsuiRotation { get; set; }
-	//}
-
-	//// @interface Charts_Swift_4393 (UIScreen)
-	//[Category]
-	//[BaseType (typeof(UIScreen))]
-	//interface UIScreen_Charts_Swift_4393
-	//{
-	//	// @property (readonly, nonatomic) CGFloat nsuiScale;
-	//	[Export ("nsuiScale")]
-	//	nfloat NsuiScale { get; }
-	//}
-
-	//// @interface Charts_Swift_4398 (UITapGestureRecognizer)
-	//[Category]
-	//[BaseType (typeof(UITapGestureRecognizer))]
-	//interface UITapGestureRecognizer_Charts_Swift_4398
-	//{
-	//	// -(NSInteger)nsuiNumberOfTouches;
-	//	[Export ("nsuiNumberOfTouches")]
-	//	//[Verify (MethodToProperty)]
-	//	nint NsuiNumberOfTouches { get; }
-
-	//	// @property (nonatomic) NSInteger nsuiNumberOfTapsRequired;
-	//	[Export ("nsuiNumberOfTapsRequired")]
-	//	nint NsuiNumberOfTapsRequired { get; set; }
-	//}
-
-	//// @interface Charts_Swift_4404 (UIView)
-	//[Category]
-	//[BaseType (typeof(UIView))]
-	//interface UIView_Charts_Swift_4404
-	//{
-	//	// @property (readonly, copy, nonatomic) NSArray<UIGestureRecognizer *> * _Nullable nsuiGestureRecognizers;
-	//	[NullAllowed, Export ("nsuiGestureRecognizers", ArgumentSemantic.Copy)]
-	//	UIGestureRecognizer[] NsuiGestureRecognizers { get; }
-	//}
 }
