@@ -2,13 +2,15 @@
 <package >
   <metadata>
     <id>iOSCharts</id>
-    <version>2.2.4</version>
+    <version>3.0.0</version>
     <title>iOSCharts</title>
     <authors>Flash3001</authors>
-    <owners>Flash3001, </owners>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <owners>Flash3001, Philipp Jahoda, Daniel Cohen Gindi</owners>
+    <licenseUrl>https://raw.githubusercontent.com/Flash3001/iOSCharts.Xamarin/master/LICENSE.MD</licenseUrl>
+    <projectUrl>https://github.com/Flash3001/iOSCharts.Xamarin</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>A Xamarin port by Lucas Teixeira for Charts (ios-charts) by Daniel Cohen Gindi, inspired by Philipp Jahoda</description>
-    <releaseNotes>First release</releaseNotes>
+    <releaseNotes>Breaking change: https://github.com/danielgindi/Charts/releases/tag/v3.0.0</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>Xamarin iOS Charts iOSCharts MPAndroidCharts-inspired LineChart Combined-Chart BarChart Horizontal-BarChartPieChart ScatterChart CandleStickChart BubbleChart RadarChart</tags>
   </metadata>
