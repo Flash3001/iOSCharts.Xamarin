@@ -8,7 +8,7 @@ using UIKit;
 namespace iOSCharts
 {
 	// @interface ChartViewPortJob : NSObject
-	[BaseType(typeof(NSObject), Name = "ViewPortJob")]
+	[BaseType(typeof(NSObject))]
 	[DisableDefaultCtor]
 	interface ChartViewPortJob
 	{
@@ -65,7 +65,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartAnimator : NSObject
-	[BaseType(typeof(NSObject), Name = "Animator")]
+	[BaseType(typeof(NSObject))]
 	interface ChartAnimator
 	{
 		[Wrap("WeakDelegate")]
@@ -144,8 +144,8 @@ namespace iOSCharts
 	interface IChartAnimatorDelegate { }
 
 	// @protocol ChartAnimatorDelegate
-	[BaseType(typeof(NSObject), Name = "AnimatorDelegate")]
-	[Protocol(Name = "AnimatorDelegate"), Model]
+	[BaseType(typeof(NSObject))]
+	[Protocol, Model]
 	interface ChartAnimatorDelegate
 	{
 		// @required -(void)animatorUpdated:(ChartAnimator * _Nonnull)animator;
@@ -160,7 +160,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartComponentBase : NSObject
-	[BaseType(typeof(NSObject), Name = "ComponentBase")]
+	[BaseType(typeof(NSObject))]
 	interface ChartComponentBase
 	{
 		// @property (nonatomic) BOOL enabled;
@@ -181,7 +181,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartAxisBase : ChartComponentBase
-	[BaseType(typeof(ChartComponentBase), Name = "AxisBase")]
+	[BaseType(typeof(ChartComponentBase))]
 	interface ChartAxisBase
 	{
 		// @property (nonatomic, strong) UIFont * _Nonnull labelFont;
@@ -394,7 +394,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartRenderer : NSObject
-	[BaseType(typeof(NSObject), Name = "Renderer")]
+	[BaseType(typeof(NSObject))]
 	interface ChartRenderer
 	{
 		// @property (nonatomic, strong) ChartViewPortHandler * _Nullable viewPortHandler;
@@ -408,7 +408,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartAxisRendererBase : ChartRenderer
-	[BaseType(typeof(ChartRenderer), Name = "AxisRendererBase")]
+	[BaseType(typeof(ChartRenderer))]
 	interface ChartAxisRendererBase
 	{
 		// @property (nonatomic, strong) ChartAxisBase * _Nullable axis;
@@ -1600,7 +1600,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartDataRendererBase : ChartRenderer
-	[BaseType(typeof(ChartRenderer), Name = "DataRenderer")]
+	[BaseType(typeof(ChartRenderer))]
 	[DisableDefaultCtor]
 	interface ChartDataRendererBase
 	{
@@ -1631,7 +1631,7 @@ namespace iOSCharts
 	}
 
 	// @interface BarLineScatterCandleBubbleChartRenderer : ChartDataRendererBase
-	[BaseType(typeof(ChartDataRendererBase), Name = "BarLineScatterCandleBubbleRenderer")]
+	[BaseType(typeof(ChartDataRendererBase))]
 	interface BarLineScatterCandleBubbleChartRenderer
 	{
 		// -(instancetype _Nonnull)initWithAnimator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler __attribute__((objc_designated_initializer));
@@ -2493,7 +2493,7 @@ namespace iOSCharts
 
 	// @protocol IInterfaceChartHighlighter <NSObject>
 	[Protocol, Model]
-	[BaseType(typeof(NSObject), Name = "IHighlighter")]
+	[BaseType(typeof(NSObject), Name = "IChartHighlighter")]
 	interface InterfaceChartHighlighter
 	{
 		// @required -(ChartHighlight * _Nullable)getHighlightWithX:(CGFloat)x y:(CGFloat)y;
@@ -2537,7 +2537,7 @@ namespace iOSCharts
 	}
 
 	// @interface BarChartHighlighter : ChartHighlighter
-	[BaseType(typeof(ChartHighlighter), Name = "BarHighlighter")]
+	[BaseType(typeof(ChartHighlighter))]
 	interface BarChartHighlighter
 	{
 		// -(ChartHighlight * _Nullable)getHighlightWithX:(CGFloat)x y:(CGFloat)y;
@@ -2992,7 +2992,7 @@ namespace iOSCharts
 	}
 
 	// @interface LineScatterCandleRadarChartRenderer : BarLineScatterCandleBubbleChartRenderer
-	[BaseType(typeof(BarLineScatterCandleBubbleChartRenderer), Name = "LineScatterCandleRadarRenderer")]
+	[BaseType(typeof(BarLineScatterCandleBubbleChartRenderer))]
 	interface LineScatterCandleRadarChartRenderer
 	{
 		// -(instancetype _Nonnull)initWithAnimator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler __attribute__((objc_designated_initializer));
@@ -3440,7 +3440,7 @@ namespace iOSCharts
 	}
 
 	// @interface CombinedChartHighlighter : ChartHighlighter
-	[BaseType(typeof(ChartHighlighter), Name = "CombinedHighlighter")]
+	[BaseType(typeof(ChartHighlighter))]
 	interface CombinedChartHighlighter
 	{
 		// -(instancetype _Nonnull)initWithChart:(id<CombinedChartDataProvider> _Nonnull)chart barDataProvider:(id<BarChartDataProvider> _Nonnull)barDataProvider __attribute__((objc_designated_initializer));
@@ -3461,7 +3461,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartDataApproximator : NSObject
-	[BaseType(typeof(NSObject), Name = "DataApproximator")]
+	[BaseType(typeof(NSObject))]
 	interface ChartDataApproximator
 	{
 	}
@@ -3470,7 +3470,7 @@ namespace iOSCharts
 
 	// @protocol InterfaceChartAxisValueFormatter <NSObject>
 	[Protocol, Model]
-	[BaseType(typeof(NSObject), Name = "IAxisValueFormatter")]
+	[BaseType(typeof(NSObject), Name = "IChartAxisValueFormatter")]
 	interface InterfaceChartAxisValueFormatter
 	{
 		// @required -(NSString * _Nonnull)stringForValue:(double)value axis:(ChartAxisBase * _Nullable)axis;
@@ -3480,7 +3480,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartDefaultAxisValueFormatter : NSObject <InterfaceChartAxisValueFormatter>
-	[BaseType(typeof(NSObject), Name = "DefaultAxisValueFormatter")]
+	[BaseType(typeof(NSObject))]
 	interface ChartDefaultAxisValueFormatter : IInterfaceChartAxisValueFormatter
 	{
 		// @property (copy, nonatomic) NSString * _Nonnull (^ _Nullable)(double, ChartAxisBase * _Nullable) block;
@@ -3524,7 +3524,7 @@ namespace iOSCharts
 	interface IInterfaceChartFillFormatter { }
 
 	// @protocol InterfaceChartFillFormatter
-	[Protocol(Name = "IFillFormatter"), Model]
+	[Protocol(Name = "IChartFillFormatter"), Model]
 	interface InterfaceChartFillFormatter
 	{
 		// @required -(CGFloat)getFillLinePositionWithDataSet:(id<IInterfaceLineChartDataSet> _Nonnull)dataSet dataProvider:(id<LineChartDataProvider> _Nonnull)dataProvider;
@@ -3534,7 +3534,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartDefaultFillFormatter : NSObject <InterfaceChartFillFormatter>
-	[BaseType(typeof(NSObject), Name = "DefaultFillFormatter")]
+	[BaseType(typeof(NSObject))]
 	interface ChartDefaultFillFormatter : IInterfaceChartFillFormatter
 	{
 		// @property (copy, nonatomic) CGFloat (^ _Nullable)(id<IInterfaceLineChartDataSet> _Nonnull, id<LineChartDataProvider> _Nonnull) block;
@@ -3561,7 +3561,7 @@ namespace iOSCharts
 
 	// @protocol InterfaceChartValueFormatter <NSObject>
 	[Protocol, Model]
-	[BaseType(typeof(NSObject), Name = "IValueFormatter")]
+	[BaseType(typeof(NSObject), Name = "IChartValueFormatter")]
 	interface InterfaceChartValueFormatter
 	{
 		// @required -(NSString * _Nonnull)stringForValue:(double)value entry:(ChartDataEntry * _Nonnull)entry dataSetIndex:(NSInteger)dataSetIndex viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler;
@@ -3571,7 +3571,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartDefaultValueFormatter : NSObject <InterfaceChartValueFormatter>
-	[BaseType(typeof(NSObject), Name = "DefaultValueFormatter")]
+	[BaseType(typeof(NSObject))]
 	interface ChartDefaultValueFormatter : IInterfaceChartValueFormatter
 	{
 		// @property (copy, nonatomic) NSString * _Nonnull (^ _Nullable)(double, ChartDataEntry * _Nonnull, NSInteger, ChartViewPortHandler * _Nullable) block;
@@ -3613,7 +3613,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartDescription : ChartComponentBase
-	[BaseType(typeof(ChartComponentBase), Name = "Description")]
+	[BaseType(typeof(ChartComponentBase))]
 	interface ChartDescription
 	{
 		// @property (copy, nonatomic) NSString * _Nullable text;
@@ -3634,7 +3634,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartFill : NSObject
-	[BaseType(typeof(NSObject), Name = "Fill")]
+	[BaseType(typeof(NSObject))]
 	interface ChartFill
 	{
 		// @property (readonly, nonatomic) enum ChartFillType type;
@@ -3728,7 +3728,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartHighlight : NSObject
-	[BaseType(typeof(NSObject), Name = "Highlight")]
+	[BaseType(typeof(NSObject))]
 	interface ChartHighlight
 	{
 		// @property (nonatomic) NSInteger dataIndex;
@@ -3902,7 +3902,7 @@ namespace iOSCharts
 	}
 
 	// @interface HorizontalBarChartHighlighter : BarChartHighlighter
-	[BaseType(typeof(BarChartHighlighter), Name = "HorizontalBarHighlighter")]
+	[BaseType(typeof(BarChartHighlighter))]
 	interface HorizontalBarChartHighlighter
 	{
 		// -(ChartHighlight * _Nullable)getHighlightWithX:(CGFloat)x y:(CGFloat)y;
@@ -4070,7 +4070,7 @@ namespace iOSCharts
 
 	// @protocol InterfaceChartMarker <NSObject>
 	[Protocol, Model]
-	[BaseType(typeof(NSObject), Name = "IMarker")]
+	[BaseType(typeof(NSObject), Name = "IChartMarker")]
 	interface InterfaceChartMarker
 	{
 		// @required @property (readonly, nonatomic) CGPoint offset;
@@ -4233,7 +4233,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartLegend : ChartComponentBase
-	[BaseType(typeof(ChartComponentBase), Name = "Legend")]
+	[BaseType(typeof(ChartComponentBase))]
 	interface ChartLegend
 	{
 		// @property (copy, nonatomic) NSArray<ChartLegendEntry *> * _Nonnull entries;
@@ -4409,7 +4409,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartLegendEntry : NSObject
-	[BaseType(typeof(NSObject), Name = "LegendEntry")]
+	[BaseType(typeof(NSObject))]
 	interface ChartLegendEntry
 	{
 		// -(instancetype _Nonnull)initWithLabel:(NSString * _Nullable)label form:(enum ChartLegendForm)form formSize:(CGFloat)formSize formLineWidth:(CGFloat)formLineWidth formLineDashPhase:(CGFloat)formLineDashPhase formLineDashLengths:(NSArray<NSNumber *> * _Nullable)formLineDashLengths formColor:(UIColor * _Nullable)formColor __attribute__((objc_designated_initializer));
@@ -4447,7 +4447,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartLegendRenderer : ChartRenderer
-	[BaseType(typeof(ChartRenderer), Name = "LegendRenderer")]
+	[BaseType(typeof(ChartRenderer))]
 	[DisableDefaultCtor]
 	interface ChartLegendRenderer
 	{
@@ -4620,7 +4620,7 @@ namespace iOSCharts
 	}
 
 	// @interface LineRadarChartRenderer : LineScatterCandleRadarChartRenderer
-	[BaseType(typeof(LineScatterCandleRadarChartRenderer), Name = "LineRadarRenderer")]
+	[BaseType(typeof(LineScatterCandleRadarChartRenderer))]
 	interface LineRadarChartRenderer
 	{
 		// -(instancetype _Nonnull)initWithAnimator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler __attribute__((objc_designated_initializer));
@@ -4683,7 +4683,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartMarkerImage : NSObject <InterfaceChartMarker>
-	[BaseType(typeof(NSObject), Name = "MarkerImage")]
+	[BaseType(typeof(NSObject))]
 	interface ChartMarkerImage : IInterfaceChartMarker
 	{
 		// @property (nonatomic, strong) UIImage * _Nullable image;
@@ -4714,7 +4714,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartMarkerView : NSUIView <InterfaceChartMarker>
-	[BaseType(typeof(NSUIView), Name = "MarkerView")]
+	[BaseType(typeof(NSUIView))]
 	interface ChartMarkerView : IInterfaceChartMarker
 	{
 		// @property (nonatomic) CGPoint offset;
@@ -4752,7 +4752,7 @@ namespace iOSCharts
 	}
 
 	// @interface MoveChartViewJob : ChartViewPortJob
-	[BaseType(typeof(ChartViewPortJob), Name = "MoveViewJob")]
+	[BaseType(typeof(ChartViewPortJob))]
 	interface MoveChartViewJob
 	{
 		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler xValue:(double)xValue yValue:(double)yValue transformer:(ChartTransformer * _Nonnull)transformer view:(ChartViewBase * _Nonnull)view __attribute__((objc_designated_initializer));
@@ -5201,7 +5201,7 @@ namespace iOSCharts
 	}
 
 	// @interface PieRadarChartHighlighter : ChartHighlighter
-	[BaseType(typeof(ChartHighlighter), Name = "PieRadarHighlighter")]
+	[BaseType(typeof(ChartHighlighter))]
 	interface PieRadarChartHighlighter
 	{
 		// -(ChartHighlight * _Nullable)getHighlightWithX:(CGFloat)x y:(CGFloat)y;
@@ -5221,7 +5221,7 @@ namespace iOSCharts
 	}
 
 	// @interface PieChartHighlighter : PieRadarChartHighlighter
-	[BaseType(typeof(PieRadarChartHighlighter), Name = "PieHighlighter")]
+	[BaseType(typeof(PieRadarChartHighlighter))]
 	interface PieChartHighlighter
 	{
 		// -(ChartHighlight * _Nullable)closestHighlightWithIndex:(NSInteger)index x:(CGFloat)x y:(CGFloat)y;
@@ -5440,7 +5440,7 @@ namespace iOSCharts
 	}
 
 	// @interface RadarChartHighlighter : PieRadarChartHighlighter
-	[BaseType(typeof(PieRadarChartHighlighter), Name = "RadarHighlighter")]
+	[BaseType(typeof(PieRadarChartHighlighter))]
 	interface RadarChartHighlighter
 	{
 		// -(ChartHighlight * _Nullable)closestHighlightWithIndex:(NSInteger)index x:(CGFloat)x y:(CGFloat)y;
@@ -5455,7 +5455,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartRange : NSObject
-	[BaseType(typeof(NSObject), Name = "Range")]
+	[BaseType(typeof(NSObject))]
 	[DisableDefaultCtor]
 	interface ChartRange
 	{
@@ -5596,7 +5596,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartTransformer : NSObject
-	[BaseType(typeof(NSObject), Name = "Transformer")]
+	[BaseType(typeof(NSObject))]
 	[DisableDefaultCtor]
 	interface ChartTransformer
 	{
@@ -5635,7 +5635,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartTransformerHorizontalBarChart : ChartTransformer
-	[BaseType(typeof(ChartTransformer), Name = "TransformerHorizontalBarChart")]
+	[BaseType(typeof(ChartTransformer))]
 	interface ChartTransformerHorizontalBarChart
 	{
 		// -(void)prepareMatrixOffsetWithInverted:(BOOL)inverted;
@@ -5705,7 +5705,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartViewPortHandler : NSObject
-	[BaseType(typeof(NSObject), Name = "ViewPortHandler")]
+	[BaseType(typeof(NSObject))]
 	interface ChartViewPortHandler
 	{
 		// -(instancetype _Nonnull)initWithWidth:(CGFloat)width height:(CGFloat)height __attribute__((objc_designated_initializer));
@@ -5951,7 +5951,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartXAxis : ChartAxisBase
-	[BaseType(typeof(ChartAxisBase), Name = "XAxis")]
+	[BaseType(typeof(ChartAxisBase))]
 	interface ChartXAxis
 	{
 		// @property (nonatomic) CGFloat labelWidth;
@@ -6000,7 +6000,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartXAxisRenderer : ChartAxisRendererBase
-	[BaseType(typeof(ChartAxisRendererBase), Name = "XAxisRenderer")]
+	[BaseType(typeof(ChartAxisRendererBase))]
 	[DisableDefaultCtor]
 	interface ChartXAxisRenderer
 	{
@@ -6106,7 +6106,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartYAxis : ChartAxisBase
-	[BaseType(typeof(ChartAxisBase), Name = "YAxis")]
+	[BaseType(typeof(ChartAxisBase))]
 	interface ChartYAxis
 	{
 		// @property (nonatomic) BOOL drawTopYLabelEntryEnabled;
@@ -6192,7 +6192,7 @@ namespace iOSCharts
 	}
 
 	// @interface ChartYAxisRenderer : ChartAxisRendererBase
-	[BaseType(typeof(ChartAxisRendererBase), Name = "YAxisRenderer")]
+	[BaseType(typeof(ChartAxisRendererBase))]
 	[DisableDefaultCtor]
 	interface ChartYAxisRenderer
 	{
@@ -6252,7 +6252,7 @@ namespace iOSCharts
 	}
 
 	// @interface ZoomChartViewJob : ChartViewPortJob
-	[BaseType (typeof(ChartViewPortJob), Name = "ZoomViewJob")]
+	[BaseType (typeof(ChartViewPortJob))]
 	interface ZoomChartViewJob
 	{
 		// -(instancetype _Nonnull)initWithViewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler scaleX:(CGFloat)scaleX scaleY:(CGFloat)scaleY xValue:(double)xValue yValue:(double)yValue transformer:(ChartTransformer * _Nonnull)transformer axis:(enum AxisDependency)axis view:(ChartViewBase * _Nonnull)view __attribute__((objc_designated_initializer));
