@@ -3,7 +3,14 @@
 A Xamarin port by Lucas Teixeira for Charts (ios-charts) by Daniel Cohen Gindi, inspired by Philipp Jahoda
 https://github.com/danielgindi/Charts
 
-<h2>Important Notes for Xcode 8</h2>
+<h2>Charts 3.0</h2>
+Requires Xcode 8 as the project has moved to Swift3. It's also a breaking change. To see the release notes go to: https://github.com/danielgindi/Charts/releases/tag/v3.0.0
+
+If you are updating from an older version of the library, please remove the Xamarin.Swift23.Support dependency, as it is not necessary anymore.
+
+All the dependencies for Swift3 are already listed in the NuGet package. You can find the project for them in here: https://github.com/Flash3001/Xamarin.Swift3.Support
+
+<h2>Important Notes for Charts 2.2.5 and Xcode 8</h2>
 If you updated to Xcode 8 there's a version of this library uploaded in NuGet pre-release channel.
 https://www.nuget.org/packages/iOSCharts/2.2.5.2-xcode8
 
@@ -21,6 +28,10 @@ When using Xcode 7 you might need use this script: https://github.com/jamesbar2/
 
 When using Xcode 8 (which updated Swift to 2.3 and 3.0) you should use this: https://github.com/Flash3001/ipa-packager
 
+<h2>Binding Swift Libraries</h2>
+If you got here after googling for a way to bind Swift libraries in Xamarin, you may find this Documentation useful: stackoverflow.com/documentation/xamarin.ios/6091/binding-swift-libraries 
+
+In case you wish help, feel free to contact me https://twitter.com/flash3001
 
 <h2>License</h2>
 Copyright 2016 Lucas Teixeira, Daniel Cohen Gindi & Philipp Jahoda
