@@ -298,7 +298,7 @@ namespace iOSCharts
 
 		// @property (nonatomic, strong) id<InterfaceChartAxisValueFormatter> _Nullable valueFormatter;
 		[NullAllowed, Export("valueFormatter", ArgumentSemantic.Strong)]
-		InterfaceChartAxisValueFormatter ValueFormatter { get; set; }
+		IInterfaceChartAxisValueFormatter ValueFormatter { get; set; }
 
 		// @property (readonly, nonatomic) BOOL isDrawGridLinesEnabled;
 		[Export("isDrawGridLinesEnabled")]
@@ -1042,7 +1042,7 @@ namespace iOSCharts
 		// @required @property (nonatomic, strong) id<InterfaceChartValueFormatter> _Nullable valueFormatter;
 		[Abstract]
 		[NullAllowed, Export("valueFormatter", ArgumentSemantic.Strong)]
-		InterfaceChartValueFormatter ValueFormatter { get; set; }
+		IInterfaceChartValueFormatter ValueFormatter { get; set; }
 
 		// @required @property (readonly, nonatomic) BOOL needsFormatter;
 		[Abstract]
@@ -1333,7 +1333,7 @@ namespace iOSCharts
 
 		// @property (nonatomic, strong) id<InterfaceChartValueFormatter> _Nullable valueFormatter;
 		[NullAllowed, Export("valueFormatter", ArgumentSemantic.Strong)]
-		InterfaceChartValueFormatter ValueFormatter { get; set; }
+		IInterfaceChartValueFormatter ValueFormatter { get; set; }
 
 		// @property (readonly, nonatomic) BOOL needsFormatter;
 		[Export("needsFormatter")]
@@ -1787,7 +1787,7 @@ namespace iOSCharts
 
 		// @property (nonatomic, strong) id<InterfaceChartMarker> _Nullable marker;
 		[NullAllowed, Export("marker", ArgumentSemantic.Strong)]
-		InterfaceChartMarker Marker { get; set; }
+		IInterfaceChartMarker Marker { get; set; }
 
 		// @property (nonatomic) CGFloat extraTopOffset;
 		[Export("extraTopOffset")]
@@ -2500,13 +2500,13 @@ namespace iOSCharts
 		[Abstract]
 		[Export("getHighlightWithX:y:")]
 		[return: NullAllowed]
-		ChartHighlight Y(nfloat x, nfloat y);
+		ChartHighlight GetHighlightWithX(nfloat x, nfloat y);
 	}
 
 	// @interface ChartHighlighter : NSObject <IInterfaceChartHighlighter>
 	[BaseType(typeof(NSObject), Name = "_TtC6Charts16ChartHighlighter")]
 	[DisableDefaultCtor]
-	interface ChartHighlighter : IInterfaceChartHighlighter
+	interface ChartHighlighter : InterfaceChartHighlighter
 	{
 		// @property (nonatomic, weak) id<ChartDataProvider> _Nullable chart;
 		[NullAllowed, Export("chart", ArgumentSemantic.Weak)]
@@ -3177,21 +3177,21 @@ namespace iOSCharts
 
 	// @interface ChevronDownShapeRenderer : NSObject <InterfaceShapeRenderer>
 	[BaseType(typeof(NSObject), Name = "_TtC6Charts24ChevronDownShapeRenderer")]
-	interface ChevronDownShapeRenderer : IInterfaceShapeRenderer
+	interface ChevronDownShapeRenderer : InterfaceShapeRenderer
 	{
 		//u-n-safe void RenderShapeWithContext(CGContextRef* context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, CGPoint point, UIColor color);
 	}
 
 	// @interface ChevronUpShapeRenderer : NSObject <InterfaceShapeRenderer>
 	[BaseType(typeof(NSObject), Name = "_TtC6Charts22ChevronUpShapeRenderer")]
-	interface ChevronUpShapeRenderer : IInterfaceShapeRenderer
+	interface ChevronUpShapeRenderer : InterfaceShapeRenderer
 	{
 		//u-n-safe void RenderShapeWithContext(CGContextRef* context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, CGPoint point, UIColor color);
 	}
 
 	// @interface CircleShapeRenderer : NSObject <InterfaceShapeRenderer>
 	[BaseType(typeof(NSObject), Name = "_TtC6Charts19CircleShapeRenderer")]
-	interface CircleShapeRenderer : IInterfaceShapeRenderer
+	interface CircleShapeRenderer : InterfaceShapeRenderer
 	{
 		//u-n-safe void RenderShapeWithContext(CGContextRef* context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, CGPoint point, UIColor color);
 	}
@@ -3455,7 +3455,7 @@ namespace iOSCharts
 
 	// @interface CrossShapeRenderer : NSObject <InterfaceShapeRenderer>
 	[BaseType(typeof(NSObject), Name = "_TtC6Charts18CrossShapeRenderer")]
-	interface CrossShapeRenderer : IInterfaceShapeRenderer
+	interface CrossShapeRenderer : InterfaceShapeRenderer
 	{
 		//u-n-safe void RenderShapeWithContext(CGContextRef* context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, CGPoint point, UIColor color);
 	}
@@ -3481,7 +3481,7 @@ namespace iOSCharts
 
 	// @interface ChartDefaultAxisValueFormatter : NSObject <InterfaceChartAxisValueFormatter>
 	[BaseType(typeof(NSObject))]
-	interface ChartDefaultAxisValueFormatter : IInterfaceChartAxisValueFormatter
+	interface ChartDefaultAxisValueFormatter : InterfaceChartAxisValueFormatter
 	{
 		// @property (copy, nonatomic) NSString * _Nonnull (^ _Nullable)(double, ChartAxisBase * _Nullable) block;
 		[NullAllowed, Export("block", ArgumentSemantic.Copy)]
@@ -3516,9 +3516,9 @@ namespace iOSCharts
 		[return: NullAllowed]
 		ChartDefaultAxisValueFormatter WithBlock(Func<double, ChartAxisBase, NSString> block);
 
-		// -(NSString * _Nonnull)stringForValue:(double)value axis:(ChartAxisBase * _Nullable)axis;
-		[Export("stringForValue:axis:")]
-		string StringForValue(double value, [NullAllowed] ChartAxisBase axis);
+		//// -(NSString * _Nonnull)stringForValue:(double)value axis:(ChartAxisBase * _Nullable)axis;
+		//[Export("stringForValue:axis:")]
+		//string StringForValue(double value, [NullAllowed] ChartAxisBase axis);
 	}
 
 	interface IInterfaceChartFillFormatter { }
@@ -3535,7 +3535,7 @@ namespace iOSCharts
 
 	// @interface ChartDefaultFillFormatter : NSObject <InterfaceChartFillFormatter>
 	[BaseType(typeof(NSObject))]
-	interface ChartDefaultFillFormatter : IInterfaceChartFillFormatter
+	interface ChartDefaultFillFormatter : InterfaceChartFillFormatter
 	{
 		// @property (copy, nonatomic) CGFloat (^ _Nullable)(id<IInterfaceLineChartDataSet> _Nonnull, id<LineChartDataProvider> _Nonnull) block;
 		[NullAllowed, Export("block", ArgumentSemantic.Copy)]
@@ -3552,9 +3552,9 @@ namespace iOSCharts
 		[return: NullAllowed]
 		ChartDefaultFillFormatter WithBlock(Func<IInterfaceLineChartDataSet, ILineChartDataProvider, nfloat> block);
 
-		// -(CGFloat)getFillLinePositionWithDataSet:(id<IInterfaceLineChartDataSet> _Nonnull)dataSet dataProvider:(id<LineChartDataProvider> _Nonnull)dataProvider;
-		[Export("getFillLinePositionWithDataSet:dataProvider:")]
-		nfloat GetFillLinePositionWithDataSet(IInterfaceLineChartDataSet dataSet, ILineChartDataProvider dataProvider);
+		//// -(CGFloat)getFillLinePositionWithDataSet:(id<IInterfaceLineChartDataSet> _Nonnull)dataSet dataProvider:(id<LineChartDataProvider> _Nonnull)dataProvider;
+		//[Export("getFillLinePositionWithDataSet:dataProvider:")]
+		//nfloat GetFillLinePositionWithDataSet(IInterfaceLineChartDataSet dataSet, ILineChartDataProvider dataProvider);
 	}
 
 	interface IInterfaceChartValueFormatter { }
@@ -3572,7 +3572,7 @@ namespace iOSCharts
 
 	// @interface ChartDefaultValueFormatter : NSObject <InterfaceChartValueFormatter>
 	[BaseType(typeof(NSObject))]
-	interface ChartDefaultValueFormatter : IInterfaceChartValueFormatter
+	interface ChartDefaultValueFormatter : InterfaceChartValueFormatter
 	{
 		// @property (copy, nonatomic) NSString * _Nonnull (^ _Nullable)(double, ChartDataEntry * _Nonnull, NSInteger, ChartViewPortHandler * _Nullable) block;
 		[NullAllowed, Export("block", ArgumentSemantic.Copy)]
@@ -3607,9 +3607,9 @@ namespace iOSCharts
 		[return: NullAllowed]
 		ChartDefaultValueFormatter WithBlock(Func<double, ChartDataEntry, nint, ChartViewPortHandler, NSString> block);
 
-		// -(NSString * _Nonnull)stringForValue:(double)value entry:(ChartDataEntry * _Nonnull)entry dataSetIndex:(NSInteger)dataSetIndex viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler;
-		[Export("stringForValue:entry:dataSetIndex:viewPortHandler:")]
-		string StringForValue(double value, ChartDataEntry entry, nint dataSetIndex, [NullAllowed] ChartViewPortHandler viewPortHandler);
+		//// -(NSString * _Nonnull)stringForValue:(double)value entry:(ChartDataEntry * _Nonnull)entry dataSetIndex:(NSInteger)dataSetIndex viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler;
+		//[Export("stringForValue:entry:dataSetIndex:viewPortHandler:")]
+		//string StringForValue(double value, ChartDataEntry entry, nint dataSetIndex, [NullAllowed] ChartViewPortHandler viewPortHandler);
 	}
 
 	// @interface ChartDescription : ChartComponentBase
@@ -4229,7 +4229,7 @@ namespace iOSCharts
 		// @required @property (readonly, nonatomic, strong) id<InterfaceShapeRenderer> _Nullable shapeRenderer;
 		[Abstract]
 		[NullAllowed, Export("shapeRenderer", ArgumentSemantic.Strong)]
-		InterfaceShapeRenderer ShapeRenderer { get; }
+		IInterfaceShapeRenderer ShapeRenderer { get; }
 	}
 
 	// @interface ChartLegend : ChartComponentBase
@@ -4684,7 +4684,7 @@ namespace iOSCharts
 
 	// @interface ChartMarkerImage : NSObject <InterfaceChartMarker>
 	[BaseType(typeof(NSObject))]
-	interface ChartMarkerImage : IInterfaceChartMarker
+	interface ChartMarkerImage : InterfaceChartMarker
 	{
 		// @property (nonatomic, strong) UIImage * _Nullable image;
 		[NullAllowed, Export("image", ArgumentSemantic.Strong)]
@@ -4715,7 +4715,7 @@ namespace iOSCharts
 
 	// @interface ChartMarkerView : NSUIView <InterfaceChartMarker>
 	[BaseType(typeof(NSUIView))]
-	interface ChartMarkerView : IInterfaceChartMarker
+	interface ChartMarkerView : InterfaceChartMarker
 	{
 		// @property (nonatomic) CGPoint offset;
 		[Export("offset", ArgumentSemantic.Assign)]
@@ -5521,7 +5521,7 @@ namespace iOSCharts
 
 		// @property (nonatomic, strong) id<InterfaceShapeRenderer> _Nullable shapeRenderer;
 		[NullAllowed, Export("shapeRenderer", ArgumentSemantic.Strong)]
-		InterfaceShapeRenderer ShapeRenderer { get; set; }
+		IInterfaceShapeRenderer ShapeRenderer { get; set; }
 
 		// +(id<InterfaceShapeRenderer> _Nonnull)rendererForShape:(enum ScatterShape)shape;
 		[Static]
@@ -5590,7 +5590,7 @@ namespace iOSCharts
 
 	// @interface SquareShapeRenderer : NSObject <InterfaceShapeRenderer>
 	[BaseType(typeof(NSObject), Name = "_TtC6Charts19SquareShapeRenderer")]
-	interface SquareShapeRenderer : IInterfaceShapeRenderer
+	interface SquareShapeRenderer : InterfaceShapeRenderer
 	{
 		//u-n-safe void RenderShapeWithContext(CGContextRef* context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, CGPoint point, UIColor color);
 	}
@@ -5650,7 +5650,7 @@ namespace iOSCharts
 
 	// @interface TriangleShapeRenderer : NSObject <InterfaceShapeRenderer>
 	[BaseType(typeof(NSObject), Name = "_TtC6Charts21TriangleShapeRenderer")]
-	interface TriangleShapeRenderer : IInterfaceShapeRenderer
+	interface TriangleShapeRenderer : InterfaceShapeRenderer
 	{
 		//u-n-safe void RenderShapeWithContext(CGContextRef* context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, CGPoint point, UIColor color);
 	}
@@ -6100,7 +6100,7 @@ namespace iOSCharts
 
 	// @interface XShapeRenderer : NSObject <InterfaceShapeRenderer>
 	[BaseType(typeof(NSObject), Name = "_TtC6Charts14XShapeRenderer")]
-	interface XShapeRenderer : IInterfaceShapeRenderer
+	interface XShapeRenderer : InterfaceShapeRenderer
 	{
 		//u-n-safe void RenderShapeWithContext(CGContextRef* context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, CGPoint point, UIColor color);
 	}
