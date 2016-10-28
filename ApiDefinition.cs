@@ -803,7 +803,7 @@ namespace iOSCharts
 		// @required @property (readonly, nonatomic, strong) ChartData * _Nullable data;
 		[Abstract]
 		[NullAllowed, Export("data", ArgumentSemantic.Strong)]
-		ChartData Data { get; }
+		ChartData Data { get; set; }
 
 		// @required @property (readonly, nonatomic) NSInteger maxVisibleCount;
 		[Abstract]
@@ -1007,7 +1007,7 @@ namespace iOSCharts
 		// @required @property (readonly, copy, nonatomic) NSArray<UIColor *> * _Nonnull colors;
 		[Abstract]
 		[Export("colors", ArgumentSemantic.Copy)]
-		UIColor[] Colors { get; }
+		UIColor[] Colors { get; set; }
 
 		// @required -(UIColor * _Nonnull)colorAtIndex:(NSInteger)atIndex;
 		[Abstract]
