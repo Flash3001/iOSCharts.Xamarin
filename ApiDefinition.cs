@@ -2076,6 +2076,10 @@ namespace iOSCharts
 		[Export("drawBordersEnabled")]
 		bool DrawBordersEnabled { get; set; }
 
+		// @property (nonatomic) BOOL clipValuesToContentEnabled;
+		[Export("clipValuesToContentEnabled")]
+		bool ClipValuesToContentEnabled { get; set; }
+
 		// @property (nonatomic) CGFloat minOffset;
 		[Export("minOffset")]
 		nfloat MinOffset { get; set; }
@@ -3464,6 +3468,9 @@ namespace iOSCharts
 	[BaseType(typeof(NSObject))]
 	interface ChartDataApproximator
 	{
+		[Static]
+		[Export("reduceWithDouglasPeuker:tolerance:")]
+		NSValue[] ReduceWithDouglasPeuker(NSValue[] points, nfloat tolerance);
 	}
 
 	interface IInterfaceChartAxisValueFormatter { }
@@ -4102,6 +4109,11 @@ namespace iOSCharts
 		[Export("sliceSpace")]
 		nfloat SliceSpace { get; set; }
 
+		// @required @property (nonatomic) BOOL automaticallyDisableSliceSpacing;
+		[Abstract]
+		[Export("automaticallyDisableSliceSpacing")]
+		bool AutomaticallyDisableSliceSpacing { get; set; }
+
 		// @required @property (nonatomic) CGFloat selectionShift;
 		[Abstract]
 		[Export("selectionShift")]
@@ -4232,6 +4244,30 @@ namespace iOSCharts
 		IInterfaceShapeRenderer ShapeRenderer { get; }
 	}
 
+	// @interface ChartIndexAxisValueFormatter : NSObject <IChartAxisValueFormatter>
+	[BaseType(typeof(NSObject))]
+	interface ChartIndexAxisValueFormatter : InterfaceChartAxisValueFormatter
+	{
+		// @property (copy, nonatomic) NSArray<NSString *> * _Nonnull values;
+		[Export("values", ArgumentSemantic.Copy)]
+		string[] Values { get; set; }
+
+		// -(instancetype _Nonnull)initWithValues:(NSArray<NSString *> * _Nonnull)values __attribute__((objc_designated_initializer));
+		[Export("initWithValues:")]
+		[DesignatedInitializer]
+		IntPtr Constructor(string[] values);
+
+		// +(ChartIndexAxisValueFormatter * _Nullable)withValues:(NSArray<NSString *> * _Nonnull)values;
+		[Static]
+		[Export("withValues:")]
+		[return: NullAllowed]
+		ChartIndexAxisValueFormatter WithValues(string[] values);
+
+		// -(NSString * _Nonnull)stringForValue:(double)value axis:(ChartAxisBase * _Nullable)axis;
+		[Export("stringForValue:axis:")]
+		string StringForValue(double value, [NullAllowed] ChartAxisBase axis);
+	}
+
 	// @interface ChartLegend : ChartComponentBase
 	[BaseType(typeof(ChartComponentBase))]
 	interface ChartLegend
@@ -4319,6 +4355,10 @@ namespace iOSCharts
 		// @property (copy, nonatomic) NSArray<NSNumber *> * _Nonnull calculatedLabelBreakPoints;
 		[Export("calculatedLabelBreakPoints", ArgumentSemantic.Copy)]
 		NSNumber[] CalculatedLabelBreakPoints { get; set; }
+
+		// @property (copy, nonatomic) NSArray<NSValue *> * _Nonnull calculatedLineSizes;
+		[Export("calculatedLineSizes", ArgumentSemantic.Copy)]
+		NSValue[] CalculatedLineSizes { get; set; }
 
 		// -(instancetype _Nonnull)initWithEntries:(NSArray<ChartLegendEntry *> * _Nonnull)entries __attribute__((objc_designated_initializer));
 		[Export("initWithEntries:")]
@@ -4850,6 +4890,10 @@ namespace iOSCharts
 		// @property (nonatomic) CGFloat sliceSpace;
 		[Export("sliceSpace")]
 		nfloat SliceSpace { get; set; }
+
+		// @required @property (nonatomic) BOOL automaticallyDisableSliceSpacing;
+		[Export("automaticallyDisableSliceSpacing")]
+		bool AutomaticallyDisableSliceSpacing { get; set; }
 
 		// @property (nonatomic) CGFloat selectionShift;
 		[Export("selectionShift")]
@@ -6213,6 +6257,11 @@ namespace iOSCharts
 
 		//u-n-safe void DrawGridLineWithContext(CGContextRef* context, CGPoint position);
 
+
+		// -(NSArray<NSValue *> * _Nonnull)transformedPositions;
+		[Export ("transformedPositions")]
+		NSValue[] TransformedPositions { get; }
+
 		//u-n-safe void DrawZeroLineWithContext(CGContextRef* context);
 
 		//u-n-safe void RenderLimitLinesWithContext(CGContextRef* context);
@@ -6235,6 +6284,9 @@ namespace iOSCharts
 		[Export ("gridClippingRect")]
 		CGRect GridClippingRect { get; }
 
+		// -(NSArray<NSValue *> * _Nonnull)transformedPositions;
+		[Export ("transformedPositions")]
+		NSValue[] TransformedPositions { get; }
 	}
 
 	// @interface YAxisRendererRadarChart : ChartYAxisRenderer
