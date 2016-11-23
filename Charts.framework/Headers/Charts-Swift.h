@@ -493,7 +493,7 @@ SWIFT_CLASS_NAMED("AxisBase")
 */
 @property (nonatomic) double axisRange;
 /**
-  the number of label entries the y-axis should have
+  the number of label entries the axis should have
   max = 25,
   min = 2,
   default = 6,
@@ -2546,9 +2546,14 @@ SWIFT_CLASS("_TtC6Charts20BarLineChartViewBase")
 */
 @property (nonatomic) BOOL drawGridBackgroundEnabled;
 /**
-  Sets drawing the borders rectangle to true. If this is enabled, there is no point drawing the axis-lines of x- and y-axis.
+  When enabled, the borders rectangle will be rendered.
+  If this is enabled, there is no point drawing the axis-lines of x- and y-axis.
 */
 @property (nonatomic) BOOL drawBordersEnabled;
+/**
+  When enabled, the values will be clipped to contentRect, otherwise they can bleed outside the content rect.
+*/
+@property (nonatomic) BOOL clipValuesToContentEnabled;
 /**
   Sets the minimum offset (padding) around the chart, defaults to 10
 */
@@ -4663,6 +4668,10 @@ SWIFT_PROTOCOL("_TtP6Charts16IPieChartDataSet_")
 */
 @property (nonatomic) CGFloat sliceSpace;
 /**
+  When enabled, slice spacing will be 0.0 when the smallest value is going to be smaller than the slice spacing itself.
+*/
+@property (nonatomic) BOOL automaticallyDisableSliceSpacing;
+/**
   indicates the selection distance of a pie slice
 */
 @property (nonatomic) CGFloat selectionShift;
@@ -4759,6 +4768,19 @@ SWIFT_PROTOCOL("_TtP6Charts20IScatterChartDataSet_")
 @end
 
 
+
+
+/**
+  This formatter is used for passing an array of x-axis labels, on whole x steps.
+*/
+SWIFT_CLASS_NAMED("IndexAxisValueFormatter")
+@interface ChartIndexAxisValueFormatter : NSObject <IChartAxisValueFormatter>
+@property (nonatomic, copy) NSArray<NSString *> * _Nonnull values;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)initWithValues:(NSArray<NSString *> * _Nonnull)values OBJC_DESIGNATED_INITIALIZER;
++ (ChartIndexAxisValueFormatter * _Nullable)withValues:(NSArray<NSString *> * _Nonnull)values;
+- (NSString * _Nonnull)stringForValue:(double)value axis:(ChartAxisBase * _Nullable)axis;
+@end
 
 @class ChartLegendEntry;
 enum ChartLegendPosition : NSInteger;
@@ -5468,6 +5490,10 @@ SWIFT_CLASS("_TtC6Charts15PieChartDataSet")
   <em>maximum</em>: 20
 */
 @property (nonatomic) CGFloat sliceSpace;
+/**
+  When enabled, slice spacing will be 0.0 when the smallest value is going to be smaller than the slice spacing itself.
+*/
+@property (nonatomic) BOOL automaticallyDisableSliceSpacing;
 /**
   indicates the selection distance of a pie slice
 */

@@ -47,4 +47,62 @@
   <ItemGroup>
     <ObjcBindingNativeFramework Include="Charts.framework" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Xamarin.Swift3, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Swift3.3.0.0\lib\xamarinios10\Xamarin.Swift3.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xamarin.Swift3.Core, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Swift3.Core.3.0.0\lib\xamarinios10\Xamarin.Swift3.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xamarin.Swift3.CoreAudio, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Swift3.CoreAudio.3.0.0\lib\xamarinios10\Xamarin.Swift3.CoreAudio.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xamarin.Swift3.CoreData, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Swift3.CoreData.3.0.0\lib\xamarinios10\Xamarin.Swift3.CoreData.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xamarin.Swift3.CoreGraphics, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Swift3.CoreGraphics.3.0.0\lib\xamarinios10\Xamarin.Swift3.CoreGraphics.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xamarin.Swift3.CoreImage, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Swift3.CoreImage.3.0.0\lib\xamarinios10\Xamarin.Swift3.CoreImage.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xamarin.Swift3.CoreMedia, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Swift3.CoreMedia.3.0.0\lib\xamarinios10\Xamarin.Swift3.CoreMedia.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xamarin.Swift3.Darwin, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Swift3.Darwin.3.0.0\lib\xamarinios10\Xamarin.Swift3.Darwin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xamarin.Swift3.Dispatch, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Swift3.Dispatch.3.0.0\lib\xamarinios10\Xamarin.Swift3.Dispatch.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xamarin.Swift3.Foundation, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Swift3.Foundation.3.0.0\lib\xamarinios10\Xamarin.Swift3.Foundation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xamarin.Swift3.ObjectiveC, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Swift3.ObjectiveC.3.0.0\lib\xamarinios10\Xamarin.Swift3.ObjectiveC.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xamarin.Swift3.OS, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Swift3.OS.3.0.0\lib\xamarinios10\Xamarin.Swift3.OS.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xamarin.Swift3.UIKit, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Swift3.UIKit.3.0.0\lib\xamarinios10\Xamarin.Swift3.UIKit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xamarin.Swift3.QuartzCore">
+      <HintPath>..\packages\Xamarin.Swift3.QuartzCore.3.0.1\lib\xamarinios10\Xamarin.Swift3.QuartzCore.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
 </Project>
