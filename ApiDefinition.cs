@@ -3523,9 +3523,9 @@ namespace iOSCharts
 		[return: NullAllowed]
 		ChartDefaultAxisValueFormatter WithBlock(Func<double, ChartAxisBase, NSString> block);
 
-		//// -(NSString * _Nonnull)stringForValue:(double)value axis:(ChartAxisBase * _Nullable)axis;
-		//[Export("stringForValue:axis:")]
-		//string StringForValue(double value, [NullAllowed] ChartAxisBase axis);
+		// -(NSString * _Nonnull)stringForValue:(double)value axis:(ChartAxisBase * _Nullable)axis;
+		[Export("stringForValue:axis:")]
+		string Axis(double value, [NullAllowed] ChartAxisBase axis);
 	}
 
 	interface IInterfaceChartFillFormatter { }
@@ -4265,7 +4265,7 @@ namespace iOSCharts
 
 		// -(NSString * _Nonnull)stringForValue:(double)value axis:(ChartAxisBase * _Nullable)axis;
 		[Export("stringForValue:axis:")]
-		string StringForValue(double value, [NullAllowed] ChartAxisBase axis);
+		string Axis(double value, [NullAllowed] ChartAxisBase axis);
 	}
 
 	// @interface ChartLegend : ChartComponentBase
