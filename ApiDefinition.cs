@@ -868,7 +868,7 @@ namespace iOSCharts
 	interface IInterfaceChartDataSet { }
 
 	// @protocol IInterfaceChartDataSet
-	[Protocol(Name = "_TtP6Charts13IInterfaceChartDataSet_"), Model]
+	[Protocol(Name = "_TtP6Charts13IChartDataSet_"), Model]
 	interface InterfaceChartDataSet
 	{
 		// @required -(void)notifyDataSetChanged;
@@ -997,7 +997,7 @@ namespace iOSCharts
 		// @required @property (readonly, nonatomic) enum AxisDependency axisDependency;
 		[Abstract]
 		[Export("axisDependency")]
-		AxisDependency AxisDependency { get; }
+		AxisDependency AxisDependency { get; set; }
 
 		// @required @property (readonly, copy, nonatomic) NSArray<UIColor *> * _Nonnull valueColors;
 		[Abstract]
@@ -1113,7 +1113,7 @@ namespace iOSCharts
 	interface IInterfaceBarLineScatterCandleBubbleChartDataSet { }
 
 	// @protocol IInterfaceBarLineScatterCandleBubbleChartDataSet <IInterfaceChartDataSet>
-	[Protocol(Name = "_TtP6Charts39IInterfaceBarLineScatterCandleBubbleChartDataSet_"), Model]
+	[Protocol(Name = "_TtP6Charts39IBarLineScatterCandleBubbleChartDataSet_"), Model]
 	interface InterfaceBarLineScatterCandleBubbleChartDataSet : InterfaceChartDataSet
 	{
 		// @required @property (nonatomic, strong) UIColor * _Nonnull highlightColor;
@@ -1140,7 +1140,7 @@ namespace iOSCharts
 	interface IInterfaceBarChartDataSet { }
 
 	// @protocol IInterfaceBarChartDataSet <IInterfaceBarLineScatterCandleBubbleChartDataSet>
-	[Protocol(Name = "_TtP6Charts16IInterfaceBarChartDataSet_"), Model]
+	[Protocol(Name = "_TtP6Charts16IBarChartDataSet_"), Model]
 	interface InterfaceBarChartDataSet : InterfaceBarLineScatterCandleBubbleChartDataSet
 	{
 		// @required @property (readonly, nonatomic) BOOL isStacked;
@@ -2614,7 +2614,7 @@ namespace iOSCharts
 	interface IInterfaceBubbleChartDataSet { }
 
 	// @protocol IInterfaceBubbleChartDataSet <IInterfaceBarLineScatterCandleBubbleChartDataSet>
-	[Protocol(Name = "_TtP6Charts19IInterfaceBubbleChartDataSet_"), Model]
+	[Protocol(Name = "_TtP6Charts19IBubbleChartDataSet_"), Model]
 	interface InterfaceBubbleChartDataSet : InterfaceBarLineScatterCandleBubbleChartDataSet
 	{
 		// @required @property (readonly, nonatomic) CGFloat maxSize;
@@ -2787,7 +2787,7 @@ namespace iOSCharts
 	interface IInterfaceLineScatterCandleRadarChartDataSet { }
 
 	// @protocol IInterfaceLineScatterCandleRadarChartDataSet <IInterfaceBarLineScatterCandleBubbleChartDataSet>
-	[Protocol(Name = "_TtP6Charts35IInterfaceLineScatterCandleRadarChartDataSet_"), Model]
+	[Protocol(Name = "_TtP6Charts35ILineScatterCandleRadarChartDataSet_"), Model]
 	interface InterfaceLineScatterCandleRadarChartDataSet : InterfaceBarLineScatterCandleBubbleChartDataSet
 	{
 		// @required @property (nonatomic) BOOL drawHorizontalHighlightIndicatorEnabled;
@@ -2819,7 +2819,7 @@ namespace iOSCharts
 	interface IInterfaceCandleChartDataSet { }
 
 	// @protocol IInterfaceCandleChartDataSet <IInterfaceLineScatterCandleRadarChartDataSet>
-	[Protocol(Name = "_TtP6Charts19IInterfaceCandleChartDataSet_"), Model]
+	[Protocol(Name = "_TtP6Charts19ICandleChartDataSet_"), Model]
 	interface InterfaceCandleChartDataSet : InterfaceLineScatterCandleRadarChartDataSet
 	{
 		// @required @property (nonatomic) CGFloat barSpace;
@@ -3173,7 +3173,7 @@ namespace iOSCharts
 
 	// @protocol InterfaceShapeRenderer <NSObject>
 	[Protocol, Model]
-	[BaseType(typeof(NSObject), Name = "_TtP6Charts14InterfaceShapeRenderer_")]
+	[BaseType(typeof(NSObject), Name = "_TtP6Charts14IShapeRenderer_")]
 	interface InterfaceShapeRenderer
 	{
 		//u-n-safe void DataSet(CGContextRef* context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, CGPoint point, UIColor color);
@@ -3926,7 +3926,7 @@ namespace iOSCharts
 	interface IInterfaceLineRadarChartDataSet { }
 
 	// @protocol IInterfaceLineRadarChartDataSet <IInterfaceLineScatterCandleRadarChartDataSet>
-	[Protocol(Name = "_TtP6Charts22IInterfaceLineRadarChartDataSet_"), Model]
+	[Protocol(Name = "_TtP6Charts22ILineRadarChartDataSet_"), Model]
 	interface InterfaceLineRadarChartDataSet : InterfaceLineScatterCandleRadarChartDataSet
 	{
 		// @required @property (nonatomic, strong) UIColor * _Nonnull fillColor;
@@ -3963,7 +3963,7 @@ namespace iOSCharts
 	interface IInterfaceLineChartDataSet { }
 
 	// @protocol IInterfaceLineChartDataSet <IInterfaceLineRadarChartDataSet>
-	[Protocol(Name = "_TtP6Charts17IInterfaceLineChartDataSet_"), Model]
+	[Protocol(Name = "_TtP6Charts17ILineChartDataSet_"), Model]
 	interface InterfaceLineChartDataSet : InterfaceLineRadarChartDataSet
 	{
 		// @required @property (nonatomic) enum LineChartMode mode;
@@ -4101,7 +4101,7 @@ namespace iOSCharts
 	interface IInterfacePieChartDataSet { }
 
 	// @protocol IInterfacePieChartDataSet <IInterfaceChartDataSet>
-	[Protocol(Name = "_TtP6Charts16IInterfacePieChartDataSet_"), Model]
+	[Protocol(Name = "_TtP6Charts16IPieChartDataSet_"), Model]
 	interface InterfacePieChartDataSet : InterfaceChartDataSet
 	{
 		// @required @property (nonatomic) CGFloat sliceSpace;
@@ -4173,7 +4173,7 @@ namespace iOSCharts
 	interface IInterfaceRadarChartDataSet { }
 
 	// @protocol IInterfaceRadarChartDataSet <IInterfaceLineRadarChartDataSet>
-	[Protocol(Name = "_TtP6Charts18IInterfaceRadarChartDataSet_"), Model]
+	[Protocol(Name = "_TtP6Charts18IRadarChartDataSet_"), Model]
 	interface InterfaceRadarChartDataSet : InterfaceLineRadarChartDataSet
 	{
 		// @required @property (nonatomic) BOOL drawHighlightCircleEnabled;
@@ -4220,7 +4220,7 @@ namespace iOSCharts
 	interface IInterfaceScatterChartDataSet { }
 
 	// @protocol IInterfaceScatterChartDataSet <IInterfaceLineScatterCandleRadarChartDataSet>
-	[Protocol(Name = "_TtP6Charts20IInterfaceScatterChartDataSet_"), Model]
+	[Protocol(Name = "_TtP6Charts20IScatterChartDataSet_"), Model]
 	interface InterfaceScatterChartDataSet : InterfaceLineScatterCandleRadarChartDataSet
 	{
 		// @required @property (readonly, nonatomic) CGFloat scatterShapeSize;
