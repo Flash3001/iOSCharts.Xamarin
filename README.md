@@ -1,6 +1,6 @@
 # iOSCharts.Xamarin
 
-A Xamarin port by Lucas Teixeira for Charts (ios-charts) by Daniel Cohen Gindi, inspired by Philipp Jahoda
+A Xamarin binding by Lucas Teixeira for Charts (ios-charts) by Daniel Cohen Gindi, inspired by Philipp Jahoda
 https://github.com/danielgindi/Charts
 
 <h2>Charts 3.0</h2>
