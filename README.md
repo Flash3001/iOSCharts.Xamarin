@@ -33,6 +33,8 @@ When using Xcode 8 (which updated Swift to 2.3 and 3.0) you should use this: htt
 
 When using Xcode 9 (Swift 3.2 and 4.0) you should use this: https://github.com/bq/ipa-packager
 
+Don't worry about the ipa-packager 'support version', the only difference is the path inside of the Xcode app. Xcode 8 supported two set of runtime libraries, but Xcode 6, 7 and 9 only support one and the path is the same for all.
+
 <h2>Binding Swift Libraries</h2>
 If you got here after googling for a way to bind Swift libraries in Xamarin, you may find this Documentation useful: stackoverflow.com/documentation/xamarin.ios/6091/binding-swift-libraries 
 
