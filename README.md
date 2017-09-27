@@ -31,7 +31,7 @@ When using Xcode 7 you might need use this script: https://github.com/jamesbar2/
 
 When using Xcode 8 (which updated Swift to 2.3 and 3.0) you should use this: https://github.com/Flash3001/ipa-packager
 
-When using Xcode 9 (Swift 3.2 and 4.0) you should use this: https://github.com/Flash3001/ipa-packager
+When using Xcode 9 (Swift 3.2 and 4.0) you should use this: https://github.com/bq/ipa-packager
 
 <h2>Binding Swift Libraries</h2>
 If you got here after googling for a way to bind Swift libraries in Xamarin, you may find this Documentation useful: stackoverflow.com/documentation/xamarin.ios/6091/binding-swift-libraries 
