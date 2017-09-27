@@ -7,4 +7,5 @@ framework module Charts {
 
 module Charts.Swift {
     header "Charts-Swift.h"
+    requires objc
 }
