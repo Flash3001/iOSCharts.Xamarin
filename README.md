@@ -3,12 +3,10 @@
 A Xamarin binding by Lucas Teixeira for Charts (ios-charts) by Daniel Cohen Gindi, inspired by Philipp Jahoda
 https://github.com/danielgindi/Charts
 
-<h2>Charts 3.0</h2>
-Requires Xcode 8 as the project has moved to Swift3. It's also a breaking change. To see the release notes go to: https://github.com/danielgindi/Charts/releases/tag/v3.0.0
+<h2>Charts 3.0.4</h2>
+Requires Xcode 9 as the project has moved to Swift 4. It's also a breaking change. To see the release notes go to: https://github.com/danielgindi/Charts/releases/tag/v3.0.0
 
-If you are updating from an older version of the library, please remove the Xamarin.Swift23.Support dependency, as it is not necessary anymore.
-
-All the dependencies for Swift3 are already listed in the NuGet package. You can find the project for them in here: https://github.com/Flash3001/Xamarin.Swift3.Support
+All the dependencies for Swift 4 are already listed in the NuGet package. You can find the project for them in here: https://github.com/Flash3001/Xamarin.Swift3.Support (it is misnamed)
 
 <h2>Important Notes for Charts 3.0.4 and Xcode 9</h2>
 A version of the library was released to support Xcode 9 and it's dependencies in Nuget changed from Xamarin.Swift3.* to Xamarin.Swift4.* , please remove the old packages from your project.
