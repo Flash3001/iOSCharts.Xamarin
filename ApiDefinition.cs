@@ -689,6 +689,16 @@ namespace iOSCharts
 		[DesignatedInitializer]
 		IntPtr Constructor(double x, double y, [NullAllowed] NSObject data);
 
+        // - (nonnull instancetype)initWithX:(double)x y:(double)y icon:(UIImage * _Nullable)icon OBJC_DESIGNATED_INITIALIZER;
+        [Export("initWithX:y:icon:")]
+        [DesignatedInitializer]
+        IntPtr Constructor(double x, double y, [NullAllowed] UIImage icon);
+
+        // - (nonnull instancetype)initWithX:(double)x y:(double)y icon:(UIImage * _Nullable)icon data:(id _Nullable)data OBJC_DESIGNATED_INITIALIZER;
+        [Export("initWithX:y:icon:data:")]
+        [DesignatedInitializer]
+        IntPtr Constructor(double x, double y, [NullAllowed] UIImage icon, [NullAllowed] NSObject data);
+
 		// -(BOOL)isEqual:(id _Nullable)object;
 		[Export("isEqual:")]
 		bool IsEqual([NullAllowed] NSObject @object);
