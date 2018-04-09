@@ -1918,21 +1918,21 @@ namespace iOSCharts
         [Export("highlightValues:")]
         void HighlightValues([NullAllowed] ChartHighlight[] highs);
 
-        // -(void)highlightValueWithX:(double)x dataSetIndex:(NSInteger)dataSetIndex;
-        [Export("highlightValueWithX:dataSetIndex:")]
-        void HighlightValueWithX(double x, nint dataSetIndex);
+        // -(void)highlightValueWithX:(double)x dataSetIndex:(id)dataSetIndex dataIndex:(id)dataIndex;
+        [Export("highlightValueWithX:dataSetIndex:dataIndex:")]
+        void HighlightValueWithX(double x, nint dataSetIndex, nint dataIndex);
 
-        // -(void)highlightValueWithX:(double)x y:(double)y dataSetIndex:(NSInteger)dataSetIndex;
-        [Export("highlightValueWithX:y:dataSetIndex:")]
-        void HighlightValueWithX(double x, double y, nint dataSetIndex);
+        // -(void)highlightValueWithX:(double)x y:(double)y dataSetIndex:(id)dataSetIndex dataIndex:(id)dataIndex;
+        [Export("highlightValueWithX:y:dataSetIndex:dataIndex:")]
+        void HighlightValueWithX(double x, double y, nint dataSetIndex, nint dataIndex);
 
-        // -(void)highlightValueWithX:(double)x dataSetIndex:(NSInteger)dataSetIndex callDelegate:(BOOL)callDelegate;
-        [Export("highlightValueWithX:dataSetIndex:callDelegate:")]
-        void HighlightValueWithX(double x, nint dataSetIndex, bool callDelegate);
+        // -(void)highlightValueWithX:(double)x dataSetIndex:(id)dataSetIndex dataIndex:(id)dataIndex callDelegate:(id)callDelegate;
+        [Export("highlightValueWithX:dataSetIndex:dataIndex:callDelegate:")]
+        void HighlightValueWithX(double x, nint dataSetIndex, nint dataIndex, bool callDelegate);
 
-        // -(void)highlightValueWithX:(double)x y:(double)y dataSetIndex:(NSInteger)dataSetIndex callDelegate:(BOOL)callDelegate;
-        [Export("highlightValueWithX:y:dataSetIndex:callDelegate:")]
-        void HighlightValueWithX(double x, double y, nint dataSetIndex, bool callDelegate);
+        // -(void)highlightValueWithX:(double)x y:(double)y dataSetIndex:(id)dataSetIndex dataIndex:(id)dataIndex callDelegate:(id)callDelegate;
+        [Export("highlightValueWithX:y:dataSetIndex:dataIndex:callDelegate:")]
+        void HighlightValueWithX(double x, double y, nint dataSetIndex, nint dataIndex, bool callDelegate);
 
         // -(void)highlightValue:(ChartHighlight * _Nullable)highlight;
         [Export("highlightValue:")]
