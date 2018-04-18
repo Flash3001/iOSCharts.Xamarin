@@ -4207,10 +4207,10 @@ namespace iOSCharts
         [Export("refreshContentWithEntry:highlight:")]
         void RefreshContentWithEntry(ChartDataEntry entry, ChartHighlight highlight);
 
-        // @required -(void)drawWithContext:(id)context point:(id)point;
+        // @required -(void)drawWithContext:(CGContext)context point:(CGPoint)point; 
         [Abstract]
         [Export("drawWithContext:point:")]
-        void DrawWithContext(NSObject context, NSObject point);
+        void DrawWithContext(CGContext context, CGPoint point); 
     }
 
     interface IInterfacePieChartDataSet { }
@@ -4865,9 +4865,9 @@ namespace iOSCharts
         [Export("refreshContentWithEntry:highlight:")]
         void RefreshContentWithEntry(ChartDataEntry entry, ChartHighlight highlight);
 
-        // -(void)drawWithContext:(id)context point:(id)point;
+        // -(void)drawWithContext:(CGContext)context point:(CGPoint)point; 
         [Export("drawWithContext:point:")]
-        void DrawWithContext(NSObject context, NSObject point);
+        void DrawWithContext(CGContext context, CGPoint point); 
 
         // +(ChartMarkerView * _Nullable)viewFromXib;
         [Static]
