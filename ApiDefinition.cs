@@ -412,21 +412,21 @@ namespace iOSCharts
         [DesignatedInitializer]
         IntPtr Constructor([NullAllowed] ChartViewPortHandler viewPortHandler, [NullAllowed] ChartTransformer transformer, [NullAllowed] ChartAxisBase axis);
 
-        // -(void)renderAxisLabelsWithContext:(id)context;
+        // -(void)renderAxisLabelsWithContext:(CGContext)context;
         [Export("renderAxisLabelsWithContext:")]
-        void RenderAxisLabelsWithContext(NSObject context);
+        void RenderAxisLabelsWithContext(CGContext context);
 
-        // -(void)renderGridLinesWithContext:(id)context;
+        // -(void)renderGridLinesWithContext:(CGContext)context;
         [Export("renderGridLinesWithContext:")]
-        void RenderGridLinesWithContext(NSObject context);
+        void RenderGridLinesWithContext(CGContext context);
 
-        // -(void)renderAxisLineWithContext:(id)context;
+        // -(void)renderAxisLineWithContext:(CGContext)context;
         [Export("renderAxisLineWithContext:")]
-        void RenderAxisLineWithContext(NSObject context);
+        void RenderAxisLineWithContext(CGContext context);
 
-        // -(void)renderLimitLinesWithContext:(id)context;
+        // -(void)renderLimitLinesWithContext:(CGContext)context;
         [Export("renderLimitLinesWithContext:")]
-        void RenderLimitLinesWithContext(NSObject context);
+        void RenderLimitLinesWithContext(CGContext context);
 
         // -(void)computeAxisWithMin:(double)min max:(double)max inverted:(BOOL)inverted;
         [Export("computeAxisWithMin:max:inverted:")]
@@ -1660,21 +1660,21 @@ namespace iOSCharts
         [DesignatedInitializer]
         IntPtr Constructor(ChartAnimator animator, ChartViewPortHandler viewPortHandler);
 
-        // -(void)drawDataWithContext:(id)context;
+        // -(void)drawDataWithContext:(CGContext)context;
         [Export("drawDataWithContext:")]
-        void DrawDataWithContext(NSObject context);
+        void DrawDataWithContext(CGContext context);
 
-        // -(void)drawValuesWithContext:(id)context;
+        // -(void)drawValuesWithContext:(CGContext)context;
         [Export("drawValuesWithContext:")]
-        void DrawValuesWithContext(NSObject context);
+        void DrawValuesWithContext(CGContext context);
 
-        // -(void)drawExtrasWithContext:(id)context;
+        // -(void)drawExtrasWithContext:(CGContext)context;
         [Export("drawExtrasWithContext:")]
-        void DrawExtrasWithContext(NSObject context);
+        void DrawExtrasWithContext(CGContext context);
 
-        // -(void)drawHighlightedWithContext:(id)context indices:(id)indices;
+        // -(void)drawHighlightedWithContext:(CGContext)context indices:(NSArray<ChartHighlight *> * _Nonnull)indices;
         [Export("drawHighlightedWithContext:indices:")]
-        void DrawHighlightedWithContext(NSObject context, NSObject indices);
+        void DrawHighlightedWithContext(CGContext context, ChartHighlight[] indices);
 
         // -(void)initBuffers __attribute__((objc_method_family("none")));
         [Export("initBuffers")]
@@ -1712,29 +1712,29 @@ namespace iOSCharts
         [Export("initBuffers")]
         void InitBuffers();
 
-        // -(void)drawDataWithContext:(id)context;
+        // -(void)drawDataWithContext:(CGContext)context;
         [Export("drawDataWithContext:")]
-        void DrawDataWithContext(NSObject context);
+        void DrawDataWithContext(CGContext context);
 
-        // -(void)drawDataSetWithContext:(id)context dataSet:(id<IBarChartDataSet> _Nonnull)dataSet index:(id)index;
+        // -(void)drawDataSetWithContext:(CGContext)context dataSet:(id<IBarChartDataSet> _Nonnull)dataSet index:(id)index;
         [Export("drawDataSetWithContext:dataSet:index:")]
-        void DrawDataSetWithContext(NSObject context, IInterfaceBarChartDataSet dataSet, NSObject index);
+        void DrawDataSetWithContext(CGContext context, IInterfaceBarChartDataSet dataSet, NSObject index);
 
-        // -(void)drawValuesWithContext:(id)context;
+        // -(void)drawValuesWithContext:(CGContext)context;
         [Export("drawValuesWithContext:")]
-        void DrawValuesWithContext(NSObject context);
+        void DrawValuesWithContext(CGContext context);
 
-        // -(void)drawValueWithContext:(id)context value:(id)value xPos:(id)xPos yPos:(id)yPos font:(UIFont * _Nonnull)font align:(id)align color:(UIColor * _Nonnull)color;
+        // -(void)drawValueWithContext:(CGContext)context value:(id)value xPos:(id)xPos yPos:(id)yPos font:(UIFont * _Nonnull)font align:(id)align color:(UIColor * _Nonnull)color;
         [Export("drawValueWithContext:value:xPos:yPos:font:align:color:")]
-        void DrawValueWithContext(NSObject context, NSObject value, NSObject xPos, NSObject yPos, UIFont font, NSObject align, UIColor color);
+        void DrawValueWithContext(CGContext context, NSObject value, NSObject xPos, NSObject yPos, UIFont font, NSObject align, UIColor color);
 
-        // -(void)drawExtrasWithContext:(id)context;
+        // -(void)drawExtrasWithContext:(CGContext)context;
         [Export("drawExtrasWithContext:")]
-        void DrawExtrasWithContext(NSObject context);
+        void DrawExtrasWithContext(CGContext context);
 
-        // -(void)drawHighlightedWithContext:(id)context indices:(id)indices;
+        // -(void)drawHighlightedWithContext:(CGContext)context indices:(NSArray<ChartHighlight *> * _Nonnull)indices;
         [Export("drawHighlightedWithContext:indices:")]
-        void DrawHighlightedWithContext(NSObject context, NSObject indices);
+        void DrawHighlightedWithContext(CGContext context, ChartHighlight[] indices);
     }
 
     // @interface NSUIView : UIView
@@ -2752,25 +2752,25 @@ namespace iOSCharts
         [DesignatedInitializer]
         IntPtr Constructor([NullAllowed] IBubbleChartDataProvider dataProvider, [NullAllowed] ChartAnimator animator, [NullAllowed] ChartViewPortHandler viewPortHandler);
 
-        // -(void)drawDataWithContext:(id)context;
+        // -(void)drawDataWithContext:(CGContext)context;
         [Export("drawDataWithContext:")]
-        void DrawDataWithContext(NSObject context);
+        void DrawDataWithContext(CGContext context);
 
-        // -(void)drawDataSetWithContext:(id)context dataSet:(id<IBubbleChartDataSet> _Nonnull)dataSet;
+        // -(void)drawDataSetWithContext:(CGContext)context dataSet:(id<IBubbleChartDataSet> _Nonnull)dataSet;
         [Export("drawDataSetWithContext:dataSet:")]
-        void DrawDataSetWithContext(NSObject context, IInterfaceBubbleChartDataSet dataSet);
+        void DrawDataSetWithContext(CGContext context, IInterfaceBubbleChartDataSet dataSet);
 
-        // -(void)drawValuesWithContext:(id)context;
+        // -(void)drawValuesWithContext:(CGContext)context;
         [Export("drawValuesWithContext:")]
-        void DrawValuesWithContext(NSObject context);
+        void DrawValuesWithContext(CGContext context);
 
-        // -(void)drawExtrasWithContext:(id)context;
+        // -(void)drawExtrasWithContext:(CGContext)context;
         [Export("drawExtrasWithContext:")]
-        void DrawExtrasWithContext(NSObject context);
+        void DrawExtrasWithContext(CGContext context);
 
-        // -(void)drawHighlightedWithContext:(id)context indices:(id)indices;
+        // -(void)drawHighlightedWithContext:(CGContext)context indices:(NSArray<ChartHighlight *> * _Nonnull)indices;
         [Export("drawHighlightedWithContext:indices:")]
-        void DrawHighlightedWithContext(NSObject context, NSObject indices);
+        void DrawHighlightedWithContext(CGContext context, ChartHighlight[] indices);
     }
 
     // @interface BubbleChartView : BarLineChartViewBase <BubbleChartDataProvider>
@@ -3105,25 +3105,25 @@ namespace iOSCharts
         [DesignatedInitializer]
         IntPtr Constructor([NullAllowed] ICandleChartDataProvider dataProvider, [NullAllowed] ChartAnimator animator, [NullAllowed] ChartViewPortHandler viewPortHandler);
 
-        // -(void)drawDataWithContext:(id)context;
+        // -(void)drawDataWithContext:(CGContext)context;
         [Export("drawDataWithContext:")]
-        void DrawDataWithContext(NSObject context);
+        void DrawDataWithContext(CGContext context);
 
-        // -(void)drawDataSetWithContext:(id)context dataSet:(id<ICandleChartDataSet> _Nonnull)dataSet;
+        // -(void)drawDataSetWithContext:(CGContext)context dataSet:(id<ICandleChartDataSet> _Nonnull)dataSet;
         [Export("drawDataSetWithContext:dataSet:")]
-        void DrawDataSetWithContext(NSObject context, IInterfaceCandleChartDataSet dataSet);
+        void DrawDataSetWithContext(CGContext context, IInterfaceCandleChartDataSet dataSet);
 
-        // -(void)drawValuesWithContext:(id)context;
+        // -(void)drawValuesWithContext:(CGContext)context;
         [Export("drawValuesWithContext:")]
-        void DrawValuesWithContext(NSObject context);
+        void DrawValuesWithContext(CGContext context);
 
-        // -(void)drawExtrasWithContext:(id)context;
+        // -(void)drawExtrasWithContext:(CGContext)context;
         [Export("drawExtrasWithContext:")]
-        void DrawExtrasWithContext(NSObject context);
+        void DrawExtrasWithContext(CGContext context);
 
-        // -(void)drawHighlightedWithContext:(id)context indices:(id)indices;
+        // -(void)drawHighlightedWithContext:(CGContext)context indices:(NSArray<ChartHighlight *> * _Nonnull)indices;
         [Export("drawHighlightedWithContext:indices:")]
-        void DrawHighlightedWithContext(NSObject context, NSObject indices);
+        void DrawHighlightedWithContext(CGContext context, ChartHighlight[] indices);
     }
 
     // @interface CandleStickChartView : BarLineChartViewBase <CandleChartDataProvider>
@@ -3432,21 +3432,21 @@ namespace iOSCharts
         [Export("initBuffers")]
         void InitBuffers();
 
-        // -(void)drawDataWithContext:(id)context;
+        // -(void)drawDataWithContext:(CGContext)context;
         [Export("drawDataWithContext:")]
-        void DrawDataWithContext(NSObject context);
+        void DrawDataWithContext(CGContext context);
 
-        // -(void)drawValuesWithContext:(id)context;
+        // -(void)drawValuesWithContext:(CGContext)context;
         [Export("drawValuesWithContext:")]
-        void DrawValuesWithContext(NSObject context);
+        void DrawValuesWithContext(CGContext context);
 
-        // -(void)drawExtrasWithContext:(id)context;
+        // -(void)drawExtrasWithContext:(CGContext)context;
         [Export("drawExtrasWithContext:")]
-        void DrawExtrasWithContext(NSObject context);
+        void DrawExtrasWithContext(CGContext context);
 
-        // -(void)drawHighlightedWithContext:(id)context indices:(id)indices;
+        // -(void)drawHighlightedWithContext:(CGContext)context indices:(NSArray<ChartHighlight *> * _Nonnull)indices;
         [Export("drawHighlightedWithContext:indices:")]
-        void DrawHighlightedWithContext(NSObject context, NSObject indices);
+        void DrawHighlightedWithContext(CGContext context, ChartHighlight[] indices);
 
         // -(ChartDataRendererBase * _Nullable)getSubRendererWithIndex:(NSInteger)index;
         [Export("getSubRendererWithIndex:")]
@@ -3856,9 +3856,9 @@ namespace iOSCharts
         [Export("fillWithCGLayer:")]
         ChartFill FillWithCGLayer(NSObject CGLayer);
 
-        // -(void)fillPathWithContext:(id)context rect:(id)rect;
+        // -(void)fillPathWithContext:(CGContext)context rect:(id)rect;
         [Export("fillPathWithContext:rect:")]
-        void FillPathWithContext(NSObject context, NSObject rect);
+        void FillPathWithContext(CGContext context, NSObject rect);
     }
 
 
@@ -3963,13 +3963,13 @@ namespace iOSCharts
         [Export("initBuffers")]
         void InitBuffers();
 
-        // -(void)drawDataSetWithContext:(id)context dataSet:(id<IBarChartDataSet> _Nonnull)dataSet index:(id)index;
+        // -(void)drawDataSetWithContext:(CGContext)context dataSet:(id<IBarChartDataSet> _Nonnull)dataSet index:(id)index;
         [Export("drawDataSetWithContext:dataSet:index:")]
-        void DrawDataSetWithContext(NSObject context, IInterfaceBarChartDataSet dataSet, NSObject index);
+        void DrawDataSetWithContext(CGContext context, IInterfaceBarChartDataSet dataSet, NSObject index);
 
-        // -(void)drawValuesWithContext:(id)context;
+        // -(void)drawValuesWithContext:(CGContext)context;
         [Export("drawValuesWithContext:")]
-        void DrawValuesWithContext(NSObject context);
+        void DrawValuesWithContext(CGContext context);
 
         // -(BOOL)isDrawingValuesAllowedWithDataProvider:(id<ChartDataProvider> _Nullable)dataProvider;
         [Export("isDrawingValuesAllowedWithDataProvider:")]
@@ -4207,10 +4207,10 @@ namespace iOSCharts
         [Export("refreshContentWithEntry:highlight:")]
         void RefreshContentWithEntry(ChartDataEntry entry, ChartHighlight highlight);
 
-        // @required -(void)drawWithContext:(id)context point:(id)point;
+        // @required -(void)drawWithContext:(CGContext)context point:(CGPoint)point; 
         [Abstract]
         [Export("drawWithContext:point:")]
-        void DrawWithContext(NSObject context, NSObject point);
+        void DrawWithContext(CGContext context, CGPoint point); 
     }
 
     interface IInterfacePieChartDataSet { }
@@ -4586,17 +4586,17 @@ namespace iOSCharts
         [Export("computeLegendWithData:")]
         void ComputeLegendWithData(ChartData data);
 
-        // -(void)renderLegendWithContext:(id)context;
+        // -(void)renderLegendWithContext:(CGContext)context;
         [Export("renderLegendWithContext:")]
-        void RenderLegendWithContext(NSObject context);
+        void RenderLegendWithContext(CGContext context);
 
-        // -(void)drawFormWithContext:(id)context x:(id)x y:(id)y entry:(ChartLegendEntry * _Nonnull)entry legend:(ChartLegend * _Nonnull)legend;
+        // -(void)drawFormWithContext:(CGContext)context x:(id)x y:(id)y entry:(ChartLegendEntry * _Nonnull)entry legend:(ChartLegend * _Nonnull)legend;
         [Export("drawFormWithContext:x:y:entry:legend:")]
-        void DrawFormWithContext(NSObject context, NSObject x, NSObject y, ChartLegendEntry entry, ChartLegend legend);
+        void DrawFormWithContext(CGContext context, NSObject x, NSObject y, ChartLegendEntry entry, ChartLegend legend);
 
-        // -(void)drawLabelWithContext:(id)context x:(id)x y:(id)y label:(id)label font:(UIFont * _Nonnull)font textColor:(UIColor * _Nonnull)textColor;
+        // -(void)drawLabelWithContext:(CGContext)context x:(id)x y:(id)y label:(id)label font:(UIFont * _Nonnull)font textColor:(UIColor * _Nonnull)textColor;
         [Export("drawLabelWithContext:x:y:label:font:textColor:")]
-        void DrawLabelWithContext(NSObject context, NSObject x, NSObject y, NSObject label, UIFont font, UIColor textColor);
+        void DrawLabelWithContext(CGContext context, NSObject x, NSObject y, NSObject label, UIFont font, UIColor textColor);
     }
 
     // @interface LineChartData : ChartData
@@ -4740,13 +4740,13 @@ namespace iOSCharts
         [DesignatedInitializer]
         IntPtr Constructor([NullAllowed] ChartAnimator animator, [NullAllowed] ChartViewPortHandler viewPortHandler);
 
-        // -(void)drawFilledPathWithContext:(id)context path:(id)path fill:(ChartFill * _Nonnull)fill fillAlpha:(id)fillAlpha;
+        // -(void)drawFilledPathWithContext:(CGContext)context path:(id)path fill:(ChartFill * _Nonnull)fill fillAlpha:(id)fillAlpha;
         [Export("drawFilledPathWithContext:path:fill:fillAlpha:")]
-        void DrawFilledPathWithContext(NSObject context, NSObject path, ChartFill fill, NSObject fillAlpha);
+        void DrawFilledPathWithContext(CGContext context, NSObject path, ChartFill fill, NSObject fillAlpha);
 
-        // -(void)drawFilledPathWithContext:(id)context path:(id)path fillColor:(UIColor * _Nonnull)fillColor fillAlpha:(id)fillAlpha;
+        // -(void)drawFilledPathWithContext:(CGContext)context path:(id)path fillColor:(UIColor * _Nonnull)fillColor fillAlpha:(id)fillAlpha;
         [Export("drawFilledPathWithContext:path:fillColor:fillAlpha:")]
-        void DrawFilledPathWithContext(NSObject context, NSObject path, UIColor fillColor, NSObject fillAlpha);
+        void DrawFilledPathWithContext(CGContext context, NSObject path, UIColor fillColor, NSObject fillAlpha);
     }
 
     // @interface LineChartRenderer : LineRadarChartRenderer
@@ -4762,37 +4762,37 @@ namespace iOSCharts
         [DesignatedInitializer]
         IntPtr Constructor([NullAllowed] ILineChartDataProvider dataProvider, [NullAllowed] ChartAnimator animator, [NullAllowed] ChartViewPortHandler viewPortHandler);
 
-        // -(void)drawDataWithContext:(id)context;
+        // -(void)drawDataWithContext:(CGContext)context;
         [Export("drawDataWithContext:")]
-        void DrawDataWithContext(NSObject context);
+        void DrawDataWithContext(CGContext context);
 
-        // -(void)drawDataSetWithContext:(id)context dataSet:(id<ILineChartDataSet> _Nonnull)dataSet;
+        // -(void)drawDataSetWithContext:(CGContext)context dataSet:(id<ILineChartDataSet> _Nonnull)dataSet;
         [Export("drawDataSetWithContext:dataSet:")]
-        void DrawDataSetWithContext(NSObject context, IInterfaceLineChartDataSet dataSet);
+        void DrawDataSetWithContext(CGContext context, IInterfaceLineChartDataSet dataSet);
 
-        // -(void)drawCubicBezierWithContext:(id)context dataSet:(id<ILineChartDataSet> _Nonnull)dataSet;
+        // -(void)drawCubicBezierWithContext:(CGContext)context dataSet:(id<ILineChartDataSet> _Nonnull)dataSet;
         [Export("drawCubicBezierWithContext:dataSet:")]
-        void DrawCubicBezierWithContext(NSObject context, IInterfaceLineChartDataSet dataSet);
+        void DrawCubicBezierWithContext(CGContext context, IInterfaceLineChartDataSet dataSet);
 
-        // -(void)drawHorizontalBezierWithContext:(id)context dataSet:(id<ILineChartDataSet> _Nonnull)dataSet;
+        // -(void)drawHorizontalBezierWithContext:(CGContext)context dataSet:(id<ILineChartDataSet> _Nonnull)dataSet;
         [Export("drawHorizontalBezierWithContext:dataSet:")]
-        void DrawHorizontalBezierWithContext(NSObject context, IInterfaceLineChartDataSet dataSet);
+        void DrawHorizontalBezierWithContext(CGContext context, IInterfaceLineChartDataSet dataSet);
 
-        // -(void)drawLinearWithContext:(id)context dataSet:(id<ILineChartDataSet> _Nonnull)dataSet;
+        // -(void)drawLinearWithContext:(CGContext)context dataSet:(id<ILineChartDataSet> _Nonnull)dataSet;
         [Export("drawLinearWithContext:dataSet:")]
-        void DrawLinearWithContext(NSObject context, IInterfaceLineChartDataSet dataSet);
+        void DrawLinearWithContext(CGContext context, IInterfaceLineChartDataSet dataSet);
 
-        // -(void)drawValuesWithContext:(id)context;
+        // -(void)drawValuesWithContext:(CGContext)context;
         [Export("drawValuesWithContext:")]
-        void DrawValuesWithContext(NSObject context);
+        void DrawValuesWithContext(CGContext context);
 
-        // -(void)drawExtrasWithContext:(id)context;
+        // -(void)drawExtrasWithContext:(CGContext)context;
         [Export("drawExtrasWithContext:")]
-        void DrawExtrasWithContext(NSObject context);
+        void DrawExtrasWithContext(CGContext context);
 
-        // -(void)drawHighlightedWithContext:(id)context indices:(id)indices;
+        // -(void)drawHighlightedWithContext:(CGContext)context indices:(NSArray<ChartHighlight *> * _Nonnull)indices;
         [Export("drawHighlightedWithContext:indices:")]
-        void DrawHighlightedWithContext(NSObject context, NSObject indices);
+        void DrawHighlightedWithContext(CGContext context, ChartHighlight[] indices);
     }
 
     // @interface LineChartView : BarLineChartViewBase <LineChartDataProvider>
@@ -4865,9 +4865,9 @@ namespace iOSCharts
         [Export("refreshContentWithEntry:highlight:")]
         void RefreshContentWithEntry(ChartDataEntry entry, ChartHighlight highlight);
 
-        // -(void)drawWithContext:(id)context point:(id)point;
+        // -(void)drawWithContext:(CGContext)context point:(CGPoint)point; 
         [Export("drawWithContext:point:")]
-        void DrawWithContext(NSObject context, NSObject point);
+        void DrawWithContext(CGContext context, CGPoint point); 
 
         // +(ChartMarkerView * _Nullable)viewFromXib;
         [Static]
@@ -5054,9 +5054,9 @@ namespace iOSCharts
         [DesignatedInitializer]
         IntPtr Constructor([NullAllowed] PieChartView chart, [NullAllowed] ChartAnimator animator, [NullAllowed] ChartViewPortHandler viewPortHandler);
 
-        // -(void)drawDataWithContext:(id)context;
+        // -(void)drawDataWithContext:(CGContext)context;
         [Export("drawDataWithContext:")]
-        void DrawDataWithContext(NSObject context);
+        void DrawDataWithContext(CGContext context);
 
         // -(CGFloat)calculateMinimumRadiusForSpacedSliceWithCenter:(CGPoint)center radius:(CGFloat)radius angle:(CGFloat)angle arcStartPointX:(CGFloat)arcStartPointX arcStartPointY:(CGFloat)arcStartPointY startAngle:(CGFloat)startAngle sweepAngle:(CGFloat)sweepAngle;
         [Export("calculateMinimumRadiusForSpacedSliceWithCenter:radius:angle:arcStartPointX:arcStartPointY:startAngle:sweepAngle:")]
@@ -5066,21 +5066,21 @@ namespace iOSCharts
         [Export("getSliceSpaceWithDataSet:")]
         nfloat GetSliceSpaceWithDataSet(IInterfacePieChartDataSet dataSet);
 
-        // -(void)drawDataSetWithContext:(id)context dataSet:(id<IPieChartDataSet> _Nonnull)dataSet;
+        // -(void)drawDataSetWithContext:(CGContext)context dataSet:(id<IPieChartDataSet> _Nonnull)dataSet;
         [Export("drawDataSetWithContext:dataSet:")]
-        void DrawDataSetWithContext(NSObject context, IInterfacePieChartDataSet dataSet);
+        void DrawDataSetWithContext(CGContext context, IInterfacePieChartDataSet dataSet);
 
-        // -(void)drawValuesWithContext:(id)context;
+        // -(void)drawValuesWithContext:(CGContext)context;
         [Export("drawValuesWithContext:")]
-        void DrawValuesWithContext(NSObject context);
+        void DrawValuesWithContext(CGContext context);
 
-        // -(void)drawExtrasWithContext:(id)context;
+        // -(void)drawExtrasWithContext:(CGContext)context;
         [Export("drawExtrasWithContext:")]
-        void DrawExtrasWithContext(NSObject context);
+        void DrawExtrasWithContext(CGContext context);
 
-        // -(void)drawHighlightedWithContext:(id)context indices:(id)indices;
+        // -(void)drawHighlightedWithContext:(CGContext)context indices:(NSArray<ChartHighlight *> * _Nonnull)indices;
         [Export("drawHighlightedWithContext:indices:")]
-        void DrawHighlightedWithContext(NSObject context, NSObject indices);
+        void DrawHighlightedWithContext(CGContext context, ChartHighlight[] indices);
     }
 
     // @interface PieRadarChartViewBase : ChartViewBase
@@ -5490,25 +5490,25 @@ namespace iOSCharts
         [DesignatedInitializer]
         IntPtr Constructor([NullAllowed] RadarChartView chart, [NullAllowed] ChartAnimator animator, [NullAllowed] ChartViewPortHandler viewPortHandler);
 
-        // -(void)drawDataWithContext:(id)context;
+        // -(void)drawDataWithContext:(CGContext)context;
         [Export("drawDataWithContext:")]
-        void DrawDataWithContext(NSObject context);
+        void DrawDataWithContext(CGContext context);
 
-        // -(void)drawValuesWithContext:(id)context;
+        // -(void)drawValuesWithContext:(CGContext)context;
         [Export("drawValuesWithContext:")]
-        void DrawValuesWithContext(NSObject context);
+        void DrawValuesWithContext(CGContext context);
 
-        // -(void)drawExtrasWithContext:(id)context;
+        // -(void)drawExtrasWithContext:(CGContext)context;
         [Export("drawExtrasWithContext:")]
-        void DrawExtrasWithContext(NSObject context);
+        void DrawExtrasWithContext(CGContext context);
 
-        // -(void)drawWebWithContext:(id)context;
+        // -(void)drawWebWithContext:(CGContext)context;
         [Export("drawWebWithContext:")]
-        void DrawWebWithContext(NSObject context);
+        void DrawWebWithContext(CGContext context);
 
-        // -(void)drawHighlightedWithContext:(id)context indices:(id)indices;
+        // -(void)drawHighlightedWithContext:(CGContext)context indices:(NSArray<ChartHighlight *> * _Nonnull)indices;
         [Export("drawHighlightedWithContext:indices:")]
-        void DrawHighlightedWithContext(NSObject context, NSObject indices);
+        void DrawHighlightedWithContext(CGContext context, ChartHighlight[] indices);
     }
 
     // @interface RadarChartView : PieRadarChartViewBase
@@ -5709,25 +5709,25 @@ namespace iOSCharts
         [DesignatedInitializer]
         IntPtr Constructor([NullAllowed] IScatterChartDataProvider dataProvider, [NullAllowed] ChartAnimator animator, [NullAllowed] ChartViewPortHandler viewPortHandler);
 
-        // -(void)drawDataWithContext:(id)context;
+        // -(void)drawDataWithContext:(CGContext)context;
         [Export("drawDataWithContext:")]
-        void DrawDataWithContext(NSObject context);
+        void DrawDataWithContext(CGContext context);
 
-        // -(void)drawDataSetWithContext:(id)context dataSet:(id<IScatterChartDataSet> _Nonnull)dataSet;
+        // -(void)drawDataSetWithContext:(CGContext)context dataSet:(id<IScatterChartDataSet> _Nonnull)dataSet;
         [Export("drawDataSetWithContext:dataSet:")]
-        void DrawDataSetWithContext(NSObject context, IInterfaceScatterChartDataSet dataSet);
+        void DrawDataSetWithContext(CGContext context, IInterfaceScatterChartDataSet dataSet);
 
-        // -(void)drawValuesWithContext:(id)context;
+        // -(void)drawValuesWithContext:(CGContext)context;
         [Export("drawValuesWithContext:")]
-        void DrawValuesWithContext(NSObject context);
+        void DrawValuesWithContext(CGContext context);
 
-        // -(void)drawExtrasWithContext:(id)context;
+        // -(void)drawExtrasWithContext:(CGContext)context;
         [Export("drawExtrasWithContext:")]
-        void DrawExtrasWithContext(NSObject context);
+        void DrawExtrasWithContext(CGContext context);
 
-        // -(void)drawHighlightedWithContext:(id)context indices:(id)indices;
+        // -(void)drawHighlightedWithContext:(CGContext)context indices:(NSArray<ChartHighlight *> * _Nonnull)indices;
         [Export("drawHighlightedWithContext:indices:")]
-        void DrawHighlightedWithContext(NSObject context, NSObject indices);
+        void DrawHighlightedWithContext(CGContext context, ChartHighlight[] indices);
     }
 
     // @interface ScatterChartView : BarLineChartViewBase <ScatterChartDataProvider>
@@ -5753,9 +5753,9 @@ namespace iOSCharts
     [BaseType(typeof(NSObject), Name = "_TtC6Charts19SquareShapeRenderer")]
     interface SquareShapeRenderer : InterfaceShapeRenderer
     {
-        // -(void)renderShapeWithContext:(id)context dataSet:(id<IScatterChartDataSet> _Nonnull)dataSet viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler point:(id)point color:(UIColor * _Nonnull)color;
+        // -(void)renderShapeWithContext:(CGContext)context dataSet:(id<IScatterChartDataSet> _Nonnull)dataSet viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler point:(CGPoint)point color:(UIColor * _Nonnull)color;
         [Export("renderShapeWithContext:dataSet:viewPortHandler:point:color:")]
-        void RenderShapeWithContext(NSObject context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, NSObject point, UIColor color);
+        void RenderShapeWithContext(CGContext context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, CGPoint point, UIColor color);
     }
 
     // @interface ChartTransformer : NSObject
@@ -5815,9 +5815,9 @@ namespace iOSCharts
     [BaseType(typeof(NSObject), Name = "_TtC6Charts21TriangleShapeRenderer")]
     interface TriangleShapeRenderer : InterfaceShapeRenderer
     {
-        // -(void)renderShapeWithContext:(id)context dataSet:(id<IScatterChartDataSet> _Nonnull)dataSet viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler point:(id)point color:(UIColor * _Nonnull)color;
+        // -(void)renderShapeWithContext:(CGContext)context dataSet:(id<IScatterChartDataSet> _Nonnull)dataSet viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler point:(CGPoint)point color:(UIColor * _Nonnull)color;
         [Export("renderShapeWithContext:dataSet:viewPortHandler:point:color:")]
-        void RenderShapeWithContext(NSObject context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, NSObject point, UIColor color);
+        void RenderShapeWithContext(CGContext context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, CGPoint point, UIColor color);
     }
 
     // @interface Charts_Swift_6204(UIPanGestureRecognizer)
@@ -6190,45 +6190,45 @@ namespace iOSCharts
         [Export("computeSize")]
         void ComputeSize();
 
-        // -(void)renderAxisLabelsWithContext:(id)context;
+        // -(void)renderAxisLabelsWithContext:(CGContext)context;
         [Export("renderAxisLabelsWithContext:")]
-        void RenderAxisLabelsWithContext(NSObject context);
+        void RenderAxisLabelsWithContext(CGContext context);
 
-        // -(void)renderAxisLineWithContext:(id)context;
+        // -(void)renderAxisLineWithContext:(CGContext)context;
         [Export("renderAxisLineWithContext:")]
-        void RenderAxisLineWithContext(NSObject context);
+        void RenderAxisLineWithContext(CGContext context);
 
-        // -(void)drawLabelsWithContext:(id)context pos:(id)pos anchor:(id)anchor;
+        // -(void)drawLabelsWithContext:(CGContext)context pos:(id)pos anchor:(id)anchor;
         [Export("drawLabelsWithContext:pos:anchor:")]
-        void DrawLabelsWithContext(NSObject context, NSObject pos, NSObject anchor);
+        void DrawLabelsWithContext(CGContext context, NSObject pos, NSObject anchor);
 
-        // -(void)drawLabelWithContext:(id)context formattedLabel:(id)formattedLabel x:(id)x y:(id)y attributes:(id)attributes constrainedToSize:(id)constrainedToSize anchor:(id)anchor angleRadians:(id)angleRadians;
+        // -(void)drawLabelWithContext:(CGContext)context formattedLabel:(id)formattedLabel x:(id)x y:(id)y attributes:(id)attributes constrainedToSize:(id)constrainedToSize anchor:(id)anchor angleRadians:(id)angleRadians;
         [Export("drawLabelWithContext:formattedLabel:x:y:attributes:constrainedToSize:anchor:angleRadians:")]
-        void DrawLabelWithContext(NSObject context, NSObject formattedLabel, NSObject x, NSObject y, NSObject attributes, NSObject constrainedToSize, NSObject anchor, NSObject angleRadians);
+        void DrawLabelWithContext(CGContext context, NSObject formattedLabel, NSObject x, NSObject y, NSObject attributes, NSObject constrainedToSize, NSObject anchor, NSObject angleRadians);
 
-        // -(void)renderGridLinesWithContext:(id)context;
+        // -(void)renderGridLinesWithContext:(CGContext)context;
         [Export("renderGridLinesWithContext:")]
-        void RenderGridLinesWithContext(NSObject context);
+        void RenderGridLinesWithContext(CGContext context);
 
         // @property(readonly, nonatomic) CGRect gridClippingRect;
         [Export("gridClippingRect")]
         CGRect GridClippingRect { get; }
 
-        // -(void)drawGridLineWithContext:(id)context x:(id)x y:(id)y;
+        // -(void)drawGridLineWithContext:(CGContext)context x:(id)x y:(id)y;
         [Export("drawGridLineWithContext:x:y:")]
-        void DrawGridLineWithContext(NSObject context, NSObject x, NSObject y);
+        void DrawGridLineWithContext(CGContext context, NSObject x, NSObject y);
 
-        // -(void)renderLimitLinesWithContext:(id)context;
+        // -(void)renderLimitLinesWithContext:(CGContext)context;
         [Export("renderLimitLinesWithContext:")]
-        void RenderLimitLinesWithContext(NSObject context);
+        void RenderLimitLinesWithContext(CGContext context);
 
-        // -(void)renderLimitLineLineWithContext:(id)context limitLine:(ChartLimitLine * _Nonnull)limitLine position:(id)position;
+        // -(void)renderLimitLineLineWithContext:(CGContext)context limitLine:(ChartLimitLine * _Nonnull)limitLine position:(id)position;
         [Export("renderLimitLineLineWithContext:limitLine:position:")]
-        void RenderLimitLineLineWithContext(NSObject context, ChartLimitLine limitLine, NSObject position);
+        void RenderLimitLineLineWithContext(CGContext context, ChartLimitLine limitLine, NSObject position);
 
-        // -(void)renderLimitLineLabelWithContext:(id)context limitLine:(ChartLimitLine * _Nonnull)limitLine position:(id)position yOffset:(id)yOffset;
+        // -(void)renderLimitLineLabelWithContext:(CGContext)context limitLine:(ChartLimitLine * _Nonnull)limitLine position:(id)position yOffset:(id)yOffset;
         [Export("renderLimitLineLabelWithContext:limitLine:position:yOffset:")]
-        void RenderLimitLineLabelWithContext(NSObject context, ChartLimitLine limitLine, NSObject position, NSObject yOffset);
+        void RenderLimitLineLabelWithContext(CGContext context, ChartLimitLine limitLine, NSObject position, NSObject yOffset);
     }
 
     // @interface XAxisRendererHorizontalBarChart : ChartXAxisRenderer
@@ -6248,32 +6248,32 @@ namespace iOSCharts
         [Export("computeSize")]
         void ComputeSize();
 
-        // -(void)renderAxisLabelsWithContext:(id)context;
+        // -(void)renderAxisLabelsWithContext:(CGContext)context;
         [Export("renderAxisLabelsWithContext:")]
-        void RenderAxisLabelsWithContext(NSObject context);
+        void RenderAxisLabelsWithContext(CGContext context);
 
-        // -(void)drawLabelsWithContext:(id)context pos:(id)pos anchor:(id)anchor;
+        // -(void)drawLabelsWithContext:(CGContext)context pos:(id)pos anchor:(id)anchor;
         [Export("drawLabelsWithContext:pos:anchor:")]
-        void DrawLabelsWithContext(NSObject context, NSObject pos, NSObject anchor);
+        void DrawLabelsWithContext(CGContext context, NSObject pos, NSObject anchor);
 
-        // -(void)drawLabelWithContext:(id)context formattedLabel:(id)formattedLabel x:(id)x y:(id)y attributes:(id)attributes anchor:(id)anchor angleRadians:(id)angleRadians;
+        // -(void)drawLabelWithContext:(CGContext)context formattedLabel:(id)formattedLabel x:(id)x y:(id)y attributes:(id)attributes anchor:(id)anchor angleRadians:(id)angleRadians;
         [Export("drawLabelWithContext:formattedLabel:x:y:attributes:anchor:angleRadians:")]
-        void DrawLabelWithContext(NSObject context, NSObject formattedLabel, NSObject x, NSObject y, NSObject attributes, NSObject anchor, NSObject angleRadians);
+        void DrawLabelWithContext(CGContext context, NSObject formattedLabel, NSObject x, NSObject y, NSObject attributes, NSObject anchor, NSObject angleRadians);
         // @property(readonly, nonatomic) CGRect gridClippingRect;
         [Export("gridClippingRect")]
         CGRect GridClippingRect { get; }
 
-        // -(void)drawGridLineWithContext:(id)context x:(id)x y:(id)y;
+        // -(void)drawGridLineWithContext:(CGContext)context x:(id)x y:(id)y;
         [Export("drawGridLineWithContext:x:y:")]
-        void DrawGridLineWithContext(NSObject context, NSObject x, NSObject y);
+        void DrawGridLineWithContext(CGContext context, NSObject x, NSObject y);
 
-        // -(void)renderAxisLineWithContext:(id)context;
+        // -(void)renderAxisLineWithContext:(CGContext)context;
         [Export("renderAxisLineWithContext:")]
-        void RenderAxisLineWithContext(NSObject context);
+        void RenderAxisLineWithContext(CGContext context);
 
-        // -(void)renderLimitLinesWithContext:(id)context;
+        // -(void)renderLimitLinesWithContext:(CGContext)context;
         [Export("renderLimitLinesWithContext:")]
-        void RenderLimitLinesWithContext(NSObject context);
+        void RenderLimitLinesWithContext(CGContext context);
     }
 
     // @interface XAxisRendererRadarChart : ChartXAxisRenderer
@@ -6289,26 +6289,26 @@ namespace iOSCharts
         [DesignatedInitializer]
         IntPtr Constructor([NullAllowed] ChartViewPortHandler viewPortHandler, [NullAllowed] ChartXAxis xAxis, [NullAllowed] RadarChartView chart);
 
-        // -(void)renderAxisLabelsWithContext:(id)context;
+        // -(void)renderAxisLabelsWithContext:(CGContext)context;
         [Export("renderAxisLabelsWithContext:")]
-        void RenderAxisLabelsWithContext(NSObject context);
+        void RenderAxisLabelsWithContext(CGContext context);
 
-        // -(void)drawLabelWithContext:(id)context formattedLabel:(id)formattedLabel x:(id)x y:(id)y attributes:(id)attributes anchor:(id)anchor angleRadians:(id)angleRadians;
+        // -(void)drawLabelWithContext:(CGContext)context formattedLabel:(id)formattedLabel x:(id)x y:(id)y attributes:(id)attributes anchor:(id)anchor angleRadians:(id)angleRadians;
         [Export("drawLabelWithContext:formattedLabel:x:y:attributes:anchor:angleRadians:")]
-        void DrawLabelWithContext(NSObject context, NSObject formattedLabel, NSObject x, NSObject y, NSObject attributes, NSObject anchor, NSObject angleRadians);
+        void DrawLabelWithContext(CGContext context, NSObject formattedLabel, NSObject x, NSObject y, NSObject attributes, NSObject anchor, NSObject angleRadians);
 
-        // -(void)renderLimitLinesWithContext:(id)context;
+        // -(void)renderLimitLinesWithContext:(CGContext)context;
         [Export("renderLimitLinesWithContext:")]
-        void RenderLimitLinesWithContext(NSObject context);
+        void RenderLimitLinesWithContext(CGContext context);
     }
 
     // @interface XShapeRenderer : NSObject <InterfaceShapeRenderer>
     [BaseType(typeof(NSObject), Name = "_TtC6Charts14XShapeRenderer")]
     interface XShapeRenderer : InterfaceShapeRenderer
     {
-        // -(void)renderShapeWithContext:(id)context dataSet:(id<IScatterChartDataSet> _Nonnull)dataSet viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler point:(id)point color:(UIColor * _Nonnull)color;
+        // -(void)renderShapeWithContext:(CGContext)context dataSet:(id<IScatterChartDataSet> _Nonnull)dataSet viewPortHandler:(ChartViewPortHandler * _Nonnull)viewPortHandler point:(CGPoint)point color:(UIColor * _Nonnull)color;
         [Export("renderShapeWithContext:dataSet:viewPortHandler:point:color:")]
-        void RenderShapeWithContext(NSObject context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, NSObject point, UIColor color);
+        void RenderShapeWithContext(CGContext context, IInterfaceScatterChartDataSet dataSet, ChartViewPortHandler viewPortHandler, CGPoint point, UIColor color);
     }
 
     // @interface ChartYAxis : ChartAxisBase
@@ -6415,25 +6415,25 @@ namespace iOSCharts
         [DesignatedInitializer]
         IntPtr Constructor([NullAllowed] ChartViewPortHandler viewPortHandler, [NullAllowed] ChartYAxis yAxis, [NullAllowed] ChartTransformer transformer);
 
-        // -(void)renderAxisLabelsWithContext:(id)context;
+        // -(void)renderAxisLabelsWithContext:(CGContext)context;
         [Export("renderAxisLabelsWithContext:")]
-        void RenderAxisLabelsWithContext(NSObject context);
+        void RenderAxisLabelsWithContext(CGContext context);
 
-        // -(void)renderAxisLineWithContext:(id)context;
+        // -(void)renderAxisLineWithContext:(CGContext)context;
         [Export("renderAxisLineWithContext:")]
-        void RenderAxisLineWithContext(NSObject context);
+        void RenderAxisLineWithContext(CGContext context);
 
-        // -(void)renderGridLinesWithContext:(id)context;
+        // -(void)renderGridLinesWithContext:(CGContext)context;
         [Export("renderGridLinesWithContext:")]
-        void RenderGridLinesWithContext(NSObject context);
+        void RenderGridLinesWithContext(CGContext context);
 
         // @property(readonly, nonatomic) CGRect gridClippingRect;
         [Export("gridClippingRect")]
         CGRect GridClippingRect { get; }
 
-        // -(void)drawGridLineWithContext:(id)context position:(id)position;
+        // -(void)drawGridLineWithContext:(CGContext)context position:(id)position;
         [Export("drawGridLineWithContext:position:")]
-        void DrawGridLineWithContext(NSObject context, NSObject position);
+        void DrawGridLineWithContext(CGContext context, NSObject position);
 
 
         // -(NSArray<NSValue *> * _Nonnull)transformedPositions;
@@ -6441,13 +6441,13 @@ namespace iOSCharts
         NSValue[] TransformedPositions { get; }
 
 
-        // -(void)drawZeroLineWithContext:(id)context;
+        // -(void)drawZeroLineWithContext:(CGContext)context;
         [Export("drawZeroLineWithContext:")]
-        void DrawZeroLineWithContext(NSObject context);
+        void DrawZeroLineWithContext(CGContext context);
 
-        // -(void)renderLimitLinesWithContext:(id)context;
+        // -(void)renderLimitLinesWithContext:(CGContext)context;
         [Export("renderLimitLinesWithContext:")]
-        void RenderLimitLinesWithContext(NSObject context);
+        void RenderLimitLinesWithContext(CGContext context);
     }
 
     // @interface YAxisRendererHorizontalBarChart : ChartYAxisRenderer
@@ -6463,37 +6463,37 @@ namespace iOSCharts
         [Export("computeAxisWithMin:max:inverted:")]
         void ComputeAxisWithMin(double min, double max, bool inverted);
 
-        // -(void)renderAxisLabelsWithContext:(id)context;
+        // -(void)renderAxisLabelsWithContext:(CGContext)context;
         [Export("renderAxisLabelsWithContext:")]
-        void RenderAxisLabelsWithContext(NSObject context);
+        void RenderAxisLabelsWithContext(CGContext context);
 
-        // -(void)renderAxisLineWithContext:(id)context;
+        // -(void)renderAxisLineWithContext:(CGContext)context;
         [Export("renderAxisLineWithContext:")]
-        void RenderAxisLineWithContext(NSObject context);
+        void RenderAxisLineWithContext(CGContext context);
 
-        // -(void)drawYLabelsWithContext:(id)context fixedPosition:(id)fixedPosition positions:(id)positions offset:(id)offset;
+        // -(void)drawYLabelsWithContext:(CGContext)context fixedPosition:(id)fixedPosition positions:(id)positions offset:(id)offset;
         [Export("drawYLabelsWithContext:fixedPosition:positions:offset:")]
-        void DrawYLabelsWithContext(NSObject context, NSObject fixedPosition, NSObject positions, NSObject offset);
+        void DrawYLabelsWithContext(CGContext context, NSObject fixedPosition, NSObject positions, NSObject offset);
 
         // @property(readonly, nonatomic) CGRect gridClippingRect;
         [Export("gridClippingRect")]
         CGRect GridClippingRect { get; }
 
-        // -(void)drawGridLineWithContext:(id)context position:(id)position;
+        // -(void)drawGridLineWithContext:(CGContext)context position:(id)position;
         [Export("drawGridLineWithContext:position:")]
-        void DrawGridLineWithContext(NSObject context, NSObject position);
+        void DrawGridLineWithContext(CGContext context, NSObject position);
 
         // -(NSArray<NSValue *> * _Nonnull)transformedPositions;
         [Export("transformedPositions")]
         NSValue[] TransformedPositions { get; }
 
-        // -(void)drawZeroLineWithContext:(id)context;
+        // -(void)drawZeroLineWithContext:(CGContext)context;
         [Export("drawZeroLineWithContext:")]
-        void DrawZeroLineWithContext(NSObject context);
+        void DrawZeroLineWithContext(CGContext context);
 
-        // -(void)renderLimitLinesWithContext:(id)context;
+        // -(void)renderLimitLinesWithContext:(CGContext)context;
         [Export("renderLimitLinesWithContext:")]
-        void RenderLimitLinesWithContext(NSObject context);
+        void RenderLimitLinesWithContext(CGContext context);
     }
 
     // @interface YAxisRendererRadarChart : ChartYAxisRenderer
@@ -6509,13 +6509,13 @@ namespace iOSCharts
         [Export("computeAxisValuesWithMin:max:")]
         void ComputeAxisValuesWithMin(double yMin, double yMax);
 
-        // -(void)renderAxisLabelsWithContext:(id)context;
+        // -(void)renderAxisLabelsWithContext:(CGContext)context;
         [Export("renderAxisLabelsWithContext:")]
-        void RenderAxisLabelsWithContext(NSObject context);
+        void RenderAxisLabelsWithContext(CGContext context);
 
-        // -(void)renderLimitLinesWithContext:(id)context;
+        // -(void)renderLimitLinesWithContext:(CGContext)context;
         [Export("renderLimitLinesWithContext:")]
-        void RenderLimitLinesWithContext(NSObject context);
+        void RenderLimitLinesWithContext(CGContext context);
     }
 
     // @interface ZoomChartViewJob : ChartViewPortJob
