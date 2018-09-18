@@ -79,24 +79,6 @@ namespace iOSCharts
 	}
 
 	[Native]
-	public enum ChartLegendPosition : ulong
-	{
-		RightOfChart = 0,
-		RightOfChartCenter = 1,
-		RightOfChartInside = 2,
-		LeftOfChart = 3,
-		LeftOfChartCenter = 4,
-		LeftOfChartInside = 5,
-		BelowChartLeft = 6,
-		BelowChartRight = 7,
-		BelowChartCenter = 8,
-		AboveChartLeft = 9,
-		AboveChartRight = 10,
-		AboveChartCenter = 11,
-		PiechartCenter = 12
-	}
-
-	[Native]
 	public enum ChartLegendForm : ulong
 	{
 		None = 0,

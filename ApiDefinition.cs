@@ -602,6 +602,18 @@ namespace iOSCharts
         // @property(readonly, nonatomic, strong) id<IInterfaceChartDataSet> _Nullable maxEntryCountSet;
         [NullAllowed, Export("maxEntryCountSet", ArgumentSemantic.Strong)]
         IInterfaceChartDataSet MaxEntryCountSet { get; }
+
+		// @property (copy, nonatomic) NSString * _Nullable accessibilityEntryLabelPrefix;
+		[NullAllowed, Export ("accessibilityEntryLabelPrefix")]
+		string AccessibilityEntryLabelPrefix { get; set; }
+
+		// @property (copy, nonatomic) NSString * _Nullable accessibilityEntryLabelSuffix;
+		[NullAllowed, Export ("accessibilityEntryLabelSuffix")]
+		string AccessibilityEntryLabelSuffix { get; set; }
+
+		// @property (nonatomic) BOOL accessibilityEntryLabelSuffixIsCount;
+		[Export ("accessibilityEntryLabelSuffixIsCount")]
+		bool AccessibilityEntryLabelSuffixIsCount { get; set; }
     }
 
     // @interface BarLineScatterCandleBubbleChartData : ChartData
@@ -1132,17 +1144,17 @@ namespace iOSCharts
         // @required @property(nonatomic) int drawIconsEnabled;
         [Abstract]
         [Export("drawIconsEnabled")]
-        int DrawIconsEnabled { get; set; }
+        bool DrawIconsEnabled { get; set; }
 
         // @required @property(readonly, nonatomic) int isDrawIconsEnabled;
         [Abstract]
         [Export("isDrawIconsEnabled")]
-        int IsDrawIconsEnabled { get; }
+        bool IsDrawIconsEnabled { get; }
 
-        // @required @property(nonatomic) int iconsOffset;
+        // @required @property(nonatomic) CGPoint iconsOffset;
         [Abstract]
         [Export("iconsOffset")]
-        int IconsOffset { get; set; }
+        CGPoint IconsOffset { get; set; }
 
         // @required @property(nonatomic) BOOL visible;
         [Abstract]
@@ -1424,17 +1436,17 @@ namespace iOSCharts
         [Export("isDrawValuesEnabled")]
         bool IsDrawValuesEnabled { get; }
 
-        // @property(nonatomic) int drawIconsEnabled;
+        // @property(nonatomic) bool drawIconsEnabled;
         [Export("drawIconsEnabled")]
-        int DrawIconsEnabled { get; set; }
+        bool DrawIconsEnabled { get; set; }
 
-        // @property(readonly, nonatomic) int isDrawIconsEnabled;
+        // @property(readonly, nonatomic) bool isDrawIconsEnabled;
         [Export("isDrawIconsEnabled")]
-        int IsDrawIconsEnabled { get; }
+        bool IsDrawIconsEnabled { get; }
 
-        // @property(nonatomic) int iconsOffset;
-        [Export("iconsOffset")]
-        int IconsOffset { get; set; }
+        // @property(nonatomic) CGPoint iconsOffset;
+        [Export("iconsOffset", ArgumentSemantic.Assign)]
+        CGPoint IconsOffset { get; set; }
 
         // @property(nonatomic) BOOL visible;
         [Export("visible")]
@@ -1651,8 +1663,12 @@ namespace iOSCharts
     [DisableDefaultCtor]
     interface ChartDataRendererBase
     {
-        // @property(nonatomic, strong) ChartAnimator * _Nullable animator;
-        [Export("animator", ArgumentSemantic.Strong)]
+        // @property (copy, nonatomic) NSArray<NSUIAccessibilityElement *> * _Nonnull accessibleChartElements;
+		[Export ("accessibleChartElements", ArgumentSemantic.Copy)]
+		NSUIAccessibilityElement[] AccessibleChartElements { get; set; }
+
+		// @property (readonly, nonatomic, strong) ChartAnimator * _Nonnull animator;
+		[Export("animator", ArgumentSemantic.Strong)]
         ChartAnimator Animator { get; set; }
 
         // -(instancetype _Nonnull)initWithAnimator:(ChartAnimator * _Nullable)animator viewPortHandler:(ChartViewPortHandler * _Nullable)viewPortHandler __attribute__((objc_designated_initializer));
@@ -1683,6 +1699,9 @@ namespace iOSCharts
         // -(BOOL)isDrawingValuesAllowedWithDataProvider:(id<ChartDataProvider> _Nullable)dataProvider;
         [Export("isDrawingValuesAllowedWithDataProvider:")]
         bool IsDrawingValuesAllowedWithDataProvider([NullAllowed] IChartDataProvider dataProvider);
+		// -(NSUIAccessibilityElement * _Nonnull)createAccessibleHeaderUsingChart:(ChartViewBase * _Nonnull)chart andData:(ChartData * _Nonnull)data withDefaultDescription:(NSString * _Nonnull)defaultDescription __attribute__((warn_unused_result));
+		[Export ("createAccessibleHeaderUsingChart:andData:withDefaultDescription:")]
+		NSUIAccessibilityElement CreateAccessibleHeaderUsingChart (ChartViewBase chart, ChartData data, string defaultDescription);
     }
 
     // @interface BarLineScatterCandleBubbleChartRenderer : ChartDataRendererBase
@@ -1897,6 +1916,11 @@ namespace iOSCharts
         // -(void)drawRect:(CGRect)rect;
         [Export("drawRect:")]
         void DrawRect(CGRect rect);
+
+
+		// -(NSArray * _Nullable)accessibilityChildren __attribute__((warn_unused_result));
+		[NullAllowed, Export ("accessibilityChildren")]
+		NSObject[] AccessibilityChildren { get; }
 
         // @property(readonly, copy, nonatomic) NSArray<ChartHighlight *> * _Nonnull highlighted;
         [Export("highlighted", ArgumentSemantic.Copy)]
@@ -2135,7 +2159,7 @@ namespace iOSCharts
         [Export("clipValuesToContentEnabled")]
         bool ClipValuesToContentEnabled { get; set; }
 
-        // @property(nonatomic) int clipDataToContentEnabled;
+        // @property(nonatomic) bool clipDataToContentEnabled;
         [Export("clipDataToContentEnabled")]
         bool ClipDataToContentEnabled { get; set; }
 
@@ -2333,6 +2357,14 @@ namespace iOSCharts
         // @property(readonly, nonatomic) BOOL isDragEnabled;
         [Export("isDragEnabled")]
         bool IsDragEnabled { get; }
+
+		// @property (nonatomic) BOOL dragXEnabled;
+		[Export ("dragXEnabled")]
+		bool DragXEnabled { get; set; }
+
+		// @property (nonatomic) BOOL dragYEnabled;
+		[Export ("dragYEnabled")]
+		bool DragYEnabled { get; set; }
 
         // -(void)setScaleEnabled:(BOOL)enabled;
         [Export("setScaleEnabled:")]
@@ -3730,9 +3762,9 @@ namespace iOSCharts
         [NullAllowed, Export("text")]
         string Text { get; set; }
 
-        //// @property(nonatomic) NSTextAlignment textAlign;
-        //[Export("textAlign", ArgumentSemantic.Assign)]
-        //NSTextAlignment TextAlign { get; set; }
+		// @property (nonatomic) UITextAlignment textAlign;
+		[Export ("textAlign", ArgumentSemantic.Assign)]
+        UITextAlignment TextAlign { get; set; }
 
         // @property(nonatomic, strong) UIFont * _Nonnull font;
         [Export("font", ArgumentSemantic.Strong)]
@@ -4468,6 +4500,10 @@ namespace iOSCharts
         [Export("stackSpace")]
         nfloat StackSpace { get; set; }
 
+		// @property (copy, nonatomic) NSArray<NSValue *> * _Nonnull calculatedLabelSizes;
+		[Export ("calculatedLabelSizes", ArgumentSemantic.Copy)]
+		NSValue[] CalculatedLabelSizes { get; set; }
+
         // @property(copy, nonatomic) NSArray<NSNumber *> * _Nonnull calculatedLabelBreakPoints;
         [Export("calculatedLabelBreakPoints", ArgumentSemantic.Copy)]
         NSNumber[] CalculatedLabelBreakPoints { get; set; }
@@ -4900,6 +4936,21 @@ namespace iOSCharts
         IntPtr Constructor(ChartViewPortHandler viewPortHandler, double xValue, double yValue, ChartTransformer transformer, ChartViewBase view);
     }
 
+	// @interface NSUIAccessibilityElement : UIAccessibilityElement
+	[BaseType (typeof(UIAccessibilityElement), Name = "_TtC6Charts24NSUIAccessibilityElement")]
+	[DisableDefaultCtor]
+	interface NSUIAccessibilityElement
+	{
+		// -(instancetype _Nonnull)initWithAccessibilityContainer:(id _Nonnull)container __attribute__((objc_designated_initializer));
+		[Export ("initWithAccessibilityContainer:")]
+		[DesignatedInitializer]
+		IntPtr Constructor (NSObject container);
+
+		// @property (nonatomic) CGRect accessibilityFrame;
+		[Export ("accessibilityFrame", ArgumentSemantic.Assign)]
+		CGRect AccessibilityFrame { get; set; }
+	}
+
     // @interface PieChartData : ChartData
     [BaseType(typeof(ChartData), Name = "_TtC6Charts12PieChartData")]
     interface PieChartData
@@ -4945,22 +4996,38 @@ namespace iOSCharts
     [BaseType(typeof(ChartDataEntry), Name = "_TtC6Charts17PieChartDataEntry")]
     interface PieChartDataEntry
     {
-        // -(instancetype _Nonnull)initWithValue:(double)value label:(NSString * _Nullable)label data:(id _Nullable)data __attribute__((objc_designated_initializer));
-        [Export("initWithValue:label:data:")]
-        [DesignatedInitializer]
-        IntPtr Constructor(double value, [NullAllowed] string label, [NullAllowed] NSObject data);
+        		// -(instancetype _Nonnull)initWithValue:(double)value label:(NSString * _Nullable)label;
+		[Export ("initWithValue:label:")]
+		IntPtr Constructor (double value, [NullAllowed] string label);
 
-        // -(instancetype _Nonnull)initWithValue:(double)value label:(NSString * _Nullable)label;
-        [Export("initWithValue:label:")]
-        IntPtr Constructor(double value, [NullAllowed] string label);
+		// -(instancetype _Nonnull)initWithValue:(double)value label:(NSString * _Nullable)label data:(id _Nullable)data;
+		[Export ("initWithValue:label:data:")]
+		IntPtr Constructor (double value, [NullAllowed] string label, [NullAllowed] NSObject data);
 
-        // -(instancetype _Nonnull)initWithValue:(double)value data:(id _Nullable)data;
-        [Export("initWithValue:data:")]
-        IntPtr Constructor(double value, [NullAllowed] NSObject data);
+		// -(instancetype _Nonnull)initWithValue:(double)value label:(NSString * _Nullable)label icon:(UIImage * _Nullable)icon;
+		[Export ("initWithValue:label:icon:")]
+		IntPtr Constructor (double value, [NullAllowed] string label, [NullAllowed] UIImage icon);
 
-        // -(instancetype _Nonnull)initWithValue:(double)value;
-        [Export("initWithValue:")]
-        IntPtr Constructor(double value);
+		// -(instancetype _Nonnull)initWithValue:(double)value label:(NSString * _Nullable)label icon:(UIImage * _Nullable)icon data:(id _Nullable)data __attribute__((objc_designated_initializer));
+		[Export ("initWithValue:label:icon:data:")]
+		[DesignatedInitializer]
+		IntPtr Constructor (double value, [NullAllowed] string label, [NullAllowed] UIImage icon, [NullAllowed] NSObject data);
+
+		// -(instancetype _Nonnull)initWithValue:(double)value;
+		[Export ("initWithValue:")]
+		IntPtr Constructor (double value);
+
+		// -(instancetype _Nonnull)initWithValue:(double)value data:(id _Nullable)data;
+		[Export ("initWithValue:data:")]
+		IntPtr Constructor (double value, [NullAllowed] NSObject data);
+
+		// -(instancetype _Nonnull)initWithValue:(double)value icon:(UIImage * _Nullable)icon;
+		[Export ("initWithValue:icon:")]
+		IntPtr Constructor (double value, [NullAllowed] UIImage icon);
+
+		// -(instancetype _Nonnull)initWithValue:(double)value icon:(UIImage * _Nullable)icon data:(id _Nullable)data;
+		[Export ("initWithValue:icon:data:")]
+		IntPtr Constructor (double value, [NullAllowed] UIImage icon, [NullAllowed] NSObject data);
 
         // @property(copy, nonatomic) NSString * _Nullable label;
         [NullAllowed, Export("label")]
@@ -5962,9 +6029,9 @@ namespace iOSCharts
         [Export("zoomOutWithX:y:")]
         CGAffineTransform ZoomOutWithX(nfloat x, nfloat y);
 
-        // -(id)resetZoom __attribute__((warn_unused_result));
+        // -(CGAffineTransform)resetZoom __attribute__((warn_unused_result));
         [Export("resetZoom")]
-        NSObject ResetZoom { get; }
+        CGAffineTransform ResetZoom { get; }
 
         // -(CGAffineTransform)setZoomWithScaleX:(CGFloat)scaleX scaleY:(CGFloat)scaleY;
         [Export("setZoomWithScaleX:scaleY:")]
@@ -6315,9 +6382,9 @@ namespace iOSCharts
     [BaseType(typeof(ChartAxisBase))]
     interface ChartYAxis
     {
-        // @property(nonatomic) int drawBottomYLabelEntryEnabled;
+        // @property(nonatomic) bool drawBottomYLabelEntryEnabled;
         [Export("drawBottomYLabelEntryEnabled")]
-        int DrawBottomYLabelEntryEnabled { get; set; }
+        bool DrawBottomYLabelEntryEnabled { get; set; }
 
         // @property(nonatomic) BOOL drawTopYLabelEntryEnabled;
         [Export("drawTopYLabelEntryEnabled")]
@@ -6359,6 +6426,14 @@ namespace iOSCharts
         [Export("labelPosition", ArgumentSemantic.Assign)]
         YAxisLabelPosition LabelPosition { get; set; }
 
+		// @property (nonatomic) UITextAlignment labelAlignment;
+		[Export ("labelAlignment", ArgumentSemantic.Assign)]
+		UITextAlignment LabelAlignment { get; set; }
+
+		// @property (nonatomic) CGFloat labelXOffset;
+		[Export ("labelXOffset")]
+		nfloat LabelXOffset { get; set; }
+
         // @property(nonatomic) CGFloat minWidth;
         [Export("minWidth")]
         nfloat MinWidth { get; set; }
@@ -6396,9 +6471,9 @@ namespace iOSCharts
         [Export("calculateWithMin:max:")]
         void CalculateWithMin(double dataMin, double dataMax);
 
-        // @property(readonly, nonatomic) int isDrawBottomYLabelEntryEnabled;
+        // @property(readonly, nonatomic) bool isDrawBottomYLabelEntryEnabled;
         [Export("isDrawBottomYLabelEntryEnabled")]
-        int IsDrawBottomYLabelEntryEnabled { get; }
+        bool IsDrawBottomYLabelEntryEnabled { get; }
 
         // @property(readonly, nonatomic) BOOL isDrawTopYLabelEntryEnabled;
         [Export("isDrawTopYLabelEntryEnabled")]
