@@ -21,7 +21,7 @@
     <Title>iOSCharts</Title>
     <Description>A Xamarin binding by Lucas Teixeira for Charts (ios-charts) by Daniel Cohen Gindi, inspired by Philipp Jahoda.</Description>
     <ReleaseNotes>.NET7 version</ReleaseNotes>
-    <Version>3.2.2.2</Version>
+    <Version>3.2.2.3</Version>
     <Authors>Flash3001</Authors>
     <PackageProjectUrl>ProjectUrl</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/Flash3001/iOSCharts.Xamarin/master/LICENSE.MD</PackageLicenseUrl>

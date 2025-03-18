@@ -3821,12 +3821,12 @@ namespace iOSCharts
         // -(instancetype _Nonnull)initWithLinearGradient:(id)linearGradient angle:(id)angle __attribute__((objc_designated_initializer));
         [Export("initWithLinearGradient:angle:")]
         [DesignatedInitializer]
-        IntPtr Constructor(NSObject linearGradient, nfloat angle);
+        IntPtr Constructor(CGGradient linearGradient, nfloat angle);
 
         // -(instancetype _Nonnull)initWithRadialGradient:(id)radialGradient startOffsetPercent:(id)startOffsetPercent startRadiusPercent:(id)startRadiusPercent endOffsetPercent:(id)endOffsetPercent endRadiusPercent:(id)endRadiusPercent __attribute__((objc_designated_initializer));
         [Export("initWithRadialGradient:startOffsetPercent:startRadiusPercent:endOffsetPercent:endRadiusPercent:")]
         [DesignatedInitializer]
-        IntPtr Constructor(NSObject radialGradient, NSObject startOffsetPercent, NSObject startRadiusPercent, NSObject endOffsetPercent, NSObject endRadiusPercent);
+        IntPtr Constructor(CGGradient radialGradient, nfloat startOffsetPercent, nfloat startRadiusPercent, nfloat endOffsetPercent, nfloat endRadiusPercent);
 
         //u-n-safe IntPtr Constructor(CGGradientRef* radialGradient);
 
@@ -3854,17 +3854,17 @@ namespace iOSCharts
         // +(ChartFill * _Nonnull)fillWithLinearGradient:(id)linearGradient angle:(id)angle __attribute__((warn_unused_result));
         [Static]
         [Export("fillWithLinearGradient:angle:")]
-        ChartFill FillWithLinearGradient(NSObject linearGradient, NSObject angle);
+        ChartFill FillWithLinearGradient(CGGradient linearGradient, nfloat angle);
 
         // +(ChartFill * _Nonnull)fillWithRadialGradient:(id)radialGradient startOffsetPercent:(id)startOffsetPercent startRadiusPercent:(id)startRadiusPercent endOffsetPercent:(id)endOffsetPercent endRadiusPercent:(id)endRadiusPercent __attribute__((warn_unused_result));
         [Static]
         [Export("fillWithRadialGradient:startOffsetPercent:startRadiusPercent:endOffsetPercent:endRadiusPercent:")]
-        ChartFill FillWithRadialGradient(NSObject radialGradient, NSObject startOffsetPercent, NSObject startRadiusPercent, NSObject endOffsetPercent, NSObject endRadiusPercent);
+        ChartFill FillWithRadialGradient(CGGradient radialGradient, nfloat startOffsetPercent, nfloat startRadiusPercent, nfloat endOffsetPercent, nfloat endRadiusPercent);
 
         // +(ChartFill * _Nonnull)fillWithRadialGradient:(id)radialGradient __attribute__((warn_unused_result));
         [Static]
         [Export("fillWithRadialGradient:")]
-        ChartFill FillWithRadialGradient(NSObject radialGradient);
+        ChartFill FillWithRadialGradient(CGGradient radialGradient);
 
         // +(ChartFill * _Nonnull)fillWithCGImage:(id)CGImage tiled:(id)tiled __attribute__((warn_unused_result));
         [Static]
