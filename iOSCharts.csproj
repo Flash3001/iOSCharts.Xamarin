@@ -1,44 +1,54 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Build" ToolsVersion="4.0">
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AA49CF8C-4ADE-4142-BE58-689B43EDCFDE}</ProjectGuid>
-    <ProjectTypeGuids>{8FFB629D-F513-41CE-95D2-7ECE97B6EEEC};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFramework>net10.0-ios</TargetFramework>
     <OutputType>Library</OutputType>
     <RootNamespace>iOSCharts</RootNamespace>
     <AssemblyName>iOSCharts</AssemblyName>
-    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <TargetFramework>net7.0-ios</TargetFramework>
+    <IsBindingProject>true</IsBindingProject>
+    <ImplicitUsings>true</ImplicitUsings>
+    <Nullable>disable</Nullable>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
     <EnableDefaultItems>false</EnableDefaultItems>
     <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
-    <Platforms>AnyCPU;iPhoneSimulator;iPhone</Platforms>
-    <ImplicitUsings>true</ImplicitUsings>
-    <IsBindingProject>true</IsBindingProject>
+    <!-- Xcode 26.6 / iOS 26.5 SDK; DGCharts itself is built with IPHONEOS_DEPLOYMENT_TARGET 12.0 -->
+    <SupportedOSPlatformVersion>12.2</SupportedOSPlatformVersion>
+    <!-- .NET default (true): the xcframework ships as the iOSCharts.resources binding resource package next to the dll -->
+    <NoBindingEmbedding>true</NoBindingEmbedding>
+    <!-- replaces the old [assembly: LinkerSafe] -->
+    <IsTrimmable>true</IsTrimmable>
+    <!-- CS0108/CS0114: classes adopt protocols in the bare form (interface Foo : FooProtocol), which is what
+         makes bgen inline the members and implement IFooProtocol; the same members get inlined again in every
+         subclass and hide the base ones. Harmless: same selectors. -->
+    <NoWarn>$(NoWarn);CS0108;CS0114</NoWarn>
+
     <PackageId>iOSCharts</PackageId>
     <Title>iOSCharts</Title>
-    <Description>A Xamarin binding by Lucas Teixeira for Charts (ios-charts) by Daniel Cohen Gindi, inspired by Philipp Jahoda.</Description>
-    <ReleaseNotes>.NET7 version</ReleaseNotes>
-    <Version>3.2.2.3</Version>
+    <Description>A .NET for iOS binding by Lucas Teixeira for Charts (DGCharts) by Daniel Cohen Gindi, inspired by Philipp Jahoda.</Description>
+    <PackageReleaseNotes>Charts (DGCharts) 5.1.0 as an xcframework (device arm64, simulator arm64 + x86_64). .NET 10 / Xcode 26.6. Breaking changes: https://github.com/ChartsOrg/Charts/blob/master/CHANGELOG.md</PackageReleaseNotes>
+    <Version>5.1.0</Version>
     <Authors>Flash3001</Authors>
-    <PackageProjectUrl>ProjectUrl</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/Flash3001/iOSCharts.Xamarin/master/LICENSE.MD</PackageLicenseUrl>
-    <Tags>Xamarin;iOS;Charts;iOSCharts;MPAndroidCharts-inspired;LineChart;Combined-Chart;BarChart;Horizontal-BarChartPieChart;ScatterChart;CandleStickChart;BubbleChart;RadarChart</Tags>
     <Company></Company>
+    <Copyright>Copyright 2016-2026 Lucas Teixeira</Copyright>
+    <PackageProjectUrl>https://github.com/Flash3001/iOSCharts.Xamarin</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>Xamarin;iOS;dotnet-ios;Charts;DGCharts;iOSCharts;MPAndroidCharts-inspired;LineChart;Combined-Chart;BarChart;Horizontal-BarChart;PieChart;ScatterChart;CandleStickChart;BubbleChart;RadarChart</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
+
   <ItemGroup>
     <ObjcBindingApiDefinition Include="ApiDefinition.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <ObjcBindingCoreSource Include="Structs.cs" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
+
   <ItemGroup>
-    <NativeReference Include="Charts.framework">
+    <NativeReference Include="DGCharts.xcframework">
       <Kind>Framework</Kind>
       <SmartLink>False</SmartLink>
+      <Frameworks>Foundation CoreGraphics QuartzCore UIKit</Frameworks>
     </NativeReference>
   </ItemGroup>
 </Project>

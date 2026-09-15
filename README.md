@@ -1,45 +1,102 @@
 # iOSCharts.Xamarin
 
-A Xamarin binding by Lucas Teixeira for Charts (ios-charts) by Daniel Cohen Gindi, inspired by Philipp Jahoda
-https://github.com/danielgindi/Charts
+A .NET for iOS binding by Lucas Teixeira for Charts (now DGCharts) by Daniel Cohen Gindi, inspired by Philipp Jahoda.
+https://github.com/ChartsOrg/Charts
 
-<h2>Charts 3.0.4</h2>
-Requires Xcode 9 as the project has moved to Swift 4. It's also a breaking change. To see the release notes go to: https://github.com/danielgindi/Charts/releases/tag/v3.0.0
+## Charts 5.1.0 (package 5.1.0)
 
-All the dependencies for Swift 4 are already listed in the NuGet package. You can find the project for them in here: https://github.com/Flash3001/Xamarin.Swift3.Support (it is misnamed)
+* Binds **DGCharts 5.1.0** shipped as `DGCharts.xcframework`: device `arm64`, simulator `arm64` + `x86_64`.
+  Apple-silicon simulators work; `armv7`/`i386` are gone.
+* Targets **net10.0-ios** (.NET 10 SDK, iOS workload 26.5). Built and verified with **Xcode 26.6**.
+* No more `Xamarin.Swift*` dependencies. The Swift 5 ABI is stable and the runtime ships with iOS 12.2+.
+* The native library is delivered as a .NET binding resource package (`iOSCharts.resources.zip` next to the
+  dll in the NuGet), which is what `NoBindingEmbedding=true` produces.
+* Breaking changes from Charts 3.x are upstream's: https://github.com/ChartsOrg/Charts/blob/master/CHANGELOG.md
 
-<h2>Important Notes for Charts 3.0.4 and Xcode 9</h2>
-A version of the library was released to support Xcode 9 and it's dependencies in Nuget changed from Xamarin.Swift3.* to Xamarin.Swift4.* , please remove the old packages from your project.
+### Naming changes you will hit when upgrading from 3.2.x
 
-<h2>Important Notes for Charts 2.2.5 and Xcode 8</h2>
-If you updated to Xcode 8 there's a version of this library uploaded in NuGet pre-release channel.
-https://www.nuget.org/packages/iOSCharts/2.2.5.2-xcode8
+Charts 5 renamed its Swift protocols, and the C# names follow the Objective-C names, so the old `IInterface…`
+work-around is gone:
 
-It is important as Xcode 8 dropped support for Swift 2.2 and now only works with 2.3 and 3.0.
-This version was updated to work on 2.3.
+| 3.2.x binding                                   | 5.1.0 binding                                   |
+|-------------------------------------------------|-------------------------------------------------|
+| `IInterfaceChartDataSet` / `InterfaceChartDataSet` | `IChartDataSetProtocol` / `ChartDataSetProtocol` |
+| `IInterfaceLineChartDataSet` …                  | `ILineChartDataSetProtocol` … (same for Bar, Bubble, Candle, Pie, Radar, Scatter, LineRadar, …) |
+| `IInterfaceChartValueFormatter` / `InterfaceChartValueFormatter` | `IChartValueFormatter` / `ChartValueFormatter` |
+| `IInterfaceChartAxisValueFormatter`             | `IChartAxisValueFormatter` / `ChartAxisValueFormatter` |
+| `IInterfaceChartFillFormatter`                  | `IChartFillFormatter` / `ChartFillFormatter`    |
+| `IInterfaceChartMarker` / `InterfaceChartMarker` | `IChartMarker` / `ChartMarker`                 |
+| `IInterfaceChartHighlighter`                    | `IChartHighlighterProtocol` / `ChartHighlighterProtocol` (the class is still `ChartHighlighter`) |
+| `IInterfaceShapeRenderer`                       | `IShapeRenderer` / `ShapeRenderer`              |
+| `ChartRenderer`, `ChartDataRendererBase`, `ChartAxisRendererBase` classes | `IChartRenderer` / `IChartDataRenderer` protocols; axis renderers derive from `NSObject` |
+| `ChartFill` class + `ChartFillType` enum        | `IChartFill` protocol with `ChartColorFill`, `ChartLinearGradientFill`, `ChartRadialGradientFill`, `ChartImageFill`, `ChartLayerFill`, `ChartEmptyFill` |
 
-Its SwiftSupport dependence has changed to https://github.com/Flash3001/Xamarin.Swift23.Support NuGet: https://www.nuget.org/packages/Xamarin.Swift23.Support/
+To implement a protocol in C#, subclass the model class (`class MyFormatter : ChartValueFormatter { … }`) and
+override its members; pass it wherever the `I…` interface is expected. Constructors take `IntPtr`-free
+`NativeHandle` handles now.
 
-<h2>Troubleshooting</h2>
-When creating the IPA for publish you might get the following error:
+```csharp
+var entries = Enumerable.Range(0, 8).Select(i => new ChartDataEntry(i, Math.Sin(i) * 10 + 20)).ToArray();
+var set = new LineChartDataSet(entries, "sin") { Mode = LineChartMode.CubicBezier };
+set.Colors = ChartColorTemplates.Material;
+set.ValueFormatter = new MyValueFormatter();        // : ChartValueFormatter
+chart.Data = new LineChartData(new IChartDataSetProtocol[] { set });
+chart.XAxis.ValueFormatter = new ChartIndexAxisValueFormatter(new[] { "a", "b", "c" });
+chart.Delegate = new MyDelegate();                  // : ChartViewDelegate
+```
 
-<i>"Invalid Swift Support - The SwiftSupport folder is missing. Rebuild your app using the current public (GM) version of Xcode and resubmit it."</i>
+## Building the binding
 
-When using Xcode 7 you might need use this script: https://github.com/jamesbar2/auto-ipa-packager or https://github.com/bq/ipa-packager
+Requirements: .NET 10 SDK with the `ios` workload, Xcode 26.6. When more than one Xcode is installed, point
+the .NET SDK at 26.6:
 
-When using Xcode 8 (which updated Swift to 2.3 and 3.0) you should use this: https://github.com/Flash3001/ipa-packager
+```sh
+export MD_APPLE_SDK_ROOT=/Applications/Xcode26.6.app
+dotnet build -c Release          # produces bin/Release/iOSCharts.5.1.0.nupkg
+```
 
-When using Xcode 9 (Swift 3.2 and 4.0) you should use this: https://github.com/bq/ipa-packager
+`../global.json` pins the .NET SDK to 10.0.302.
 
-Don't worry about the ipa-packager 'support version', the only difference is the path inside of the Xcode app. Xcode 8 supported two set of runtime libraries, but Xcode 6, 7 and 9 only support one and the path is the same for all.
+## Regenerating the binding for a new Charts release
 
-<h2>Binding Swift Libraries</h2>
-If you got here after googling for a way to bind Swift libraries in Xamarin, you may find this Documentation useful: stackoverflow.com/documentation/xamarin.ios/6091/binding-swift-libraries 
+All the hand tweaks the Swift → Objective-C → C# path needs are scripted in `tools/`:
 
-In case you wish help, feel free to contact me https://twitter.com/flash3001
+1. `tools/build-xcframework.sh /path/to/Charts-x.y.z` archives the `DGCharts` scheme for iOS and the
+   iOS Simulator with Xcode 26.6 and writes `DGCharts.xcframework` here.
+2. `tools/sharpie.sh` runs Objective Sharpie 3.5 on `DGCharts-Swift.h`. Sharpie's clang cannot read the
+   iOS 26 SDK module map, so the script imports UIKit textually through a wrapper header with `-fno-modules`
+   and adds the SDK `SubFrameworks` search path; without that every `CGFloat`/`BOOL` comes out as `NSObject`.
+3. `python3 tools/transform.py <ApiDefinitions.cs> <StructsAndEnums.cs> ApiDefinition.cs Structs.cs`
+   re-applies the "witchcraft":
+   * a dummy `interface IFoo { }` per protocol, so `IFoo` can be used as a parameter/property type;
+   * every protocol is `[Protocol(Name = "_TtP8DGCharts…_"), Model]` + `[BaseType(typeof(NSObject))]`
+     (Sharpie already emits the mangled `_TtC8DGCharts…` / `_TtP8DGCharts…` runtime names for the Swift
+     types without an explicit `@objc(Name)`);
+   * members use the `IFoo` form for protocol types, classes and protocols adopt protocols in the bare
+     `interface Foo : FooProtocol` form. That bare form is what makes bgen inline the members *and* implement
+     `IFooProtocol`; with the `I` form bgen sees only the dummy interface and the class does not implement
+     the protocol at all;
+   * get-only protocol properties that the concrete classes expose as settable get a `set;` (`data`,
+     `axisDependency`, `colors`, `barData`, …), otherwise the copy re-inlined into every subclass hides the
+     settable one of the base class and `lineChart.Data = …` stops compiling;
+   * the protocol `ChartHighlighter` shares its Objective-C name with the class, so the C# protocol is
+     `ChartHighlighterProtocol`;
+   * Sharpie's odd protocol member names (`Axis`, `Y`, `Rect`, `DataSet`, `Entry`, `DataProvider`) become the
+     class member names, `chartView:animatorDidStop:` becomes `ChartViewAnimatorDidStop`;
+   * `copyWithZone:` (`INSCopying` stays), `initWithCoder:` (bgen adds it for `UIView` subclasses),
+     `observeValueForKeyPath:…`, `[Verify]`, and the `nsui*` UIKit helper categories are dropped; the
+     in-module Swift extension categories are folded into their classes; `NSTextAlignment` → `UITextAlignment`.
+4. `dotnet build -c Release`, then `tools/SmokeTest` (a .NET iOS app; `dotnet build` it and run on an
+   arm64 simulator) exercises every chart type, formatter/delegate/marker subclasses and the mangled names.
 
-<h2>License</h2>
-Copyright 2017 Lucas Teixeira, Daniel Cohen Gindi & Philipp Jahoda
+## Binding Swift Libraries
+
+If you got here after googling for a way to bind Swift libraries in Xamarin / .NET for iOS, the steps above
+are the whole recipe. Feel free to reach out: https://twitter.com/flash3001
+
+## License
+
+Copyright 2016-2026 Lucas Teixeira, Daniel Cohen Gindi & Philipp Jahoda
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
